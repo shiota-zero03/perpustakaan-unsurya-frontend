@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.overflow-smooth-primary::-webkit-scrollbar {
+    width: 5px;
+}
+
+.overflow-smooth-primary::-webkit-scrollbar-track {
+    background-color: #447CA080;
+    border-radius: 5px;
+}
+
+.overflow-smooth-primary::-webkit-scrollbar-thumb {
+    background-color: #085C94;
+    border-radius: 5px;
+    border: 2px solid #447CA080;
+}
+
+.overflow-smooth-primary {
+    scrollbar-color: #085C94 #447CA080;
+    scrollbar-width: thin;
+}
+
+.overflow-smooth-white::-webkit-scrollbar {
+    width: 5px;
+}
+
+.overflow-smooth-white::-webkit-scrollbar-track {
+    background-color: #ffffff80;
+    border-radius: 5px;
+}
+
+.overflow-smooth-white::-webkit-scrollbar-thumb {
+    background-color: #085C94;
+    border-radius: 5px;
+    border: 2px solid #ffffff80;
+}
+
+.overflow-smooth-white {
+    scrollbar-color: #085C94 #ffffff80;
+    scrollbar-width: thin;
+}
+
+
+.loader {
+    border-top-color: #085C94;
+    -webkit-animation: spinner 1.5s linear infinite;
+    animation: spinner 1.5s linear infinite;
+}
+  
+@-webkit-keyframes spinner {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+  
+@keyframes spinner {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+input[type="file"]::file-selector-button {
+    background: #085C94;
+    padding: 6px 18px;
+    border: none;
+    color: white;
+}
+input[type="file"] {
+    cursor: pointer;
+    border: 0.5px solid #B0B0B0;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 100%;
+}
