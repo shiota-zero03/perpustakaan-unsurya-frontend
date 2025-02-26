@@ -10,8 +10,7 @@ export interface IRegisterRes extends BaseRes {
 
 export interface ITokenRes extends BaseRes {
     data: {
-      accessToken: string;
-      refreshToken: string;
+      token: string;
       role?: string;
     };
   }

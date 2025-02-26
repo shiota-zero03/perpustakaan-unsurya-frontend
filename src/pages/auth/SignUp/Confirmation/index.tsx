@@ -13,7 +13,7 @@ export default function SignUpConfirmation () {
             <div className="grid grid-cols-11">
                 <div className="items-center justify-center md:h-[85vh] h-[90vh] lg:col-span-6 lg:flex hidden relative">
                 <div className="absolute w-full flex items-center justify-between top-0 py-4 px-4">
-                    <ButtonBordered className="text-white text-sm border-white font-bold h-10" content="Home" startContent={<BiSolidLeftArrowCircle className="text-white sm:text-xl text-base" />} onPress={() => navigate('/')} />
+                    <ButtonBordered className="text-white text-sm border-white font-bold h-10" content="Home" startContent={<BiSolidLeftArrowCircle className="text-white sm:text-xl text-base" />} onPress={() => navigate('/auth')} />
                 </div>
                     <img src={AuthThankyou} alt="auth-thankyou" loading="lazy" className="w-80" />
                 </div>
@@ -26,7 +26,7 @@ export default function SignUpConfirmation () {
                         Langkah terakhir dalam pendaftaran anda adalah menunggu verifikasi admin, kami akan mengirimkan email jika admin sudah memverifikasi akun anda
                     </div>
                     <div className="bg-primary rounded-full p-2 mb-6 md:text-base text-xs">
-                        <Link to={"/auth/sign-in"} className="py-1 px-6 font-bold text-white">Kembalik ke halaman masuk</Link>
+                        <Link to={"/auth/sign-in"} className="py-1 px-6 font-bold text-white">Kembali ke halaman masuk</Link>
                     </div>
                 </div>
             </div>

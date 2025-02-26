@@ -23,15 +23,6 @@ export const resetPassword = async (data: IResetReq): Promise<NullDataRes> => {
   return response.data;
 };
 
-export const requestRefreshToken = async (
-  refreshToken: string,
-): Promise<ITokenRes> => {
-  const response = await instance.post(`/auth/refresh-token`, {
-    refreshToken,
-  });
-  return response.data;
-};
-
 export const authLogout = async (): Promise<NullDataRes> => {
   const response = await instance.post(`/auth/sign-out`, {});
   return response.data;

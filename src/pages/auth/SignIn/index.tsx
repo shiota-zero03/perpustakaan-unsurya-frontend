@@ -47,8 +47,8 @@ export default function SignIn () {
                         successToast({ text: res.message })
                         dispatch(
                             setAuthTokens({
-                                accessToken: res.data.accessToken,
-                                refreshToken: res.data.refreshToken
+                                token: res.data.token,
+                                role: res.data.role || ""
                             }),
                         );
                         navigate('/dashboard')
