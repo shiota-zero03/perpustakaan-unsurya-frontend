@@ -27,8 +27,9 @@ export default function Auth () {
                         UNSURYA
                     </div>
                     <div className="bg-primary rounded-full p-2 mb-6">
-                        <Link to={"/auth/sign-up"} className="py-1 px-6 font-bold text-white">Daftar</Link>
-                        <Link to={"/auth/sign-in"} className="bg-white py-1 px-6 rounded-full font-bold text-primary">Masuk</Link>
+                        {/* <Link to={"/auth/sign-up"} className="py-1 px-6 font-bold text-white">Daftar</Link> */}
+                        {/* <Link to={"/auth/sign-in"} className="bg-white py-1 px-6 rounded-full font-bold text-primary">Masuk</Link> */}
+                        <Link to={"/auth/sign-in"} className=" py-1 px-12 rounded-full font-bold text-white">Masuk</Link>
                     </div>
                     <div>
                         <Link to={"/visitor"} className="text-primary flex items-center gap-2 font-medium sm:text-sm text-xs">Ke halaman pengunjung dan cari buku <BsArrowRight /></Link>

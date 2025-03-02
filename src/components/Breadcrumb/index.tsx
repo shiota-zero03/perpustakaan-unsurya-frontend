@@ -54,7 +54,7 @@ function BreadcrumbWithCustomSeparator( { icon: Icon }: {icon: IconType} ) {
             }}
             href={linkFormat(i)}
           >
-            {item}
+            {item === ' Cms' ? 'CMS' : item}
           </BreadcrumbItem>
         ))}
       </Breadcrumbs>

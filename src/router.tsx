@@ -2,8 +2,11 @@ import { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import Loader from "@/components/Loader";
 
+const LandingLayout = lazy(() => import("@/components/Layout/LandingLayout"));
 const AuthLayout = lazy(() => import("@/components/Layout/AuthLayout"));
 const MainLayout = lazy(() => import("@/components/Layout/MainLayout"));
+
+const Home = lazy(() => import("@/pages/landing-page"));
 
 const Auth = lazy(() => import("@/pages/auth"));
 const SignIn = lazy(() => import("@/pages/auth/SignIn"));
@@ -32,10 +35,16 @@ const DetailPetugas = lazy(() => import("@/pages/admin/petugas/DetailPetugas"));
 
 const DataPengunjung = lazy(() => import("@/pages/admin/pengunjung"));
 
+const DataFakultas = lazy(() => import("@/pages/admin/data-fakultas"));
+const DataProdi = lazy(() => import("@/pages/admin/data-prodi"));
+
 export default function Router() {
     return (
       <Suspense fallback={<Loader />}>
         <Routes>
+          <Route element={ <LandingLayout /> }>
+            <Route path="/" element={<Home />} />
+          </Route>
           <Route element={ <AuthLayout /> } >
             <Route path="/auth" element={<Auth />} />
             <Route path="/auth/sign-in" element={<SignIn />} />
@@ -70,6 +79,9 @@ export default function Router() {
             <Route path="/data-master/pengunjung" element={<DataPengunjung />} />
             <Route path="/data-transaksi/peminjaman" element={<Dashboard />} />
             <Route path="/data-transaksi/laporan-denda" element={<Dashboard />} />
+
+            <Route path="/cms/fakultas" element={<DataFakultas />} />
+            <Route path="/cms/program-studi" element={<DataProdi />} />
           </Route>
         </Routes>
       </Suspense>

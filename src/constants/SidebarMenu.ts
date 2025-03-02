@@ -3,6 +3,7 @@ import { IoGridOutline } from "react-icons/io5";
 import { TbReport } from "react-icons/tb";
 import { BsDatabaseFillGear } from "react-icons/bs";
 import { IconType } from "react-icons/lib";
+import { TbBinaryTree } from "react-icons/tb";
 
 interface PropsMenu {
     text: string;
@@ -86,5 +87,48 @@ export const AdminSidebar: PropsMenu[] = [
                 link: '/data-transaksi/laporan-denda'
             },
         ]
-    }
+    },
+    {
+        text: 'CMS',
+        name: 'cms',
+        link: '#',
+        icon: TbBinaryTree,
+        subMenu: [
+            {
+                text: 'Data Fakultas',
+                name: 'fakultas',
+                link: '/cms/fakultas'
+            },
+            {
+                text: 'Data Prodi',
+                name: 'program-studi',
+                link: '/cms/program-studi'
+            },
+            {
+                text: 'Banner',
+                name: 'banner',
+                link: '/cms/banner'
+            },
+            {
+                text: 'Profil Perpustakaan',
+                name: 'profil-perpustakaan',
+                link: '/cms/profil-perpustakaan'
+            },
+            {
+                text: 'Petunjuk',
+                name: 'petunjuk',
+                link: '/cms/petunjuk'
+            },
+            {
+                text: 'Prosedur',
+                name: 'prosedur',
+                link: '/cms/prosedur'
+            },
+            {
+                text: 'Berita dan informasi',
+                name: 'berita-informasi',
+                link: '/cms/berita-informasi'
+            },
+        ]
+    },
 ];

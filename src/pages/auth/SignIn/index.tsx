@@ -151,9 +151,9 @@ export default function SignIn () {
                         <div>
                             <ButtonSolid type="submit" isLoading={sLoading} className="bg-primary text-sm text-white font-bold h-10 w-full" content="Sign In" />
                         </div>
-                        <div className="flex items-center justify-center gap-1 sm:text-sm text-xs text-primary font-medium">
+                        {/* <div className="flex items-center justify-center gap-1 sm:text-sm text-xs text-primary font-medium">
                             Belum punya akun ? <Link to={"/auth/sign-up"} className="font-bold underline">Daftar</Link>
-                        </div>
+                        </div> */}
                     </form>
                 </div>
                 <div className="items-center justify-center md:h-[85vh] h-[90vh] lg:col-span-6 lg:flex hidden">

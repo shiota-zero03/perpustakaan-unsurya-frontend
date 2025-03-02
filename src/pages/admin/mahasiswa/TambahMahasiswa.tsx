@@ -14,7 +14,7 @@ import { MahasiswaInterfaceReq, MahasiswaInterfaceErrorReq } from "@/interface/r
 import { useGetAllDepartment, useGetAllFaculty } from "@/services/option";
 import { useStoreMahasiswa } from "@/services/mahasiswa";
 
-export default function TambahDataDosen(){
+export default function TambahDataMahasiswa(){
 
     const navigate = useNavigate();
 
@@ -149,7 +149,7 @@ export default function TambahDataDosen(){
             <BreadcrumbWithCustomSeparator icon={FaUserGraduate} />
             <div className="bg-white lg:p-8 p-4 border shadow rounded-md flex flex-col gap-4">
                 <div className="border border-primary py-2 sm:px-4 px-2 sm:text-left text-center rounded-md">
-                    <h1 className="text-primary font-semibold">FORM TAMBAH DOSEN</h1>
+                    <h1 className="text-primary font-semibold">FORM TAMBAH MAHASISWA</h1>
                 </div>
                 <div className="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-4">
                     <div className="col-span-1">
