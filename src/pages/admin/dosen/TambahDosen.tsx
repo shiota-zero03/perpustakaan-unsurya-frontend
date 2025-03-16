@@ -2,7 +2,7 @@ import { FaUserGraduate } from "react-icons/fa6";
 import BreadcrumbWithCustomSeparator from "@/components/Breadcrumb";
 import { useNavigate } from "react-router-dom";
 import { Button, Input, Select, SelectItem, useDisclosure } from "@nextui-org/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
 
 import UserImage from "@/assets/images/user.png";
@@ -31,11 +31,25 @@ export default function TambahDataDosen(){
 
     const [ formDataError, setFormDataError ] = useState<DosenInterfaceReq>({})
 
+    useEffect(() => {
+        setFormData({
+            profilePicture: null,
+            name: null,
+            nidn: null,
+            gender: null,
+            phoneNumber: null,
+            email: null,
+            password: null,
+            status: null,
+            validUntil: null
+        });
+        setFormDataError({})
+    }, [])
+
     const handleChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
             const base64Icon = await convertFileToBase64(file);
-            console.log(base64Icon)
             setFormData({
               ...formData,
               profilePicture: base64Icon,

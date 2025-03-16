@@ -34,6 +34,23 @@ export default function TambahDataMahasiswa(){
 
     const [ formDataError, setFormDataError ] = useState<MahasiswaInterfaceErrorReq>({})
 
+    useEffect(() => {
+        setFormData({
+            profilePicture: null,
+            name: null,
+            nim: null,
+            gender: null,
+            phoneNumber: null,
+            email: null,
+            password: null,
+            status: null,
+            faculty: null,
+            department: null,
+            validUntil: null
+        });
+        setFormDataError({});
+    }, [])
+
     const {
         data: facultyData,
         isFetching: facultyIsFetching

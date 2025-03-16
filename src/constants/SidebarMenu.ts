@@ -54,9 +54,14 @@ export const AdminSidebar: PropsMenu[] = [
                 link: '/data-master/petugas'
             },
             {
-                text: 'Data Buku',
-                name: 'buku',
-                link: '/data-master/buku'
+                text: 'Data Buku Fisik',
+                name: 'buku-fisik',
+                link: '/data-master/buku-fisik'
+            },
+            {
+                text: 'Data Buku Digital',
+                name: 'buku-digital',
+                link: '/data-master/buku-digital'
             },
             {
                 text: 'Data TA/Skripsi',

@@ -1,6 +1,6 @@
 import { BaseErrorRes } from "@/interface/response/base.interface";
-import { useImportMahasiswa } from "@/services/mahasiswa";
-import { sampleMahasiswaExport } from "@/services/mahasiswa/http";
+import { useImportBukuFisik } from "@/services/buku-fisik";
+import { sampleBukuFisikExport } from "@/services/buku-fisik/http";
 import { convertFileToBase64 } from "@/utils/base64Formater";
 import { errorToast, successToast } from "@/utils/toastMessage";
 import { Button, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure } from "@nextui-org/react";
@@ -16,19 +16,19 @@ interface Props {
   confirmAction: () => void;
 }
 
-const ImportMahasiswa = ({ isOpen, onClose, confirmAction }: Props) => {
+const ImportBukuFisik = ({ isOpen, onClose, confirmAction }: Props) => {
   const [ isLoading, setLoading ] = useState<boolean>(false)
   const [ isLoadingImport, setIsLoadingExport ] = useState<boolean>(false)
   const [ dataImport, setDataImport ] = useState<string>('')
   const handleDownloadTemplate = async () => {
     try {
       setIsLoadingExport(true);
-      await sampleMahasiswaExport();
+      await sampleBukuFisikExport();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: { status: number } | any) {
       if (error?.status === 404) {
         errorToast({
-          text: "Data mahasiswa tidak ditemukan",
+          text: "Data buku fisik tidak ditemukan",
         });
       }
       throw error;
@@ -49,7 +49,7 @@ const ImportMahasiswa = ({ isOpen, onClose, confirmAction }: Props) => {
     }
   }
 
-  const {mutate: mutatePost} = useImportMahasiswa();
+  const {mutate: mutatePost} = useImportBukuFisik();
   const handleSubmit = () => {
     setLoading(true)
     try {
@@ -105,13 +105,13 @@ const ImportMahasiswa = ({ isOpen, onClose, confirmAction }: Props) => {
       >
         <ModalContent>
           <ModalHeader className="flex items-center justify-between">
-            <span className="font-semibold text-primary">Import Data Mahasiswa</span>
+            <span className="font-semibold text-primary">Import Data Buku</span>
             <BiX className="text-danger border rounded-full p-1 cursor-pointer border-danger" size={32} onClick={onClose} />
           </ModalHeader>
           <hr />
           <ModalBody className="flex flex-col gap-y-5 p-8">
             <div>
-              <Button onPress={handleDownloadTemplate} isLoading={isLoadingImport} className="bg-primary text-white w-full rounded-md"><BsCloudDownloadFill /> Sample Mahasiswa Import</Button>
+              <Button onPress={handleDownloadTemplate} isLoading={isLoadingImport} className="bg-primary text-white w-full rounded-md"><BsCloudDownloadFill /> Sample Buku Import</Button>
             </div>
             <div>
               <label htmlFor="import" className="font-semibold text-primary">Upload file import <span className="text-danger">*</span></label>
@@ -141,4 +141,4 @@ const ImportMahasiswa = ({ isOpen, onClose, confirmAction }: Props) => {
   );
 };
 
-export default ImportMahasiswa;
+export default ImportBukuFisik;

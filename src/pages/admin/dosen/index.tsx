@@ -114,7 +114,7 @@ export default function DataDosen(){
         
                 return (
                     <div className={`${status === 'Aktif' ? 'text-accent-green' : (status === 'Tidak Aktif' ? 'text-accent-gray' : 'text-danger')} flex items-center`}>
-                        <div className="italic flex items-center justify-center w-full"><FaCircle size={4} className="me-1" />{status}</div>
+                        <div className="italic flex items-center w-full"><FaCircle size={4} className="me-1" />{status}</div>
                     </div>
                 );
                 },
@@ -140,7 +140,7 @@ export default function DataDosen(){
                     const { id } = row.original;
 
                     return (
-                        <div className="flex items-center justify-center gap-2">
+                        <div className="flex items-center gap-2">
                             <Button onPress={() => navigate(`/data-anggota/dosen/detail/${id}`)} isIconOnly size="sm" variant="bordered" color="primary"><BsEye /></Button>
                             <Button onPress={() => navigate(`/data-anggota/dosen/edit-data/${id}`)} isIconOnly size="sm" variant="bordered" color="warning"><BiEdit /></Button>
                             <Button onPress={() => deletedAction(id)} isIconOnly size="sm" variant="bordered" color="danger"><BiTrash /></Button>

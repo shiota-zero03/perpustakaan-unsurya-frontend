@@ -1,11 +1,10 @@
-import { FaCircle, FaUserGear } from "react-icons/fa6";
+import { FaBook } from "react-icons/fa6";
 import BreadcrumbWithCustomSeparator from "@/components/Breadcrumb";
 import { useEffect, useMemo, useState } from "react";
-import { PetugasListRes } from "@/interface/response/Petugas.interface";
 import { createColumnHelper, Row } from "@tanstack/react-table";
 import { Button, Checkbox, Input, Select, SelectItem, useDisclosure } from "@nextui-org/react";
 import MyReactTable from "@/components/DataTable";
-import { BiEdit, BiSearch, BiTrash } from "react-icons/bi";
+import { BiDownload, BiEdit, BiSearch, BiTrash, BiUpload } from "react-icons/bi";
 import { BsEye, BsPlusSquareFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { TbRestore } from "react-icons/tb";
@@ -14,19 +13,21 @@ import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
 import { SelectedDataReq } from "@/interface/request/Utils.interface";
-import { formatedTimestampWitoutWeekday } from "@/utils/dateFormat";
-import { useDeletedPetugas, useGetListPetugas, usePostSelectedPetugas } from "@/services/petugas";
+import ImportBukuFisik from "@/components/Modals/import/ImportBuukuFisik";
+import { useDeletedBukuFisik, useGetListBukuFisik, usePostSelectedBukuFisik } from "@/services/buku-fisik";
+import { BukuFisikListRes } from "@/interface/response/BukuFisik.interface";
+import { DataBukuFisikExport } from "@/services/buku-fisik/http";
 
-export default function DataPetugas(){
+export default function DataBukuFisik(){
 
     const navigate = useNavigate();
 
     const limit = 10;
     const [currentPage, setCurrentPage] = useState<number>(1);
 
-    const [nameSearch, setNameSearch] = useState<string | null>(null);
-    const [emailSearch, setEmailSearch] = useState<string | null>(null);
-    const [statusSearch, setStatusSearch] = useState<string | null>(null);
+    const [judulSearch, setJudulSearch] = useState<string | null>(null);
+    const [penulisSearch, setPenulisSearch] = useState<string | null>(null);
+    const [tahunSearch, setTahunSearch] = useState<string | null>(null);
     
     const [totalPage, setTotalPage] = useState(1);
     const [totalData, setTotalData] = useState(1);
@@ -36,32 +37,32 @@ export default function DataPetugas(){
     const [selectedId, setSelectedId] = useState<string>('')
 
     const {
-        data: dataPetugas,
-        refetch: refetchPetugas,
-        isLoading: isLoadingPetugas,
-        isFetching: isFetchingPetugas,
-    } = useGetListPetugas(
+        data: dataBukuFisik,
+        refetch: refetchBukuFisik,
+        isLoading: isLoadingBukuFisik,
+        isFetching: isFetchingBukuFisik,
+    } = useGetListBukuFisik(
         limit,
         currentPage,
-        nameSearch,
-        emailSearch,
-        statusSearch
+        judulSearch,
+        penulisSearch,
+        tahunSearch
     );
     
-    const PETUGAS_DATA = useMemo(() => {
-        if (!dataPetugas || !dataPetugas.data) return [];
-        setTotalPage(dataPetugas.data.pagination.totalPages || 0);
-        setTotalData(dataPetugas.data.pagination.totalItems || 0);
-        setFromPage(dataPetugas.data.pagination.from || 0);
-        setToPage(dataPetugas.data.pagination.to || 0);
+    const MAHASISWA_DATA = useMemo(() => {
+        if (!dataBukuFisik || !dataBukuFisik.data) return [];
+        setTotalPage(dataBukuFisik.data.pagination.totalPages || 0);
+        setTotalData(dataBukuFisik.data.pagination.totalItems || 0);
+        setFromPage(dataBukuFisik.data.pagination.from || 0);
+        setToPage(dataBukuFisik.data.pagination.to || 0);
 
-        return dataPetugas.data.data
-    }, [dataPetugas, currentPage]);
+        return dataBukuFisik.data.data
+    }, [dataBukuFisik, currentPage]);
 
     const [ checkBoxData, setCheckBoxData ] = useState<string[]>([]);
 
     useEffect(() => {
-        refetchPetugas();
+        refetchBukuFisik();
         setCheckBoxData([])
     }, [currentPage]);
 
@@ -76,65 +77,68 @@ export default function DataPetugas(){
         });
     }
 
-    const columnHelper = createColumnHelper<PetugasListRes>();
+    const columnHelper = createColumnHelper<BukuFisikListRes>();
 
     const columns = useMemo(
         () => [
             {
                 id: "select",
                 header: () => <span></span>,
-                cell: ({ row }: { row: Row<PetugasListRes> }) => {
+                cell: ({ row }: { row: Row<BukuFisikListRes> }) => {
                     const { id } = row.original;
                     const isChecked = checkBoxData.includes(id);
                     return <Checkbox value={id} key={id} isSelected={isChecked} onChange={() => handleCheckBox(id)} />
                 },
             },
-            columnHelper.accessor("name", {
-                id: "name",
-                cell: (info) => info.getValue(),
-                header: () => <span>Nama</span>,
-            }),
-            columnHelper.accessor("email", {
-                id: "email",
-                cell: (info) => info.getValue(),
-                header: () => <span>Email</span>,
-            }),
-            columnHelper.accessor("status", {
-                id: "status",
+            columnHelper.accessor("cover", {
+                id: "cover",
                 cell: (info) => {
-                const status = info.getValue();
-        
-                return (
-                    <div className={`${status === 'Aktif' ? 'text-accent-green' : (status === 'Tidak Aktif' ? 'text-accent-gray' : 'text-danger')} flex items-center`}>
-                        <div className="italic flex items-center w-full"><FaCircle size={4} className="me-1" />{status}</div>
-                    </div>
-                );
+                    const cover = info.getValue() as string;
+                    return (
+                        cover ? (
+                            <div className="border w-16 p-1 flex items-center justify-center border-primary rounded-md overflow-hidden">
+                                <img src={cover} alt="cover-buku" className="rounded-md" />
+                            </div>
+                        ) : (
+                            <div className="border w-16 h-16 flex items-center justify-center border-primary rounded-md">
+                                <FaBook className="text-xl" />
+                            </div>
+                        )
+                    )
                 },
-                header: () => <span>Status</span>,
+                filterFn: "includesString",
+                header: () => <span>Cover Buku</span>,
             }),
-            columnHelper.accessor("waktu_terdaftar", {
-                id: "waktu_terdaftar",
-                cell: (info) => {
-                const waktu_terdaftar = info.getValue();
-        
-                return (
-                    <div>
-                        {formatedTimestampWitoutWeekday(waktu_terdaftar || "", "|")}
-                    </div>
-                );
-                },
-                header: () => <span>Waktu Terdaftar</span>,
+            columnHelper.accessor("judul", {
+                id: "judul",
+                cell: (info) => info.getValue(),
+                header: () => <span>Judul Buku</span>,
+            }),
+            columnHelper.accessor("penulis", {
+                id: "penulis",
+                cell: (info) => info.getValue(),
+                header: () => <span>Penulis</span>,
+            }),
+            columnHelper.accessor("stok", {
+                id: "stok",
+                cell: (info) => info.getValue(),
+                header: () => <span>Stok Buku</span>,
+            }),
+            columnHelper.accessor("tahun_terbit", {
+                id: "tahun_terbit",
+                cell: (info) => info.getValue(),
+                header: () => <span>Tahun Terbit</span>,
             }),
             {
                 id: "action",
                 header: () => <span>Aksi</span>,
-                cell: ({ row }: { row: Row<PetugasListRes> }) => {
+                cell: ({ row }: { row: Row<BukuFisikListRes> }) => {
                     const { id } = row.original;
 
                     return (
                         <div className="flex items-center gap-2">
-                            <Button onPress={() => navigate(`/data-master/petugas/detail/${id}`)} isIconOnly size="sm" variant="bordered" color="primary"><BsEye /></Button>
-                            <Button onPress={() => navigate(`/data-master/petugas/edit-data/${id}`)} isIconOnly size="sm" variant="bordered" color="warning"><BiEdit /></Button>
+                            <Button onPress={() => navigate(`/data-master/buku-fisik/detail/${id}`)} isIconOnly size="sm" variant="bordered" color="primary"><BsEye /></Button>
+                            <Button onPress={() => navigate(`/data-master/buku-fisik/edit-data/${id}`)} isIconOnly size="sm" variant="bordered" color="warning"><BiEdit /></Button>
                             <Button onPress={() => deletedAction(id)} isIconOnly size="sm" variant="bordered" color="danger"><BiTrash /></Button>
                         </div>
                     );
@@ -146,16 +150,16 @@ export default function DataPetugas(){
 
     const handleSearch = () => {
         setCurrentPage(1);
-        refetchPetugas();
+        refetchBukuFisik();
     }
 
     const handleReset = () => {
-        setNameSearch(null);
-        setEmailSearch(null);
-        setStatusSearch(null);
+        setJudulSearch(null);
+        setPenulisSearch(null);
+        setTahunSearch(null);
         setTimeout(() => {
             setCurrentPage(1);
-            refetchPetugas();
+            refetchBukuFisik();
         }, 500);
     }
 
@@ -164,17 +168,11 @@ export default function DataPetugas(){
     const { isOpen: isOpenSelected, onOpen: onOpenSelected, onClose: onCloseSelected } = useDisclosure();
     const [ confirmText, setConfirmText ] = useState<string>('')
     const [ selectedAction, setSelectedAction ] = useState<string>('')
-    const {mutate: mutateSelection} = usePostSelectedPetugas();
+    const {mutate: mutateSelection} = usePostSelectedBukuFisik();
     const selectedItemAction = (action: string) => {
         setSelectedAction(action)
         if(action === 'deleted') { 
             setConfirmText('Apakah anda yakin untuk menghapus data terpilih? Data yang dihapus tidak bisa dikembalikan')
-            onOpenSelected()
-        } else if(action === 'activated') { 
-            setConfirmText('Apakah anda yakin untuk mengaktifkan data terpilih?')
-            onOpenSelected()
-        } else if(action === 'non-activated') { 
-            setConfirmText('Apakah anda yakin untuk menonaktifkan data terpilih?')
             onOpenSelected()
         }
     }
@@ -192,7 +190,7 @@ export default function DataPetugas(){
                         setTimeout(() => {
                             setCurrentPage(1);
                             successToast({text: res.message})
-                            refetchPetugas()
+                            refetchBukuFisik()
                             setConfirmText("")
                             setSelectedAction("")
                             onCloseSelected()
@@ -222,7 +220,7 @@ export default function DataPetugas(){
     }
 
     const { isOpen: isOpenDeleted, onOpen: onOpenDeleted, onClose: onCloseDeleted } = useDisclosure();
-    const {mutate: mutateDeleted} = useDeletedPetugas();
+    const {mutate: mutateDeleted} = useDeletedBukuFisik();
     const deletedAction = (id: string) => {
         setSelectedId(id)
         onOpenDeleted()
@@ -237,7 +235,7 @@ export default function DataPetugas(){
                         setTimeout(() => {
                             setCurrentPage(1);
                             successToast({text: res.message})
-                            refetchPetugas()
+                            refetchBukuFisik()
                             setSelectedId("")
                             onCloseDeleted()
                             isFinished()
@@ -268,6 +266,27 @@ export default function DataPetugas(){
         setLoadingAction(false);
     }
 
+    const { isOpen: isOpenImport, onOpen: onOpenImport, onClose: onCloseImport } = useDisclosure();
+
+    const [ isLoadingExport, setIsLoadingExport ] = useState<boolean>(false)
+    
+    const handleDownloadExport = async () => {
+        try {
+            setIsLoadingExport(true);
+            await DataBukuFisikExport();
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: { status: number } | any) {
+            if (error?.status === 404) {
+                errorToast({
+                    text: "Data Customer atau Akun Bank anda tidak ditemukan",
+                });
+            }
+            throw error;
+        } finally {
+            setIsLoadingExport(false);
+        }
+    };
+
     return (
         <main className="flex flex-col gap-4">
             <ConfirmAlert 
@@ -286,7 +305,15 @@ export default function DataPetugas(){
                 confirmAction={() => handleDelete(selectedId)}
             />
 
-            <BreadcrumbWithCustomSeparator icon={FaUserGear} />
+            <ImportBukuFisik 
+                isOpen={isOpenImport} 
+                onClose={onCloseImport}
+                confirmAction={() => {
+                    refetchBukuFisik();
+                    onCloseImport();
+                }}
+            />
+            <BreadcrumbWithCustomSeparator icon={FaBook} />
             <div className="bg-white p-4 border shadow rounded-md flex flex-col gap-4">
                 <div className="flex items-center justify-between sm:flex-row flex-col gap-2">
                     <Button
@@ -294,25 +321,44 @@ export default function DataPetugas(){
                         radius="sm"
                         color="primary"
                         className="font-semibold flex items-center"
-                        onPress={() => navigate('/data-master/petugas/tambah-data')}
+                        onPress={() => navigate('/data-master/buku-fisik/tambah-data')}
                     >
-                        <BsPlusSquareFill /> Tambah Data Petugas
+                        <BsPlusSquareFill /> Tambah Data Buku
                     </Button>
+                    <div className="flex items-center gap-2 sm:flex-row flex-col">
+                        <Button
+                            size="sm"
+                            radius="sm"
+                            className="border border-primary text-primary font-semibold flex items-center sm:w-auto w-full bg-transparent"
+                            onPress={onOpenImport}
+                        >
+                            <BiUpload size={16} /> Import Data
+                        </Button>
+                        <Button
+                            onPress={handleDownloadExport}
+                            isLoading={isLoadingExport}
+                            size="sm"
+                            radius="sm"
+                            className="bg-black text-white font-semibold flex items-center sm:w-auto w-full"
+                        >
+                            <BiDownload size={16} /> Export Data
+                        </Button>
+                    </div>
                 </div>
             </div>
             <div className="bg-white p-4 border shadow rounded-md flex flex-col gap-4">
                 <div className="flex sm:items-end items-center justify-between sm:flex-row flex-col gap-2">
                     <div className="flex items-center sm:flex-row flex-col gap-2 w-full">
                         <div className="w-full">
-                            <label htmlFor="search-name" className="font-semibold text-sm text-primary">Nama</label>
+                            <label htmlFor="search-name" className="font-semibold text-sm text-primary">Judul Buku</label>
                             <Input
                                 id="search-name"
                                 aria-label="Nama"
-                                placeholder="Cari berdasarkan nama"
+                                placeholder="Cari berdasarkan judul"
                                 variant="bordered" 
                                 radius="sm"
-                                value={nameSearch || ""}
-                                onChange={(e) => setNameSearch(e.target.value)}
+                                value={judulSearch || ""}
+                                onChange={(e) => setJudulSearch(e.target.value)}
                                 classNames={{
                                     inputWrapper: 'border border-primary',
                                     input: 'text-primary'
@@ -320,15 +366,15 @@ export default function DataPetugas(){
                             />
                         </div>
                         <div className="w-full">
-                            <label htmlFor="search-email" className="font-semibold text-sm text-primary">Email</label>
+                            <label htmlFor="search-nim" className="font-semibold text-sm text-primary">Penulis</label>
                             <Input
-                                id="search-email"
-                                aria-label="Email"
-                                placeholder="Cari berdasarkan email"
+                                id="search-nim"
+                                aria-label="NIM"
+                                placeholder="Cari berdasarkan penulis"
                                 variant="bordered" 
                                 radius="sm"
-                                value={emailSearch || ""}
-                                onChange={(e) => setEmailSearch(e.target.value)}
+                                value={penulisSearch || ""}
+                                onChange={(e) => setPenulisSearch(e.target.value)}
                                 classNames={{
                                     inputWrapper: 'border border-primary',
                                     input: 'text-primary'
@@ -336,27 +382,21 @@ export default function DataPetugas(){
                             />
                         </div>
                         <div className="w-full">
-                            <label htmlFor="search-status" className="font-semibold text-sm text-primary">Status</label>
-                            <Select
-                                id="search-status"
-                                aria-label="Status"
-                                placeholder="Cari berdasarkan status"
+                            <label htmlFor="search-year" className="font-semibold text-sm text-primary">Tahun Terbit</label>
+                            <Input
+                                type="number"
+                                id="search-year"
+                                aria-label="year"
+                                placeholder="Cari berdasarkan tahun"
                                 variant="bordered" 
                                 radius="sm"
-                                selectedKeys={[statusSearch || ""]}
-                                onChange={(e) => setStatusSearch(e.target.value)}
+                                value={tahunSearch || ""}
+                                onChange={(e) => setTahunSearch(e.target.value)}
                                 classNames={{
-                                    trigger: 'border border-primary',
-                                    value: 'text-primary'
+                                    inputWrapper: 'border border-primary',
+                                    input: 'text-primary'
                                 }}
-                            >
-                                <SelectItem key={'Active'} value={'Active'}>
-                                    Aktif
-                                </SelectItem>
-                                <SelectItem key={'InActive'} value={'InActive'}>
-                                    Tidak Aktif
-                                </SelectItem>
-                            </Select>
+                            />
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -395,9 +435,7 @@ export default function DataPetugas(){
                                 radius="sm"
                                 onChange={(e) => selectedItemAction(e.target.value)}
                             >
-                                <SelectItem key={'deleted'} value={'deleted'}>Hapus Akun</SelectItem>
-                                <SelectItem key={'activated'} value={'activated'}>Aktifkan Akun</SelectItem>
-                                <SelectItem key={'non-activated'} value={'non-activated'}>Non-Aktifkan Akun</SelectItem>
+                                <SelectItem key={'deleted'} value={'deleted'}>Hapus Data</SelectItem>
                             </Select>
                         </div>
                         <div className="flex items-center gap-2 sm:flex-row flex-col sm:text-sm text-xs text-primary">
@@ -405,8 +443,8 @@ export default function DataPetugas(){
                         </div>
                     </div>
                 ) : null}
-                <MyReactTable<PetugasListRes>
-                    data={PETUGAS_DATA}
+                <MyReactTable<BukuFisikListRes>
+                    data={MAHASISWA_DATA}
                     columns={columns}
                     currentPage={currentPage}
                     totalDatas={totalData}
@@ -414,8 +452,8 @@ export default function DataPetugas(){
                     fromPage={fromPage}
                     toPage={toPage}
                     handlePageChange={(page: number) => setCurrentPage(page)}
-                    isFetching={isFetchingPetugas}
-                    isLoading={isLoadingPetugas}
+                    isFetching={isFetchingBukuFisik}
+                    isLoading={isLoadingBukuFisik}
                 />
             </div>
         </main>

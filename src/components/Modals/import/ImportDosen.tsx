@@ -28,7 +28,7 @@ const ImportDosen = ({ isOpen, onClose, confirmAction }: Props) => {
     } catch (error: { status: number } | any) {
       if (error?.status === 404) {
         errorToast({
-          text: "Data Customer atau Akun Bank anda tidak ditemukan",
+          text: "Data dosen tidak ditemukan",
         });
       }
       throw error;

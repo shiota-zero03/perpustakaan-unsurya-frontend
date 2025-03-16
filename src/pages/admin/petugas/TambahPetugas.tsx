@@ -2,7 +2,7 @@ import { FaUserGraduate } from "react-icons/fa6";
 import BreadcrumbWithCustomSeparator from "@/components/Breadcrumb";
 import { useNavigate } from "react-router-dom";
 import { Button, Input, Select, SelectItem, useDisclosure } from "@nextui-org/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
 
 import UserImage from "@/assets/images/user.png";
@@ -29,7 +29,18 @@ export default function TambahPetugas(){
     })
 
     const [ formDataError, setFormDataError ] = useState<PetugasInterfaceErrorReq>({});
-    
+    useEffect(() => {
+        setFormData({
+            profilePicture: null,
+            name: null,
+            gender: null,
+            email: null,
+            password: null,
+            status: null,
+            position: null,
+        });
+        setFormDataError({})
+    }, [])
     const handleChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
