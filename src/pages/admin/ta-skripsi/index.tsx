@@ -6,19 +6,19 @@ import { Button, Checkbox, Input, Select, SelectItem, useDisclosure } from "@nex
 import MyReactTable from "@/components/DataTable";
 import { BiDownload, BiEdit, BiSearch, BiTrash, BiUpload } from "react-icons/bi";
 import { BsEye, BsPlusSquareFill } from "react-icons/bs";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { TbRestore } from "react-icons/tb";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
 import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
 import { SelectedDataReq } from "@/interface/request/Utils.interface";
-import ImportBukuDigital from "@/components/Modals/import/ImportBuukuDigital";
-import { useDeletedBukuDigital, useGetListBukuDigital, usePostSelectedBukuDigital } from "@/services/buku-digital";
-import { BukuDigitalListRes } from "@/interface/response/BukuDigital.interface";
-import { DataBukuDigitalExport } from "@/services/buku-digital/http";
+import ImportBukuFisik from "@/components/Modals/import/ImportBuukuFisik";
+import { useDeletedBukuFisik, useGetListBukuFisik, usePostSelectedBukuFisik } from "@/services/buku-fisik";
+import { BukuFisikListRes } from "@/interface/response/BukuFisik.interface";
+import { DataBukuFisikExport } from "@/services/buku-fisik/http";
 
-export default function DataBukuDigital(){
+export default function DataTASkripsi(){
 
     const navigate = useNavigate();
 
@@ -27,6 +27,7 @@ export default function DataBukuDigital(){
 
     const [judulSearch, setJudulSearch] = useState<string | null>(null);
     const [penulisSearch, setPenulisSearch] = useState<string | null>(null);
+    const [nimSearch, setNIMSearch] = useState<string | null>(null);
     const [tahunSearch, setTahunSearch] = useState<string | null>(null);
     
     const [totalPage, setTotalPage] = useState(1);
@@ -37,11 +38,11 @@ export default function DataBukuDigital(){
     const [selectedId, setSelectedId] = useState<string>('')
 
     const {
-        data: dataBukuDigital,
-        refetch: refetchBukuDigital,
-        isLoading: isLoadingBukuDigital,
-        isFetching: isFetchingBukuDigital,
-    } = useGetListBukuDigital(
+        data: dataBukuFisik,
+        refetch: refetchBukuFisik,
+        isLoading: isLoadingBukuFisik,
+        isFetching: isFetchingBukuFisik,
+    } = useGetListBukuFisik(
         limit,
         currentPage,
         judulSearch,
@@ -50,19 +51,19 @@ export default function DataBukuDigital(){
     );
     
     const MAHASISWA_DATA = useMemo(() => {
-        if (!dataBukuDigital || !dataBukuDigital.data) return [];
-        setTotalPage(dataBukuDigital.data.pagination.totalPages || 0);
-        setTotalData(dataBukuDigital.data.pagination.totalItems || 0);
-        setFromPage(dataBukuDigital.data.pagination.from || 0);
-        setToPage(dataBukuDigital.data.pagination.to || 0);
+        if (!dataBukuFisik || !dataBukuFisik.data) return [];
+        setTotalPage(dataBukuFisik.data.pagination.totalPages || 0);
+        setTotalData(dataBukuFisik.data.pagination.totalItems || 0);
+        setFromPage(dataBukuFisik.data.pagination.from || 0);
+        setToPage(dataBukuFisik.data.pagination.to || 0);
 
-        return dataBukuDigital.data.data
-    }, [dataBukuDigital, currentPage]);
+        return dataBukuFisik.data.data
+    }, [dataBukuFisik, currentPage]);
 
     const [ checkBoxData, setCheckBoxData ] = useState<string[]>([]);
 
     useEffect(() => {
-        refetchBukuDigital();
+        refetchBukuFisik();
         setCheckBoxData([])
     }, [currentPage]);
 
@@ -77,14 +78,14 @@ export default function DataBukuDigital(){
         });
     }
 
-    const columnHelper = createColumnHelper<BukuDigitalListRes>();
+    const columnHelper = createColumnHelper<BukuFisikListRes>();
 
     const columns = useMemo(
         () => [
             {
                 id: "select",
                 header: () => <span></span>,
-                cell: ({ row }: { row: Row<BukuDigitalListRes> }) => {
+                cell: ({ row }: { row: Row<BukuFisikListRes> }) => {
                     const { id } = row.original;
                     const isChecked = checkBoxData.includes(id);
                     return <Checkbox value={id} key={id} isSelected={isChecked} onChange={() => handleCheckBox(id)} />
@@ -107,43 +108,43 @@ export default function DataBukuDigital(){
                     )
                 },
                 filterFn: "includesString",
-                header: () => <span>Cover Buku</span>,
+                header: () => <span>Cover</span>,
             }),
             columnHelper.accessor("judul", {
                 id: "judul",
                 cell: (info) => info.getValue(),
-                header: () => <span>Judul Buku</span>,
+                header: () => <span>Judul</span>,
             }),
             columnHelper.accessor("penulis", {
                 id: "penulis",
                 cell: (info) => info.getValue(),
                 header: () => <span>Penulis</span>,
             }),
+            columnHelper.accessor("penulis", {
+                id: "penulis",
+                cell: (info) => info.getValue(),
+                header: () => <span>NIM</span>,
+            }),
+            columnHelper.accessor("stok", {
+                id: "stok",
+                cell: (info) => info.getValue(),
+                header: () => <span>Jenis Karya</span>,
+            }),
             columnHelper.accessor("tahun_terbit", {
                 id: "tahun_terbit",
                 cell: (info) => info.getValue(),
                 header: () => <span>Tahun Terbit</span>,
             }),
-            columnHelper.accessor("link_book", {
-                id: "link_book",
-                cell: (info) => {
-                    const link = info.getValue() as string;
-                    return (
-                        <Link to={link} target="__blank" className="italic">Lihat Buku ...</Link>
-                    )
-                },
-                header: () => <span>URL Buku</span>,
-            }),
             {
                 id: "action",
                 header: () => <span>Aksi</span>,
-                cell: ({ row }: { row: Row<BukuDigitalListRes> }) => {
+                cell: ({ row }: { row: Row<BukuFisikListRes> }) => {
                     const { id } = row.original;
 
                     return (
                         <div className="flex items-center gap-2">
-                            <Button onPress={() => navigate(`/data-master/buku-digital/detail/${id}`)} isIconOnly size="sm" variant="bordered" color="primary"><BsEye /></Button>
-                            <Button onPress={() => navigate(`/data-master/buku-digital/edit-data/${id}`)} isIconOnly size="sm" variant="bordered" color="warning"><BiEdit /></Button>
+                            <Button onPress={() => navigate(`/data-master/buku-fisik/detail/${id}`)} isIconOnly size="sm" variant="bordered" color="primary"><BsEye /></Button>
+                            <Button onPress={() => navigate(`/data-master/buku-fisik/edit-data/${id}`)} isIconOnly size="sm" variant="bordered" color="warning"><BiEdit /></Button>
                             <Button onPress={() => deletedAction(id)} isIconOnly size="sm" variant="bordered" color="danger"><BiTrash /></Button>
                         </div>
                     );
@@ -155,16 +156,17 @@ export default function DataBukuDigital(){
 
     const handleSearch = () => {
         setCurrentPage(1);
-        refetchBukuDigital();
+        refetchBukuFisik();
     }
 
     const handleReset = () => {
         setJudulSearch(null);
         setPenulisSearch(null);
         setTahunSearch(null);
+        setNIMSearch(null)
         setTimeout(() => {
             setCurrentPage(1);
-            refetchBukuDigital();
+            refetchBukuFisik();
         }, 500);
     }
 
@@ -173,7 +175,7 @@ export default function DataBukuDigital(){
     const { isOpen: isOpenSelected, onOpen: onOpenSelected, onClose: onCloseSelected } = useDisclosure();
     const [ confirmText, setConfirmText ] = useState<string>('')
     const [ selectedAction, setSelectedAction ] = useState<string>('')
-    const {mutate: mutateSelection} = usePostSelectedBukuDigital();
+    const {mutate: mutateSelection} = usePostSelectedBukuFisik();
     const selectedItemAction = (action: string) => {
         setSelectedAction(action)
         if(action === 'deleted') { 
@@ -195,7 +197,7 @@ export default function DataBukuDigital(){
                         setTimeout(() => {
                             setCurrentPage(1);
                             successToast({text: res.message})
-                            refetchBukuDigital()
+                            refetchBukuFisik()
                             setConfirmText("")
                             setSelectedAction("")
                             onCloseSelected()
@@ -225,7 +227,7 @@ export default function DataBukuDigital(){
     }
 
     const { isOpen: isOpenDeleted, onOpen: onOpenDeleted, onClose: onCloseDeleted } = useDisclosure();
-    const {mutate: mutateDeleted} = useDeletedBukuDigital();
+    const {mutate: mutateDeleted} = useDeletedBukuFisik();
     const deletedAction = (id: string) => {
         setSelectedId(id)
         onOpenDeleted()
@@ -240,7 +242,7 @@ export default function DataBukuDigital(){
                         setTimeout(() => {
                             setCurrentPage(1);
                             successToast({text: res.message})
-                            refetchBukuDigital()
+                            refetchBukuFisik()
                             setSelectedId("")
                             onCloseDeleted()
                             isFinished()
@@ -278,7 +280,7 @@ export default function DataBukuDigital(){
     const handleDownloadExport = async () => {
         try {
             setIsLoadingExport(true);
-            await DataBukuDigitalExport();
+            await DataBukuFisikExport();
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: { status: number } | any) {
             if (error?.status === 404) {
@@ -310,11 +312,11 @@ export default function DataBukuDigital(){
                 confirmAction={() => handleDelete(selectedId)}
             />
 
-            <ImportBukuDigital 
+            <ImportBukuFisik 
                 isOpen={isOpenImport} 
                 onClose={onCloseImport}
                 confirmAction={() => {
-                    refetchBukuDigital();
+                    refetchBukuFisik();
                     onCloseImport();
                 }}
             />
@@ -326,19 +328,11 @@ export default function DataBukuDigital(){
                         radius="sm"
                         color="primary"
                         className="font-semibold flex items-center"
-                        onPress={() => navigate('/data-master/buku-digital/tambah-data')}
+                        onPress={() => navigate('/data-master/buku-fisik/tambah-data')}
                     >
-                        <BsPlusSquareFill /> Tambah Data Buku
+                        <BsPlusSquareFill /> Tambah Data TA/Skripsi
                     </Button>
                     <div className="flex items-center gap-2 sm:flex-row flex-col">
-                        <Button
-                            size="sm"
-                            radius="sm"
-                            className="border border-primary text-primary font-semibold flex items-center sm:w-auto w-full bg-transparent"
-                            onPress={onOpenImport}
-                        >
-                            <BiUpload size={16} /> Import Data
-                        </Button>
                         <Button
                             onPress={handleDownloadExport}
                             isLoading={isLoadingExport}
@@ -380,6 +374,22 @@ export default function DataBukuDigital(){
                                 radius="sm"
                                 value={penulisSearch || ""}
                                 onChange={(e) => setPenulisSearch(e.target.value)}
+                                classNames={{
+                                    inputWrapper: 'border border-primary',
+                                    input: 'text-primary'
+                                }}
+                            />
+                        </div>
+                        <div className="w-full">
+                            <label htmlFor="search-nim" className="font-semibold text-sm text-primary">NIM</label>
+                            <Input
+                                id="search-nim"
+                                aria-label="NIM"
+                                placeholder="Cari berdasarkan nim"
+                                variant="bordered" 
+                                radius="sm"
+                                value={judulSearch || ""}
+                                onChange={(e) => setNIMSearch(e.target.value)}
                                 classNames={{
                                     inputWrapper: 'border border-primary',
                                     input: 'text-primary'
@@ -448,7 +458,7 @@ export default function DataBukuDigital(){
                         </div>
                     </div>
                 ) : null}
-                <MyReactTable<BukuDigitalListRes>
+                <MyReactTable<BukuFisikListRes>
                     data={MAHASISWA_DATA}
                     columns={columns}
                     currentPage={currentPage}
@@ -457,8 +467,8 @@ export default function DataBukuDigital(){
                     fromPage={fromPage}
                     toPage={toPage}
                     handlePageChange={(page: number) => setCurrentPage(page)}
-                    isFetching={isFetchingBukuDigital}
-                    isLoading={isLoadingBukuDigital}
+                    isFetching={isFetchingBukuFisik}
+                    isLoading={isLoadingBukuFisik}
                 />
             </div>
         </main>

@@ -10,44 +10,34 @@ import { convertFileToBase64 } from "@/utils/base64Formater";
 import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
-import { BukuFisikInterfaceErrorReq, BukuFisikInterfaceReq } from "@/interface/request/BukuFisik.interface";
-import { useStoreBukuFisik } from "@/services/buku-fisik";
+import { BukuDigitalInterfaceErrorReq, BukuDigitalInterfaceReq } from "@/interface/request/BukuDigital.interface";
+import { useStoreBukuDigital } from "@/services/buku-digital";
 
 export default function TambahBukuDigital(){
 
     const navigate = useNavigate();
 
-    const [ formData, setFormData ] = useState<BukuFisikInterfaceReq>({
-        no_urut: null,
+    const [ formData, setFormData ] = useState<BukuDigitalInterfaceReq>({
         cover: null,
-        kode_klasifikasi: null,
         judul: null,
         penulis: null,
         penerbit: null,
         tahun_terbit: null,
         isbn: null,
-        tanggal_masuk: null,
-        kode_rak: null,
-        stok: null,
-        denda_harian: null,
+        link_book: null,
     })
 
-    const [ formDataError, setFormDataError ] = useState<BukuFisikInterfaceErrorReq>({})
+    const [ formDataError, setFormDataError ] = useState<BukuDigitalInterfaceErrorReq>({})
 
     useEffect(() => {
         setFormData({
-            no_urut: null,
             cover: null,
-            kode_klasifikasi: null,
             judul: null,
             penulis: null,
             penerbit: null,
             tahun_terbit: null,
             isbn: null,
-            tanggal_masuk: null,
-            kode_rak: null,
-            stok: null,
-            denda_harian: null,
+            link_book: null,
         });
         setFormDataError({})
     }, [])
@@ -69,7 +59,7 @@ export default function TambahBukuDigital(){
     const [ loadingSend, setLoadingSend ] = useState<boolean>(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const {mutate: mutatePost} = useStoreBukuFisik();
+    const {mutate: mutatePost} = useStoreBukuDigital();
     const handleSubmit = () => {
         setLoadingSend(true)
         setFormDataError({})
@@ -80,7 +70,7 @@ export default function TambahBukuDigital(){
                     onSuccess: (res) => {
                         successToast({text: res.message})
                         isFinished()
-                        navigate('/data-master/buku-fisik')
+                        navigate('/data-master/buku-digital')
                         
                     },
                     onError: (error: AxiosError<BaseErrorRes>) => {
@@ -93,18 +83,13 @@ export default function TambahBukuDigital(){
                             if(status === 422) {
                                 setFormDataError({
                                     ...formDataError,
-                                    no_urut: errors.no_urut || "",
                                     cover: errors.cover || "",
-                                    kode_klasifikasi: errors.kode_klasifikasi || "",
                                     judul: errors.judul || "",
                                     penulis: errors.penulis || "",
                                     penerbit: errors.penerbit || "",
                                     tahun_terbit: errors.tahun_terbit || "",
                                     isbn: errors.isbn || "",
-                                    tanggal_masuk: errors.tanggal_masuk || "",
-                                    kode_rak: errors.kode_rak || "",
-                                    stok: errors.stok || "",
-                                    denda_harian: errors.denda_harian || "",
+                                    link_book: errors.link_book || "",
                                 })
                             }
                         } else {
@@ -139,7 +124,7 @@ export default function TambahBukuDigital(){
             <BreadcrumbWithCustomSeparator icon={FaBook} />
             <div className="bg-white lg:p-8 p-4 border shadow rounded-md flex flex-col gap-4">
                 <div className="border border-primary py-2 sm:px-4 px-2 sm:text-left text-center rounded-md">
-                    <h1 className="text-primary font-semibold">FORM TAMBAH BUKU FISIK</h1>
+                    <h1 className="text-primary font-semibold">FORM TAMBAH BUKU DIGITAL</h1>
                 </div>
                 <div className="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-4">
                     <div className="col-span-1">
@@ -158,44 +143,6 @@ export default function TambahBukuDigital(){
                     </div>
                     <div className="lg:col-span-3 sm:col-span-2 col-span-1 flex flex-col gap-1 -mt-2">
                         <div className="grid sm:grid-cols-2 grid-cols-1 gap-2">
-                            <div>
-                                <label htmlFor="no_urut" className="text-primary font-semibold text-sm">No. Urut Buku</label>
-                                <Input
-                                    aria-label="Nomor Urut"
-                                    id="no_urut"
-                                    variant="bordered"
-                                    color="primary"
-                                    radius="sm"
-                                    placeholder="book serial number here"
-                                    value={formData.no_urut || ""}
-                                    onChange={(e) => setFormData({...formData, no_urut: e.target.value})}
-                                    classNames={{
-                                        inputWrapper: "border border-primary rounded",
-                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
-                                        label: "text-primary font-semibold text-sm"
-                                    }}
-                                />
-                                <div className="text-danger italic text-xs">{formDataError.no_urut}</div>
-                            </div>
-                            <div>
-                                <label htmlFor="kode_klasifikasi" className="text-primary font-semibold text-sm">Kode Klasifikasi Koleksi Perpustakaan</label>
-                                <Input
-                                    aria-label="Nomor Urut"
-                                    id="kode_klasifikasi"
-                                    variant="bordered"
-                                    color="primary"
-                                    radius="sm"
-                                    placeholder="library classification code here"
-                                    value={formData.kode_klasifikasi || ""}
-                                    onChange={(e) => setFormData({...formData, kode_klasifikasi: e.target.value})}
-                                    classNames={{
-                                        inputWrapper: "border border-primary rounded",
-                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
-                                        label: "text-primary font-semibold text-sm"
-                                    }}
-                                />
-                                <div className="text-danger italic text-xs">{formDataError.kode_klasifikasi}</div>
-                            </div>
                             <div className="sm:col-span-2">
                                 <label htmlFor="judul" className="text-primary font-semibold text-sm">Judul Buku</label>
                                 <Input
@@ -294,85 +241,24 @@ export default function TambahBukuDigital(){
                                 />
                                 <div className="text-danger italic text-xs">{formDataError.isbn}</div>
                             </div>
-                            <div>
-                                <label htmlFor="tanggal_masuk" className="text-primary font-semibold text-sm">Tanggal Masuk Perpustakaan</label>
+                            <div className="sm:col-span-2">
+                                <label htmlFor="url" className="text-primary font-semibold text-sm">URL Buku</label>
                                 <Input
-                                    aria-label="Masa Berlaku Keanggotaan"
-                                    id="tanggal_masuk"
-                                    type="date"
+                                    aria-label="URL Buku"
+                                    id="url"
                                     variant="bordered"
                                     color="primary"
                                     radius="sm"
-                                    placeholder="mm/dd/yyyy"
-                                    value={formData.tanggal_masuk || ""}
-                                    onChange={(e) => setFormData({...formData, tanggal_masuk: e.target.value})}
+                                    placeholder="book url here"
+                                    value={formData.link_book || ""}
+                                    onChange={(e) => setFormData({...formData, link_book: e.target.value})}
                                     classNames={{
                                         inputWrapper: "border border-primary rounded",
                                         input: "text-primary text-xs font-medium italic placeholder:text-primary",
                                         label: "text-primary font-semibold text-sm"
                                     }}
                                 />
-                                <div className="text-danger italic text-xs">{formDataError.tanggal_masuk}</div>
-                            </div>
-                            <div>
-                                <label htmlFor="kode_rak" className="text-primary font-semibold text-sm">Kode Rak</label>
-                                <Input
-                                    aria-label="Nomor Urut"
-                                    id="kode_rak"
-                                    variant="bordered"
-                                    color="primary"
-                                    radius="sm"
-                                    placeholder="placement code here"
-                                    value={formData.kode_rak || ""}
-                                    onChange={(e) => setFormData({...formData, kode_rak: e.target.value})}
-                                    classNames={{
-                                        inputWrapper: "border border-primary rounded",
-                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
-                                        label: "text-primary font-semibold text-sm"
-                                    }}
-                                />
-                                <div className="text-danger italic text-xs">{formDataError.kode_rak}</div>
-                            </div>
-                            <div>
-                                <label htmlFor="stok" className="text-primary font-semibold text-sm">Jumlah Eksemplar</label>
-                                <Input
-                                    type="number"
-                                    aria-label="Nomor Urut"
-                                    id="stok"
-                                    variant="bordered"
-                                    color="primary"
-                                    radius="sm"
-                                    placeholder="book total exemplar here"
-                                    value={String(formData.stok || "")}
-                                    onChange={(e) => setFormData({...formData, stok: Number(e.target.value)})}
-                                    classNames={{
-                                        inputWrapper: "border border-primary rounded",
-                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
-                                        label: "text-primary font-semibold text-sm"
-                                    }}
-                                />
-                                <div className="text-danger italic text-xs">{formDataError.stok}</div>
-                            </div>
-                            <div>
-                                <label htmlFor="denda_harian" className="text-primary font-semibold text-sm">Denda Harian</label>
-                                <Input
-                                    type="number"
-                                    startContent={<div className="text-xs text-center text-primary italic font-semibold">Rp</div>}
-                                    aria-label="Nomor Urut"
-                                    id="denda_harian"
-                                    variant="bordered"
-                                    color="primary"
-                                    radius="sm"
-                                    placeholder="your daily fine here"
-                                    value={String(formData.denda_harian || "")}
-                                    onChange={(e) => setFormData({...formData, denda_harian: Number(e.target.value)})}
-                                    classNames={{
-                                        inputWrapper: "border border-primary rounded",
-                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
-                                        label: "text-primary font-semibold text-sm"
-                                    }}
-                                />
-                                <div className="text-danger italic text-xs">{formDataError.denda_harian}</div>
+                                <div className="text-danger italic text-xs">{formDataError.link_book}</div>
                             </div>
                         </div>
                         <div className="pt-2 pb-6">

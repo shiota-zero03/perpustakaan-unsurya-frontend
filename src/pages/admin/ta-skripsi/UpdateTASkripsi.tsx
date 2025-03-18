@@ -13,7 +13,7 @@ import { BaseErrorRes } from "@/interface/response/base.interface";
 import { BukuFisikInterfaceErrorReq, BukuFisikInterfaceReq } from "@/interface/request/BukuFisik.interface";
 import { useGetDetailBukuFisik, useUpdateBukuFisik } from "@/services/buku-fisik";
 
-export default function UpdateDataBukuFisik(){
+export default function UpdateDataTASkripsi(){
 
     const { id } = useParams();
 

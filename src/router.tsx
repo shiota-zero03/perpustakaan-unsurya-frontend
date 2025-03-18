@@ -38,6 +38,11 @@ const TambahDataBukuDigital =  lazy(() => import("@/pages/admin/buku-digital/Tam
 const UpdateDataBukuDigital =  lazy(() => import("@/pages/admin/buku-digital/UpdateBukuDigital"));
 const DetailBukuDigital =  lazy(() => import("@/pages/admin/buku-digital/DetailBukuDigital"));
 
+const DataTASkripsi = lazy(() => import("@/pages/admin/ta-skripsi"));
+const TambahDataTASkripsi =  lazy(() => import("@/pages/admin/ta-skripsi/TambahTASkripsi"));
+const UpdateDataTASkripsi =  lazy(() => import("@/pages/admin/ta-skripsi/UpdateTASkripsi"));
+const DetailTASkripsi =  lazy(() => import("@/pages/admin/ta-skripsi/DetailTASkripsi"));
+
 const DataPetugas = lazy(() => import("@/pages/admin/petugas"));
 const TambahDataPetugas = lazy(() => import("@/pages/admin/petugas/TambahPetugas"));
 const UpdateDataPetugas = lazy(() => import("@/pages/admin/petugas/UpdatePetugas"));
@@ -96,8 +101,11 @@ export default function Router() {
             <Route path="/data-master/buku-digital/edit-data/:id" element={<UpdateDataBukuDigital />} />
             <Route path="/data-master/buku-digital/detail/:id" element={<DetailBukuDigital />} />
 
-            <Route path="/data-master/buku-digital" element={<Dashboard />} />
-            <Route path="/data-master/ta-&-skripsi" element={<Dashboard />} />
+            <Route path="/data-master/ta-&-skripsi" element={<DataTASkripsi />} />
+            <Route path="/data-master/ta-&-skripsi/tambah-data" element={<TambahDataTASkripsi />} />
+            <Route path="/data-master/ta-&-skripsi/edit-data/:id" element={<UpdateDataTASkripsi />} />
+            <Route path="/data-master/ta-&-skripsi/detail/:id" element={<DetailTASkripsi />} />
+
             <Route path="/data-master/pengunjung" element={<DataPengunjung />} />
             <Route path="/data-transaksi/peminjaman" element={<Dashboard />} />
             <Route path="/data-transaksi/laporan-denda" element={<Dashboard />} />

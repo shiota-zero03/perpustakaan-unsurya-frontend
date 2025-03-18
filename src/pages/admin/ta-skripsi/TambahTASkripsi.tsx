@@ -1,8 +1,8 @@
-import { FaUserGraduate } from "react-icons/fa6";
+import { FaBook } from "react-icons/fa6";
 import BreadcrumbWithCustomSeparator from "@/components/Breadcrumb";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button, Input, useDisclosure } from "@nextui-org/react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
 
 import UserImage from "@/assets/images/buku.png";
@@ -11,11 +11,9 @@ import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
 import { BukuFisikInterfaceErrorReq, BukuFisikInterfaceReq } from "@/interface/request/BukuFisik.interface";
-import { useGetDetailBukuFisik, useUpdateBukuFisik } from "@/services/buku-fisik";
+import { useStoreBukuFisik } from "@/services/buku-fisik";
 
-export default function UpdateDataBukuFisik(){
-
-    const { id } = useParams();
+export default function TambahDataTASkripsi(){
 
     const navigate = useNavigate();
 
@@ -36,88 +34,48 @@ export default function UpdateDataBukuFisik(){
 
     const [ formDataError, setFormDataError ] = useState<BukuFisikInterfaceErrorReq>({})
 
-    const { data, isLoading, isFetching, refetch } = useGetDetailBukuFisik(id || "")
-
-    const dataFetching = useMemo(() => {
-        if(!data) {
-            setFormData({
-                no_urut: null,
-                cover: null,
-                kode_klasifikasi: null,
-                judul: null,
-                penulis: null,
-                penerbit: null,
-                tahun_terbit: null,
-                isbn: null,
-                tanggal_masuk: null,
-                kode_rak: null,
-                stok: null,
-                denda_harian: null,
-            })
-            return null;
-        } else {
-            setFormData({
-                no_urut: data.data.no_urut,
-                cover: data.data.cover,
-                kode_klasifikasi: data.data.kode_klasifikasi,
-                judul: data.data.judul,
-                penulis: data.data.penulis,
-                penerbit: data.data.penerbit,
-                tahun_terbit: data.data.tahun_terbit,
-                isbn: data.data.isbn,
-                tanggal_masuk: data.data.tanggal_masuk,
-                kode_rak: data.data.kode_rak,
-                stok: data.data.stok,
-                denda_harian: data.data.denda_harian,
-            })
-            return data.data;
-        }
-    }, [data, id])
-
     useEffect(() => {
-        refetch()
-    }, [id])
-
+        setFormData({
+            no_urut: null,
+            cover: null,
+            kode_klasifikasi: null,
+            judul: null,
+            penulis: null,
+            penerbit: null,
+            tahun_terbit: null,
+            isbn: null,
+            tanggal_masuk: null,
+            kode_rak: null,
+            stok: null,
+            denda_harian: null,
+        });
+        setFormDataError({})
+    }, [])
+    
     const handleChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
             const base64Icon = await convertFileToBase64(file);
+            console.log(base64Icon)
             setFormData({
               ...formData,
               cover: base64Icon,
             });
           } else {
-            setFormData((prev) => ({ ...prev, cover: dataFetching?.cover }));
+            setFormData((prev) => ({ ...prev, cover: null }));
           }
     }
 
     const [ loadingSend, setLoadingSend ] = useState<boolean>(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const {mutate: mutatePut} = useUpdateBukuFisik();
+    const {mutate: mutatePost} = useStoreBukuFisik();
     const handleSubmit = () => {
         setLoadingSend(true)
         setFormDataError({})
-
-        const formToSend: BukuFisikInterfaceReq = {};
-        if(formData.cover ){
-            if(formData.cover !== dataFetching?.cover) formToSend.cover = formData.cover;
-        }
-        if(formData.no_urut) formToSend.no_urut = formData.no_urut;
-        if(formData.kode_klasifikasi) formToSend.kode_klasifikasi = formData.kode_klasifikasi;
-        if(formData.judul) formToSend.judul = formData.judul;
-        if(formData.penulis) formToSend.penulis = formData.penulis;
-        if(formData.penerbit) formToSend.penerbit = formData.penerbit;
-        if(formData.tahun_terbit) formToSend.tahun_terbit = formData.tahun_terbit;
-        if(formData.isbn) formToSend.isbn = formData.isbn;
-        if(formData.tanggal_masuk) formToSend.tanggal_masuk = formData.tanggal_masuk;
-        if(formData.kode_rak) formToSend.kode_rak = formData.kode_rak;
-        if(formData.stok) formToSend.stok = formData.stok;
-        if(formData.denda_harian) formToSend.denda_harian = formData.denda_harian;
-
         try {
-            mutatePut(
-                {data: formToSend, userId: id || ""},
+            mutatePost(
+                formData,
                 {
                     onSuccess: (res) => {
                         successToast({text: res.message})
@@ -171,11 +129,6 @@ export default function UpdateDataBukuFisik(){
 
     return (
         <main className="flex flex-col gap-4">
-            {isLoading || isFetching ? (
-                <div className="inset-0 fixed bg-black/10 z-10 flex items-center justify-center">
-                    <div className="loader ease-linear rounded-full border-[6px] border-t-4 h-20 w-20 mb-4" />
-                </div>
-            ) : null}
             <ConfirmAlert 
                 isOpen={isOpen} 
                 isLoading={loadingSend} 
@@ -183,10 +136,10 @@ export default function UpdateDataBukuFisik(){
                 onClose={onClose}
                 confirmAction={() => handleSubmit()}
             />
-            <BreadcrumbWithCustomSeparator icon={FaUserGraduate} />
+            <BreadcrumbWithCustomSeparator icon={FaBook} />
             <div className="bg-white lg:p-8 p-4 border shadow rounded-md flex flex-col gap-4">
                 <div className="border border-primary py-2 sm:px-4 px-2 sm:text-left text-center rounded-md">
-                    <h1 className="text-primary font-semibold">FORM EDIT DATA BUKU</h1>
+                    <h1 className="text-primary font-semibold">FORM TAMBAH BUKU FISIK</h1>
                 </div>
                 <div className="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-4">
                     <div className="col-span-1">
