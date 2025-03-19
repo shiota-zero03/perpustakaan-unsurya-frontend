@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createColumnHelper, Row } from "@tanstack/react-table";
 import { Button, Checkbox, Input, Select, SelectItem, useDisclosure } from "@nextui-org/react";
 import MyReactTable from "@/components/DataTable";
-import { BiDownload, BiEdit, BiSearch, BiTrash, BiUpload } from "react-icons/bi";
+import { BiDownload, BiEdit, BiSearch, BiTrash } from "react-icons/bi";
 import { BsEye, BsPlusSquareFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { TbRestore } from "react-icons/tb";
@@ -13,10 +13,10 @@ import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
 import { SelectedDataReq } from "@/interface/request/Utils.interface";
-import ImportBukuFisik from "@/components/Modals/import/ImportBuukuFisik";
-import { useDeletedBukuFisik, useGetListBukuFisik, usePostSelectedBukuFisik } from "@/services/buku-fisik";
-import { BukuFisikListRes } from "@/interface/response/BukuFisik.interface";
+import { useDeletedBukuFisik, usePostSelectedBukuFisik } from "@/services/buku-fisik";
 import { DataBukuFisikExport } from "@/services/buku-fisik/http";
+import { useGetListKaryaTulis } from "@/services/karya-tulis";
+import { KaryaTulisListRes } from "@/interface/response/KaryaTulis.interface";
 
 export default function DataTASkripsi(){
 
@@ -42,9 +42,10 @@ export default function DataTASkripsi(){
         refetch: refetchBukuFisik,
         isLoading: isLoadingBukuFisik,
         isFetching: isFetchingBukuFisik,
-    } = useGetListBukuFisik(
+    } = useGetListKaryaTulis(
         limit,
         currentPage,
+        nimSearch,
         judulSearch,
         penulisSearch,
         tahunSearch
@@ -78,14 +79,14 @@ export default function DataTASkripsi(){
         });
     }
 
-    const columnHelper = createColumnHelper<BukuFisikListRes>();
+    const columnHelper = createColumnHelper<KaryaTulisListRes>();
 
     const columns = useMemo(
         () => [
             {
                 id: "select",
                 header: () => <span></span>,
-                cell: ({ row }: { row: Row<BukuFisikListRes> }) => {
+                cell: ({ row }: { row: Row<KaryaTulisListRes> }) => {
                     const { id } = row.original;
                     const isChecked = checkBoxData.includes(id);
                     return <Checkbox value={id} key={id} isSelected={isChecked} onChange={() => handleCheckBox(id)} />
@@ -120,15 +121,10 @@ export default function DataTASkripsi(){
                 cell: (info) => info.getValue(),
                 header: () => <span>Penulis</span>,
             }),
-            columnHelper.accessor("penulis", {
-                id: "penulis",
+            columnHelper.accessor("nim", {
+                id: "nim",
                 cell: (info) => info.getValue(),
                 header: () => <span>NIM</span>,
-            }),
-            columnHelper.accessor("stok", {
-                id: "stok",
-                cell: (info) => info.getValue(),
-                header: () => <span>Jenis Karya</span>,
             }),
             columnHelper.accessor("tahun_terbit", {
                 id: "tahun_terbit",
@@ -138,13 +134,13 @@ export default function DataTASkripsi(){
             {
                 id: "action",
                 header: () => <span>Aksi</span>,
-                cell: ({ row }: { row: Row<BukuFisikListRes> }) => {
+                cell: ({ row }: { row: Row<KaryaTulisListRes> }) => {
                     const { id } = row.original;
 
                     return (
                         <div className="flex items-center gap-2">
-                            <Button onPress={() => navigate(`/data-master/buku-fisik/detail/${id}`)} isIconOnly size="sm" variant="bordered" color="primary"><BsEye /></Button>
-                            <Button onPress={() => navigate(`/data-master/buku-fisik/edit-data/${id}`)} isIconOnly size="sm" variant="bordered" color="warning"><BiEdit /></Button>
+                            <Button onPress={() => navigate(`/data-master/ta-&-skripsi/detail/${id}`)} isIconOnly size="sm" variant="bordered" color="primary"><BsEye /></Button>
+                            <Button onPress={() => navigate(`/data-master/ta-&-skripsi/edit-data/${id}`)} isIconOnly size="sm" variant="bordered" color="warning"><BiEdit /></Button>
                             <Button onPress={() => deletedAction(id)} isIconOnly size="sm" variant="bordered" color="danger"><BiTrash /></Button>
                         </div>
                     );
@@ -273,8 +269,6 @@ export default function DataTASkripsi(){
         setLoadingAction(false);
     }
 
-    const { isOpen: isOpenImport, onOpen: onOpenImport, onClose: onCloseImport } = useDisclosure();
-
     const [ isLoadingExport, setIsLoadingExport ] = useState<boolean>(false)
     
     const handleDownloadExport = async () => {
@@ -312,14 +306,6 @@ export default function DataTASkripsi(){
                 confirmAction={() => handleDelete(selectedId)}
             />
 
-            <ImportBukuFisik 
-                isOpen={isOpenImport} 
-                onClose={onCloseImport}
-                confirmAction={() => {
-                    refetchBukuFisik();
-                    onCloseImport();
-                }}
-            />
             <BreadcrumbWithCustomSeparator icon={FaBook} />
             <div className="bg-white p-4 border shadow rounded-md flex flex-col gap-4">
                 <div className="flex items-center justify-between sm:flex-row flex-col gap-2">
@@ -328,7 +314,7 @@ export default function DataTASkripsi(){
                         radius="sm"
                         color="primary"
                         className="font-semibold flex items-center"
-                        onPress={() => navigate('/data-master/buku-fisik/tambah-data')}
+                        onPress={() => navigate('/data-master/ta-&-skripsi/tambah-data')}
                     >
                         <BsPlusSquareFill /> Tambah Data TA/Skripsi
                     </Button>
@@ -458,7 +444,7 @@ export default function DataTASkripsi(){
                         </div>
                     </div>
                 ) : null}
-                <MyReactTable<BukuFisikListRes>
+                <MyReactTable<KaryaTulisListRes>
                     data={MAHASISWA_DATA}
                     columns={columns}
                     currentPage={currentPage}

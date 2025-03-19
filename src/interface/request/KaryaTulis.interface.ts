@@ -1,0 +1,32 @@
+export interface KaryaTulisInterfaceErrorReq {
+    judul?: string | null;
+    cover?: string | null;
+    penulis?: string | null;
+    nim?: string | null;
+    facultyId?: string | null;
+    studyProgramId?: string | null;
+    tahun_terbit?: string | null;
+    jenis?: string | null;
+    no_urut?: string | null;
+    kode_klasifikasi?: string | null;
+    tanggal_masuk?: string | null;
+    kode_rak?: string | null;
+    denda_harian?: string | null;
+    abstrak?: string | null;
+}
+export interface KaryaTulisInterfaceReq {
+    judul?: string | null;
+    cover?: string | null;
+    penulis?: string | null;
+    nim?: string | null;
+    facultyId?: number | null;
+    studyProgramId?: number | null;
+    tahun_terbit?: number | null;
+    jenis?: string | null;
+    no_urut?: string | null;
+    kode_klasifikasi?: string | null;
+    tanggal_masuk?: string | null;
+    kode_rak?: string | null;
+    denda_harian?: number | null;
+    abstrak?: string | null;
+}
