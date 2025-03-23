@@ -1,7 +1,7 @@
 import { FaBook } from "react-icons/fa6";
 import BreadcrumbWithCustomSeparator from "@/components/Breadcrumb";
 import { useNavigate } from "react-router-dom";
-import { Button, Input, Select, SelectItem, useDisclosure } from "@nextui-org/react";
+import { Button, Input, Select, SelectItem, Textarea, useDisclosure } from "@nextui-org/react";
 import React, { useEffect, useMemo, useState } from "react";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
 
@@ -10,10 +10,11 @@ import { convertFileToBase64 } from "@/utils/base64Formater";
 import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
-import { useStoreBukuDigital } from "@/services/buku-digital";
 import { KaryaTulisInterfaceErrorReq, KaryaTulisInterfaceReq } from "@/interface/request/KaryaTulis.interface";
 import { useStoreKaryaTulis } from "@/services/karya-tulis";
 import { useGetAllDepartment, useGetAllFaculty } from "@/services/option";
+import { BsFileArrowUpFill, BsFiletypePdf, BsXCircle } from "react-icons/bs";
+import AddFileKarya from "@/components/Modals/karya-tulis/AddFile";
 
 export default function TambahBukuDigital(){
 
@@ -35,6 +36,12 @@ export default function TambahBukuDigital(){
         denda_harian: null,
         abstrak: null,
     })
+
+    const [ document, setDocument ] = useState<{ id: number | null; file: string; title: string; }[]>([])
+
+    const removeDoc = (index: number) => {
+        setDocument(document.filter((_, i) => i !== index));
+    };
 
     const [ formDataError, setFormDataError ] = useState<KaryaTulisInterfaceErrorReq>({})
 
@@ -91,7 +98,6 @@ export default function TambahBukuDigital(){
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
             const base64Icon = await convertFileToBase64(file);
-            console.log(base64Icon)
             setFormData({
               ...formData,
               cover: base64Icon,
@@ -103,19 +109,38 @@ export default function TambahBukuDigital(){
 
     const [ loadingSend, setLoadingSend ] = useState<boolean>(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen: isOpenFile, onOpen: onOpenFile, onClose: onCloseFile } = useDisclosure();
 
     const {mutate: mutatePost} = useStoreKaryaTulis();
     const handleSubmit = () => {
         setLoadingSend(true)
         setFormDataError({})
+
+        const formDataToSend: KaryaTulisInterfaceReq = {
+            judul: formData.judul,
+            cover: formData.cover,
+            penulis: formData.penulis,
+            nim: formData.nim,
+            facultyId: formData.facultyId,
+            studyProgramId: formData.studyProgramId,
+            tahun_terbit: formData.tahun_terbit,
+            jenis: formData.jenis,
+            no_urut: formData.no_urut,
+            kode_klasifikasi: formData.kode_klasifikasi,
+            tanggal_masuk: formData.tanggal_masuk,
+            kode_rak: formData.kode_rak,
+            abstrak: formData.abstrak,
+            document: document
+        }
+
         try {
             mutatePost(
-                formData,
+                formDataToSend,
                 {
                     onSuccess: (res) => {
                         successToast({text: res.message})
                         isFinished()
-                        navigate('/data-master/buku-digital')
+                        navigate('/data-master/ta-&-skripsi')
                         
                     },
                     onError: (error: AxiosError<BaseErrorRes>) => {
@@ -142,6 +167,7 @@ export default function TambahBukuDigital(){
                                     kode_rak: errors.kode_rak || "",
                                     denda_harian: errors.denda_harian || "",
                                     abstrak: errors.abstrak || "",
+                                    document: errors.document || "",
                                 })
                             }
                         } else {
@@ -159,6 +185,10 @@ export default function TambahBukuDigital(){
         }
     }
 
+    const handleChangeFile = (id: null, title: string, file: string) => {
+        setDocument([...document, { id: id, file: file, title: title }]);
+    }
+
     const isFinished = () => {
         setLoadingSend(false);
         onClose();
@@ -172,6 +202,11 @@ export default function TambahBukuDigital(){
                 text={"Apakah anda yakin untuk menyimpan data ini ?"} 
                 onClose={onClose}
                 confirmAction={() => handleSubmit()}
+            />
+            <AddFileKarya
+                isOpen={isOpenFile}
+                onClose={onCloseFile}
+                confirmAction={(title: string, file: string) => handleChangeFile(null, title, file)}
             />
             <BreadcrumbWithCustomSeparator icon={FaBook} />
             <div className="bg-white lg:p-8 p-4 border shadow rounded-md flex flex-col gap-4">
@@ -263,8 +298,46 @@ export default function TambahBukuDigital(){
                     </div>
                     <div className="lg:col-span-3 sm:col-span-2 col-span-1 flex flex-col gap-1 -mt-2">
                         <div className="grid sm:grid-cols-2 grid-cols-1 gap-2">
-                            <div className="sm:col-span-2">
-                                <label htmlFor="judul" className="text-primary font-semibold text-sm">Judul Buku</label>
+                            <div>
+                                <label htmlFor="no_urut" className="text-primary font-semibold text-sm">No. Urut Karya Tulis</label>
+                                <Input
+                                    aria-label="Nomor Urut"
+                                    id="no_urut"
+                                    variant="bordered"
+                                    color="primary"
+                                    radius="sm"
+                                    placeholder="book serial number here"
+                                    value={formData.no_urut || ""}
+                                    onChange={(e) => setFormData({...formData, no_urut: e.target.value})}
+                                    classNames={{
+                                        inputWrapper: "border border-primary rounded",
+                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
+                                        label: "text-primary font-semibold text-sm"
+                                    }}
+                                />
+                                <div className="text-danger italic text-xs">{formDataError.no_urut}</div>
+                            </div>
+                            <div>
+                                <label htmlFor="kode_klasifikasi" className="text-primary font-semibold text-sm">Kode Klasifikasi Koleksi Perpustakaan</label>
+                                <Input
+                                    aria-label="Nomor Urut"
+                                    id="kode_klasifikasi"
+                                    variant="bordered"
+                                    color="primary"
+                                    radius="sm"
+                                    placeholder="library classification code here"
+                                    value={formData.kode_klasifikasi || ""}
+                                    onChange={(e) => setFormData({...formData, kode_klasifikasi: e.target.value})}
+                                    classNames={{
+                                        inputWrapper: "border border-primary rounded",
+                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
+                                        label: "text-primary font-semibold text-sm"
+                                    }}
+                                />
+                                <div className="text-danger italic text-xs">{formDataError.kode_klasifikasi}</div>
+                            </div>
+                            <div>
+                                <label htmlFor="judul" className="text-primary font-semibold text-sm">Judul Karya Tulis</label>
                                 <Input
                                     aria-label="Nomor Urut"
                                     id="judul"
@@ -354,6 +427,90 @@ export default function TambahBukuDigital(){
                                 </Select>
                                 <div className="text-danger italic text-xs">{formDataError.studyProgramId}</div>
                             </div>
+                            <div>
+                                <label htmlFor="tanggal_masuk" className="text-primary font-semibold text-sm">Tanggal Masuk Perpustakaan</label>
+                                <Input
+                                    aria-label="Masa Berlaku Keanggotaan"
+                                    id="tanggal_masuk"
+                                    type="date"
+                                    variant="bordered"
+                                    color="primary"
+                                    radius="sm"
+                                    placeholder="mm/dd/yyyy"
+                                    value={formData.tanggal_masuk || ""}
+                                    onChange={(e) => setFormData({...formData, tanggal_masuk: e.target.value})}
+                                    classNames={{
+                                        inputWrapper: "border border-primary rounded",
+                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
+                                        label: "text-primary font-semibold text-sm"
+                                    }}
+                                />
+                                <div className="text-danger italic text-xs">{formDataError.tanggal_masuk}</div>
+                            </div>
+                            <div>
+                                <label htmlFor="kode_rak" className="text-primary font-semibold text-sm">Kode Rak</label>
+                                <Input
+                                    aria-label="Nomor Urut"
+                                    id="kode_rak"
+                                    variant="bordered"
+                                    color="primary"
+                                    radius="sm"
+                                    placeholder="placement code here"
+                                    value={formData.kode_rak || ""}
+                                    onChange={(e) => setFormData({...formData, kode_rak: e.target.value})}
+                                    classNames={{
+                                        inputWrapper: "border border-primary rounded",
+                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
+                                        label: "text-primary font-semibold text-sm"
+                                    }}
+                                />
+                                <div className="text-danger italic text-xs">{formDataError.kode_rak}</div>
+                            </div>
+                            <div className="sm:col-span-2 col-span-1">
+                                <label htmlFor="abstrak" className="text-primary font-semibold text-sm">Abstrak</label>
+                                <Textarea
+                                    aria-label="Nomor Urut"
+                                    id="abstrak"
+                                    variant="bordered"
+                                    color="primary"
+                                    radius="sm"
+                                    rows={10}
+                                    placeholder="abstract here"
+                                    value={formData.abstrak || ""}
+                                    onChange={(e) => setFormData({...formData, abstrak: e.target.value})}
+                                    classNames={{
+                                        inputWrapper: "border border-primary rounded",
+                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
+                                        label: "text-primary font-semibold text-sm"
+                                    }}
+                                />
+                                <div className="text-danger italic text-xs">{formDataError.abstrak}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="lg:col-span-4 sm:col-span-3 col-span-1">
+                        <hr className="border-0.5 border-primary" />
+                    </div>
+                    <div className="lg:col-span-4 sm:col-span-3 col-span-1">
+                        <div className="mt-2 w-full">
+                            <div 
+                                className="w-full bg-primary/20 border border-primary rounded-md font-semibold p-2 text-xs text-primary"
+                            >
+                                Dokumen Karya Tulis
+                            </div>
+                            <div className="grid lg:grid-cols-5 sm:grid-cols-3 grid-cols-2 mt-2 gap-4">
+                                {document.map((item, index) => (
+                                    <div key={index} className="md:h-40 h-24 flex flex-col items-center justify-center border border-dashed border-primary text-secondary rounded-md gap-2 font-semibold text-center relative">
+                                        <BsXCircle className="absolute right-2 top-2 text-danger cursor-pointer" onClick={() => removeDoc(index)} />
+                                        <BsFiletypePdf size={32} />
+                                        <div className="text-xs">{item.title}</div>
+                                    </div>    
+                                ))}
+                                <div className="md:h-40 h-24 flex items-center justify-center border border-dashed border-primary text-secondary rounded-md cursor-pointer" onClick={onOpenFile}>
+                                    <BsFileArrowUpFill size={32} />
+                                </div>
+                            </div>
+                            <div className="text-danger italic text-xs">{formDataError.document}</div>
                         </div>
                         <div className="pt-2 pb-6">
                             <Button

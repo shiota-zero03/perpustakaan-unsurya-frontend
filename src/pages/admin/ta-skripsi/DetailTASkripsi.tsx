@@ -4,62 +4,74 @@ import { useParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 
 import UserImage from "@/assets/images/buku.png";
-import { formatDateDMYIn, formatDateYMD } from "@/utils/dateFormat";
-import { useGetDetailBukuFisik } from "@/services/buku-fisik";
-import { BukuFisikInterfaceReq } from "@/interface/request/BukuFisik.interface";
+import { formatDateDMYIn } from "@/utils/dateFormat";
+import { useGetDetailKaryaTulis } from "@/services/karya-tulis";
+import { KaryaTulisInterfaceReq } from "@/interface/request/KaryaTulis.interface";
+import { BsFiletypePdf } from "react-icons/bs";
 
 export default function DetailTASkripsi(){
 
     const { id } = useParams();
 
-    const [ formData, setFormData ] = useState<BukuFisikInterfaceReq>({
-        no_urut: null,
-        cover: null,
-        kode_klasifikasi: null,
+    const [ formData, setFormData ] = useState<KaryaTulisInterfaceReq>({
         judul: null,
+        cover: null,
         penulis: null,
-        penerbit: null,
+        nim: null,
+        facultyId: null,
+        studyProgramId: null,
         tahun_terbit: null,
-        isbn: null,
+        jenis: null,
+        no_urut: null,
+        kode_klasifikasi: null,
         tanggal_masuk: null,
         kode_rak: null,
-        stok: null,
         denda_harian: null,
+        abstrak: null,
     })
 
-    const { data, isLoading, isFetching, refetch } = useGetDetailBukuFisik(id || "")
+    const [ document, setDocument ] = useState<{ id: number | null; file: string; title: string; }[]>([])
+
+    const { data, isLoading, isFetching, refetch } = useGetDetailKaryaTulis(id || "")
     useMemo(() => {
         if(!data) {
             setFormData({
-                no_urut: null,
-                cover: null,
-                kode_klasifikasi: null,
                 judul: null,
+                cover: null,
                 penulis: null,
-                penerbit: null,
+                nim: null,
+                facultyId: null,
+                studyProgramId: null,
                 tahun_terbit: null,
-                isbn: null,
+                jenis: null,
+                no_urut: null,
+                kode_klasifikasi: null,
                 tanggal_masuk: null,
                 kode_rak: null,
-                stok: null,
                 denda_harian: null,
+                abstrak: null,
             })
             return null;
         } else {
             setFormData({
-                no_urut: data.data.no_urut,
-                cover: data.data.cover,
-                kode_klasifikasi: data.data.kode_klasifikasi,
                 judul: data.data.judul,
+                cover: data.data.cover,
                 penulis: data.data.penulis,
-                penerbit: data.data.penerbit,
+                nim: data.data.nim,
+                facultyName: data.data.faculty?.name,
+                facultyId: data.data.faculty?.id,
+                studyProgramName: data.data.department?.name,
+                studyProgramId: data.data.department?.id,
                 tahun_terbit: data.data.tahun_terbit,
-                isbn: data.data.isbn,
-                tanggal_masuk: data.data.tanggal_masuk ? formatDateYMD(data.data.tanggal_masuk) : "",
+                jenis: data.data.jenis,
+                no_urut: data.data.no_urut,
+                kode_klasifikasi: data.data.kode_klasifikasi,
+                tanggal_masuk: data.data.tanggal_masuk,
                 kode_rak: data.data.kode_rak,
-                stok: data.data.stok,
                 denda_harian: data.data.denda_harian,
+                abstrak: data.data.abstrak,
             })
+            setDocument(data.data.dokumen)
             return data.data;
         }
     }, [data, id])
@@ -89,29 +101,51 @@ export default function DetailTASkripsi(){
                     <div className="lg:col-span-3 sm:col-span-2 col-span-1 flex flex-col gap-1">
                         <div className="border border-primary rounded-md md:px-6 md:py-4 px-2 py-2">
                             <div className="grid grid-cols-3">
+                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Nama Penulis</div>
+                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.penulis || "-"}</div>
+                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">NIM Penulis</div>
+                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.nim || "-"}</div>
+                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Jenis Karya Tulis</div>
+                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.jenis || "-"}</div>
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Nomor Urut Buku</div>
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.no_urut || "-"}</div>
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Kode Klasifikasi Koleksi Perpustakaan</div>
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.kode_klasifikasi || "-"}</div>
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Judul Buku</div>
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.judul || "-"}</div>
-                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Nama Pengarang</div>
-                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.penulis || "-"}</div>
-                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Penerbit</div>
-                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.penerbit || "-"}</div>
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Tahun Terbit</div>
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.tahun_terbit || "-"}</div>
-                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">ISBN</div>
-                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.isbn || "-"}</div>
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Tanggal Masuk Perpustakaan</div>
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.tanggal_masuk ? formatDateDMYIn(formData.tanggal_masuk) : "-"}</div>
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Kode Rak Buku</div>
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.kode_rak || "-"}</div>
-                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Jumlah Eksemplar</div>
-                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.stok ? formData.stok.toLocaleString('id-ID') : "-"}</div>
-                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Denda / Hari</div>
-                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>Rp {formData.denda_harian ? formData.denda_harian.toLocaleString('id-ID') : "-"}</div>
+                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Fakultas</div>
+                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.facultyName || "-"}</div>
+                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Program Studi</div>
+                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.studyProgramName || "-"}</div>
+                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Abstrak</div>
+                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.abstrak || "-"}</div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <hr className="border-0.5 border-primary" />
+                </div>
+                <div>
+                    <div className="mt-2 w-full">
+                        <div 
+                            className="w-full bg-primary/20 border border-primary rounded-md font-semibold p-2 text-xs text-primary"
+                        >
+                            Dokumen Karya Tulis
+                        </div>
+                        <div className="grid lg:grid-cols-5 sm:grid-cols-3 grid-cols-2 mt-2 gap-4">
+                            {document.map((item, index) => (
+                                <a href={item.file} target="__blank" key={index} className="md:h-40 h-24 flex flex-col items-center justify-center border border-dashed border-primary text-secondary rounded-md gap-2 font-semibold text-center relative">
+                                    <BsFiletypePdf size={32} />
+                                    <div className="text-xs">{item.title}</div>
+                                </a>    
+                            ))}
                         </div>
                     </div>
                 </div>

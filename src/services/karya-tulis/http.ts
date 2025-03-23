@@ -60,7 +60,7 @@ export const DataKaryaTulisExport = async () => {
   const url = window.URL.createObjectURL(new Blob([response.data]));
   const linkElement = document.createElement("a");
   linkElement.href = url;
-  linkElement.setAttribute("download", "Data Buku Fisik.xlsx");
+  linkElement.setAttribute("download", "Data Karya Tulis.xlsx");
   document.body.appendChild(linkElement);
   linkElement.click();
   document.body.removeChild(linkElement);

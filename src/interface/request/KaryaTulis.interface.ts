@@ -13,6 +13,7 @@ export interface KaryaTulisInterfaceErrorReq {
     kode_rak?: string | null;
     denda_harian?: string | null;
     abstrak?: string | null;
+    document?: string | null;
 }
 export interface KaryaTulisInterfaceReq {
     judul?: string | null;
@@ -20,7 +21,9 @@ export interface KaryaTulisInterfaceReq {
     penulis?: string | null;
     nim?: string | null;
     facultyId?: number | null;
+    facultyName?: string | null;
     studyProgramId?: number | null;
+    studyProgramName?: string | null;
     tahun_terbit?: number | null;
     jenis?: string | null;
     no_urut?: string | null;
@@ -29,4 +32,10 @@ export interface KaryaTulisInterfaceReq {
     kode_rak?: string | null;
     denda_harian?: number | null;
     abstrak?: string | null;
+
+    document?: {
+        id: number | null;
+        file: string;
+        title: string;
+    }[];
 }

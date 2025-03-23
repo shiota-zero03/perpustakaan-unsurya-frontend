@@ -13,10 +13,9 @@ import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
 import { SelectedDataReq } from "@/interface/request/Utils.interface";
-import { useDeletedBukuFisik, usePostSelectedBukuFisik } from "@/services/buku-fisik";
-import { DataBukuFisikExport } from "@/services/buku-fisik/http";
-import { useGetListKaryaTulis } from "@/services/karya-tulis";
+import { useDeletedKaryaTulis, useGetListKaryaTulis, usePostSelectedKaryaTulis } from "@/services/karya-tulis";
 import { KaryaTulisListRes } from "@/interface/response/KaryaTulis.interface";
+import { DataKaryaTulisExport } from "@/services/karya-tulis/http";
 
 export default function DataTASkripsi(){
 
@@ -171,7 +170,7 @@ export default function DataTASkripsi(){
     const { isOpen: isOpenSelected, onOpen: onOpenSelected, onClose: onCloseSelected } = useDisclosure();
     const [ confirmText, setConfirmText ] = useState<string>('')
     const [ selectedAction, setSelectedAction ] = useState<string>('')
-    const {mutate: mutateSelection} = usePostSelectedBukuFisik();
+    const {mutate: mutateSelection} = usePostSelectedKaryaTulis();
     const selectedItemAction = (action: string) => {
         setSelectedAction(action)
         if(action === 'deleted') { 
@@ -223,7 +222,7 @@ export default function DataTASkripsi(){
     }
 
     const { isOpen: isOpenDeleted, onOpen: onOpenDeleted, onClose: onCloseDeleted } = useDisclosure();
-    const {mutate: mutateDeleted} = useDeletedBukuFisik();
+    const {mutate: mutateDeleted} = useDeletedKaryaTulis();
     const deletedAction = (id: string) => {
         setSelectedId(id)
         onOpenDeleted()
@@ -274,7 +273,7 @@ export default function DataTASkripsi(){
     const handleDownloadExport = async () => {
         try {
             setIsLoadingExport(true);
-            await DataBukuFisikExport();
+            await DataKaryaTulisExport();
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: { status: number } | any) {
             if (error?.status === 404) {
@@ -374,7 +373,7 @@ export default function DataTASkripsi(){
                                 placeholder="Cari berdasarkan nim"
                                 variant="bordered" 
                                 radius="sm"
-                                value={judulSearch || ""}
+                                value={nimSearch || ""}
                                 onChange={(e) => setNIMSearch(e.target.value)}
                                 classNames={{
                                     inputWrapper: 'border border-primary',

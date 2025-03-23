@@ -22,18 +22,25 @@ export interface IKaryaTulisDetailRes extends BaseRes {
         cover: string;
         penulis: string;
         nim: string;
-        facultyId: number;
-        studyProgramId: number;
+        faculty: {
+            id: number;
+            name: string;
+        } | null;
+        department: {
+            id: number;
+            name: string;
+        } | null;
         tahun_terbit: number;
         jenis: string;
         no_urut: string;
         kode_klasifikasi: string;
         tanggal_masuk: string;
         kode_rak: string;
-        denda_harian: string;
+        denda_harian: number;
         abstrak: string;
         dokumen: {
-            judul: string;
+            id: number | null;
+            title: string;
             file: string;
         }[];
     }

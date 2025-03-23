@@ -1,7 +1,7 @@
-import { FaUserGraduate } from "react-icons/fa6";
+import { FaBook } from "react-icons/fa6";
 import BreadcrumbWithCustomSeparator from "@/components/Breadcrumb";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, Input, useDisclosure } from "@nextui-org/react";
+import { Button, Input, Select, SelectItem, Textarea, useDisclosure } from "@nextui-org/react";
 import React, { useEffect, useMemo, useState } from "react";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
 
@@ -10,66 +10,104 @@ import { convertFileToBase64 } from "@/utils/base64Formater";
 import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
-import { BukuFisikInterfaceErrorReq, BukuFisikInterfaceReq } from "@/interface/request/BukuFisik.interface";
-import { useGetDetailBukuFisik, useUpdateBukuFisik } from "@/services/buku-fisik";
+import { KaryaTulisInterfaceErrorReq, KaryaTulisInterfaceReq } from "@/interface/request/KaryaTulis.interface";
+import { useGetDetailKaryaTulis, useUpdateKaryaTulis } from "@/services/karya-tulis";
+import { useGetAllDepartment, useGetAllFaculty } from "@/services/option";
+import { BsFileArrowUpFill, BsFiletypePdf, BsXCircle } from "react-icons/bs";
+import AddFileKarya from "@/components/Modals/karya-tulis/AddFile";
 
-export default function UpdateDataTASkripsi(){
+export default function TambahBukuDigital(){
 
     const { id } = useParams();
-
     const navigate = useNavigate();
 
-    const [ formData, setFormData ] = useState<BukuFisikInterfaceReq>({
-        no_urut: null,
-        cover: null,
-        kode_klasifikasi: null,
+    const [ formData, setFormData ] = useState<KaryaTulisInterfaceReq>({
         judul: null,
+        cover: null,
         penulis: null,
-        penerbit: null,
+        nim: null,
+        facultyId: null,
+        studyProgramId: null,
         tahun_terbit: null,
-        isbn: null,
+        jenis: null,
+        no_urut: null,
+        kode_klasifikasi: null,
         tanggal_masuk: null,
         kode_rak: null,
-        stok: null,
         denda_harian: null,
+        abstrak: null,
     })
 
-    const [ formDataError, setFormDataError ] = useState<BukuFisikInterfaceErrorReq>({})
+    const [ document, setDocument ] = useState<{ id: number | null; file: string; title: string; }[]>([])
 
-    const { data, isLoading, isFetching, refetch } = useGetDetailBukuFisik(id || "")
+    const removeDoc = (index: number) => {
+        setDocument(document.filter((_, i) => i !== index));
+    };
 
+    const [ formDataError, setFormDataError ] = useState<KaryaTulisInterfaceErrorReq>({})
+
+    const { data, isLoading, isFetching, refetch } = useGetDetailKaryaTulis(id || "")
+
+    const {
+        data: facultyData,
+        isFetching: facultyIsFetching
+    } = useGetAllFaculty();
+
+    const FAKULTAS_DATA = useMemo(() => {
+        return facultyData ? facultyData.data : [];
+    }, [facultyData]);
+
+    const { data: prodiData, refetch: prodiRefetch, isFetching: prodiIsFetching } = useGetAllDepartment(
+        formData.facultyId ? String(formData.facultyId) : null
+    );
+
+    const PRODI_DATA = useMemo(() => {
+        return prodiData ? prodiData.data : [];
+    }, [prodiData]);
+
+    useEffect(() => {
+        if (formData.facultyId) {
+            prodiRefetch();
+        }
+    }, [formData.facultyId]);
+    
     const dataFetching = useMemo(() => {
         if(!data) {
             setFormData({
-                no_urut: null,
-                cover: null,
-                kode_klasifikasi: null,
                 judul: null,
+                cover: null,
                 penulis: null,
-                penerbit: null,
+                nim: null,
+                facultyId: null,
+                studyProgramId: null,
                 tahun_terbit: null,
-                isbn: null,
+                jenis: null,
+                no_urut: null,
+                kode_klasifikasi: null,
                 tanggal_masuk: null,
                 kode_rak: null,
-                stok: null,
                 denda_harian: null,
+                abstrak: null,
             })
             return null;
         } else {
             setFormData({
-                no_urut: data.data.no_urut,
-                cover: data.data.cover,
-                kode_klasifikasi: data.data.kode_klasifikasi,
                 judul: data.data.judul,
+                cover: data.data.cover,
                 penulis: data.data.penulis,
-                penerbit: data.data.penerbit,
+                nim: data.data.nim,
+                facultyId: data.data.faculty?.id,
+                studyProgramId: data.data.department?.id,
                 tahun_terbit: data.data.tahun_terbit,
-                isbn: data.data.isbn,
+                jenis: data.data.jenis,
+                no_urut: data.data.no_urut,
+                kode_klasifikasi: data.data.kode_klasifikasi,
                 tanggal_masuk: data.data.tanggal_masuk,
                 kode_rak: data.data.kode_rak,
-                stok: data.data.stok,
                 denda_harian: data.data.denda_harian,
+                abstrak: data.data.abstrak,
             })
+            setDocument(data.data.dokumen)
             return data.data;
         }
     }, [data, id])
@@ -87,42 +125,46 @@ export default function UpdateDataTASkripsi(){
               cover: base64Icon,
             });
           } else {
-            setFormData((prev) => ({ ...prev, cover: dataFetching?.cover }));
+            setFormData((prev) => ({ ...prev, cover: null }));
           }
     }
 
     const [ loadingSend, setLoadingSend ] = useState<boolean>(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen: isOpenFile, onOpen: onOpenFile, onClose: onCloseFile } = useDisclosure();
 
-    const {mutate: mutatePut} = useUpdateBukuFisik();
+    const {mutate: mutatePost} = useUpdateKaryaTulis();
     const handleSubmit = () => {
         setLoadingSend(true)
         setFormDataError({})
 
-        const formToSend: BukuFisikInterfaceReq = {};
-        if(formData.cover ){
-            if(formData.cover !== dataFetching?.cover) formToSend.cover = formData.cover;
+        const formDataToSend: KaryaTulisInterfaceReq = {
+            judul: formData.judul,
+            penulis: formData.penulis,
+            nim: formData.nim,
+            facultyId: formData.facultyId,
+            studyProgramId: formData.studyProgramId,
+            tahun_terbit: formData.tahun_terbit,
+            jenis: formData.jenis,
+            no_urut: formData.no_urut,
+            kode_klasifikasi: formData.kode_klasifikasi,
+            tanggal_masuk: formData.tanggal_masuk,
+            kode_rak: formData.kode_rak,
+            abstrak: formData.abstrak,
+            document: document
         }
-        if(formData.no_urut) formToSend.no_urut = formData.no_urut;
-        if(formData.kode_klasifikasi) formToSend.kode_klasifikasi = formData.kode_klasifikasi;
-        if(formData.judul) formToSend.judul = formData.judul;
-        if(formData.penulis) formToSend.penulis = formData.penulis;
-        if(formData.penerbit) formToSend.penerbit = formData.penerbit;
-        if(formData.tahun_terbit) formToSend.tahun_terbit = formData.tahun_terbit;
-        if(formData.isbn) formToSend.isbn = formData.isbn;
-        if(formData.tanggal_masuk) formToSend.tanggal_masuk = formData.tanggal_masuk;
-        if(formData.kode_rak) formToSend.kode_rak = formData.kode_rak;
-        if(formData.stok) formToSend.stok = formData.stok;
-        if(formData.denda_harian) formToSend.denda_harian = formData.denda_harian;
+        if(formData.cover ){
+            if(formData.cover !== dataFetching?.cover) formDataToSend.cover = formData.cover;
+        }
 
         try {
-            mutatePut(
-                {data: formToSend, userId: id || ""},
+            mutatePost(
+                {data: formDataToSend, userId: String(id)},
                 {
                     onSuccess: (res) => {
                         successToast({text: res.message})
                         isFinished()
-                        navigate('/data-master/buku-fisik')
+                        navigate('/data-master/ta-&-skripsi')
                         
                     },
                     onError: (error: AxiosError<BaseErrorRes>) => {
@@ -135,18 +177,21 @@ export default function UpdateDataTASkripsi(){
                             if(status === 422) {
                                 setFormDataError({
                                     ...formDataError,
-                                    no_urut: errors.no_urut || "",
-                                    cover: errors.cover || "",
-                                    kode_klasifikasi: errors.kode_klasifikasi || "",
                                     judul: errors.judul || "",
+                                    cover: errors.cover || "",
                                     penulis: errors.penulis || "",
-                                    penerbit: errors.penerbit || "",
+                                    nim: errors.nim || "",
+                                    facultyId: errors.facultyId || "",
+                                    studyProgramId: errors.studyProgramId || "",
                                     tahun_terbit: errors.tahun_terbit || "",
-                                    isbn: errors.isbn || "",
+                                    jenis: errors.jenis || "",
+                                    no_urut: errors.no_urut || "",
+                                    kode_klasifikasi: errors.kode_klasifikasi || "",
                                     tanggal_masuk: errors.tanggal_masuk || "",
                                     kode_rak: errors.kode_rak || "",
-                                    stok: errors.stok || "",
                                     denda_harian: errors.denda_harian || "",
+                                    abstrak: errors.abstrak || "",
+                                    document: errors.document || "",
                                 })
                             }
                         } else {
@@ -164,6 +209,10 @@ export default function UpdateDataTASkripsi(){
         }
     }
 
+    const handleChangeFile = (id: null, title: string, file: string) => {
+        setDocument([...document, { id: id, file: file, title: title }]);
+    }
+
     const isFinished = () => {
         setLoadingSend(false);
         onClose();
@@ -171,11 +220,6 @@ export default function UpdateDataTASkripsi(){
 
     return (
         <main className="flex flex-col gap-4">
-            {isLoading || isFetching ? (
-                <div className="inset-0 fixed bg-black/10 z-10 flex items-center justify-center">
-                    <div className="loader ease-linear rounded-full border-[6px] border-t-4 h-20 w-20 mb-4" />
-                </div>
-            ) : null}
             <ConfirmAlert 
                 isOpen={isOpen} 
                 isLoading={loadingSend} 
@@ -183,30 +227,108 @@ export default function UpdateDataTASkripsi(){
                 onClose={onClose}
                 confirmAction={() => handleSubmit()}
             />
-            <BreadcrumbWithCustomSeparator icon={FaUserGraduate} />
+            <AddFileKarya
+                isOpen={isOpenFile}
+                onClose={onCloseFile}
+                confirmAction={(title: string, file: string) => handleChangeFile(null, title, file)}
+            />
+            {isLoading || isFetching ? (
+                <div className="inset-0 fixed bg-black/10 z-10 flex items-center justify-center">
+                    <div className="loader ease-linear rounded-full border-[6px] border-t-4 h-20 w-20 mb-4" />
+                </div>
+            ) : null}
+            <BreadcrumbWithCustomSeparator icon={FaBook} />
             <div className="bg-white lg:p-8 p-4 border shadow rounded-md flex flex-col gap-4">
                 <div className="border border-primary py-2 sm:px-4 px-2 sm:text-left text-center rounded-md">
-                    <h1 className="text-primary font-semibold">FORM EDIT DATA BUKU</h1>
+                    <h1 className="text-primary font-semibold">FORM TAMBAH KARYA TULIS</h1>
                 </div>
                 <div className="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-4">
                     <div className="col-span-1">
-                        <div className="border border-primary rounded-md flex items center justify-center md:p-4 p-2 mb-2">
-                            <img src={formData.cover || UserImage} alt="user-image" loading="lazy" className={formData.cover ? "w-full" : "w-1/2"} />
-                        </div>
-                        <input type="file" id="cover" className="hidden" onChange={handleChangeImage} accept=".jpg,.jpeg,.png" />
-                        <label htmlFor="cover">
-                            <div 
-                                className="w-full border border-primary rounded-md font-semibold p-2 text-xs text-center text-primary cursor-pointer"
-                            >
-                                UPLOAD COVER BUKU
+                        <div>
+                            <div className="border border-primary rounded-md flex items center justify-center md:p-4 p-2 mb-2">
+                                <img src={formData.cover || UserImage} alt="user-image" loading="lazy" className={formData.cover ? "w-full" : "w-1/2"} />
                             </div>
-                        </label>
-                        <div className="text-danger italic text-xs">{formDataError.cover}</div>
+                            <input type="file" id="cover" className="hidden" onChange={handleChangeImage} accept=".jpg,.jpeg,.png" />
+                            <label htmlFor="cover">
+                                <div 
+                                    className="w-full border border-primary rounded-md font-semibold p-2 text-xs text-center text-primary cursor-pointer"
+                                >
+                                    UPLOAD COVER
+                                </div>
+                            </label>
+                            <div className="text-danger italic text-xs">{formDataError.cover}</div>
+                        </div>
+                        <div>
+                            <div>
+                                <label htmlFor="penulis" className="text-primary font-semibold text-sm">Nama Penulis</label>
+                                <Input
+                                    aria-label="Nomor Urut"
+                                    id="penulis"
+                                    variant="bordered"
+                                    color="primary"
+                                    radius="sm"
+                                    placeholder="author name here"
+                                    value={formData.penulis || ""}
+                                    onChange={(e) => setFormData({...formData, penulis: e.target.value})}
+                                    classNames={{
+                                        inputWrapper: "border border-primary rounded",
+                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
+                                        label: "text-primary font-semibold text-sm"
+                                    }}
+                                />
+                                <div className="text-danger italic text-xs">{formDataError.penulis}</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div>
+                                <label htmlFor="nim" className="text-primary font-semibold text-sm">NIM</label>
+                                <Input
+                                    aria-label="Nomor Urut"
+                                    id="nim"
+                                    variant="bordered"
+                                    color="primary"
+                                    radius="sm"
+                                    placeholder="author nim here"
+                                    value={formData.nim || ""}
+                                    onChange={(e) => setFormData({...formData, nim: e.target.value})}
+                                    classNames={{
+                                        inputWrapper: "border border-primary rounded",
+                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
+                                        label: "text-primary font-semibold text-sm"
+                                    }}
+                                />
+                                <div className="text-danger italic text-xs">{formDataError.nim}</div>
+                            </div>
+                        </div>
+                        <div>
+                            <label htmlFor="type" className="text-primary font-semibold text-sm">Jenis Karya Tulis</label>
+                            <Select
+                                aria-label="type"
+                                id="type"
+                                variant="bordered"
+                                color="primary"
+                                radius="sm"
+                                placeholder="--- Pilih jenis karya tulis ---"
+                                selectedKeys={[String(formData.jenis || "")]}
+                                onChange={(e) => setFormData({...formData, jenis: e.target.value})}
+                                classNames={{
+                                    trigger: "border border-primary rounded",
+                                    value: "text-primary text-xs font-medium italic placeholder:text-primary",
+                                    label: "text-primary font-semibold text-sm"
+                                }}
+                            >
+                                <SelectItem value={'Skripsi'} key={'Skripsi'}>Skripsi</SelectItem>
+                                <SelectItem value={'TA'} key={'TA'}>TA</SelectItem>
+                                <SelectItem value={'Tesis'} key={'Tesis'}>Tesis</SelectItem>
+                                <SelectItem value={'Disertasi'} key={'Disertasi'}>Disertasi</SelectItem>
+                            </Select>
+                            <div className="text-danger italic text-xs">{formDataError.jenis}</div>
+                        </div>
                     </div>
                     <div className="lg:col-span-3 sm:col-span-2 col-span-1 flex flex-col gap-1 -mt-2">
                         <div className="grid sm:grid-cols-2 grid-cols-1 gap-2">
                             <div>
-                                <label htmlFor="no_urut" className="text-primary font-semibold text-sm">No. Urut Buku</label>
+                                <label htmlFor="no_urut" className="text-primary font-semibold text-sm">No. Urut Karya Tulis</label>
                                 <Input
                                     aria-label="Nomor Urut"
                                     id="no_urut"
@@ -243,8 +365,8 @@ export default function UpdateDataTASkripsi(){
                                 />
                                 <div className="text-danger italic text-xs">{formDataError.kode_klasifikasi}</div>
                             </div>
-                            <div className="sm:col-span-2">
-                                <label htmlFor="judul" className="text-primary font-semibold text-sm">Judul Buku</label>
+                            <div>
+                                <label htmlFor="judul" className="text-primary font-semibold text-sm">Judul Karya Tulis</label>
                                 <Input
                                     aria-label="Nomor Urut"
                                     id="judul"
@@ -261,44 +383,6 @@ export default function UpdateDataTASkripsi(){
                                     }}
                                 />
                                 <div className="text-danger italic text-xs">{formDataError.judul}</div>
-                            </div>
-                            <div>
-                                <label htmlFor="penulis" className="text-primary font-semibold text-sm">Nama Pengarang</label>
-                                <Input
-                                    aria-label="Nomor Urut"
-                                    id="penulis"
-                                    variant="bordered"
-                                    color="primary"
-                                    radius="sm"
-                                    placeholder="author name here"
-                                    value={formData.penulis || ""}
-                                    onChange={(e) => setFormData({...formData, penulis: e.target.value})}
-                                    classNames={{
-                                        inputWrapper: "border border-primary rounded",
-                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
-                                        label: "text-primary font-semibold text-sm"
-                                    }}
-                                />
-                                <div className="text-danger italic text-xs">{formDataError.penulis}</div>
-                            </div>
-                            <div>
-                                <label htmlFor="penerbit" className="text-primary font-semibold text-sm">Penerbit</label>
-                                <Input
-                                    aria-label="Nomor Urut"
-                                    id="penerbit"
-                                    variant="bordered"
-                                    color="primary"
-                                    radius="sm"
-                                    placeholder="publisher name here"
-                                    value={formData.penerbit || ""}
-                                    onChange={(e) => setFormData({...formData, penerbit: e.target.value})}
-                                    classNames={{
-                                        inputWrapper: "border border-primary rounded",
-                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
-                                        label: "text-primary font-semibold text-sm"
-                                    }}
-                                />
-                                <div className="text-danger italic text-xs">{formDataError.penerbit}</div>
                             </div>
                             <div>
                                 <label htmlFor="tahun_terbit" className="text-primary font-semibold text-sm">Tahun Terbit</label>
@@ -323,23 +407,54 @@ export default function UpdateDataTASkripsi(){
                                 <div className="text-danger italic text-xs">{formDataError.tahun_terbit}</div>
                             </div>
                             <div>
-                                <label htmlFor="isbn" className="text-primary font-semibold text-sm">ISBN</label>
-                                <Input
-                                    aria-label="Nomor Urut"
-                                    id="isbn"
+                                <label htmlFor="faculty" className="text-primary font-semibold text-sm">Fakultas</label>
+                                <Select
+                                    aria-label="Faculty"
+                                    id="faculty"
                                     variant="bordered"
                                     color="primary"
                                     radius="sm"
-                                    placeholder="book isbn here"
-                                    value={formData.isbn || ""}
-                                    onChange={(e) => setFormData({...formData, isbn: e.target.value})}
+                                    placeholder="--- Pilih fakultas ---"
+                                    selectedKeys={[String(formData.facultyId || "")]}
+                                    onChange={(e) => setFormData({...formData, facultyId: Number(e.target.value)})}
                                     classNames={{
-                                        inputWrapper: "border border-primary rounded",
-                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
+                                        trigger: "border border-primary rounded",
+                                        value: "text-primary text-xs font-medium italic placeholder:text-primary",
                                         label: "text-primary font-semibold text-sm"
                                     }}
-                                />
-                                <div className="text-danger italic text-xs">{formDataError.isbn}</div>
+                                >
+                                    {facultyIsFetching ? (
+                                        <SelectItem value={""} key={""}>Loading ...</SelectItem>
+                                    ) : FAKULTAS_DATA.map(item => (
+                                        <SelectItem value={item.id} key={item.id}>{item.name}</SelectItem>
+                                    ))}
+                                </Select>
+                                <div className="text-danger italic text-xs">{formDataError.facultyId}</div>
+                            </div>
+                            <div>
+                                <label htmlFor="prodi" className="text-primary font-semibold text-sm">Program Studi</label>
+                                <Select
+                                    aria-label="prodi"
+                                    id="prodi"
+                                    variant="bordered"
+                                    color="primary"
+                                    radius="sm"
+                                    placeholder="--- Pilih program studi ---"
+                                    selectedKeys={[String(formData.studyProgramId || "")]}
+                                    onChange={(e) => setFormData({...formData, studyProgramId: Number(e.target.value)})}
+                                    classNames={{
+                                        trigger: "border border-primary rounded",
+                                        value: "text-primary text-xs font-medium italic placeholder:text-primary",
+                                        label: "text-primary font-semibold text-sm"
+                                    }}
+                                >
+                                    {prodiIsFetching ? (
+                                        <SelectItem value={""} key={""}>Loading ...</SelectItem>
+                                    ) : PRODI_DATA.map(item => (
+                                        <SelectItem value={item.id} key={item.id}>{item.name}</SelectItem>
+                                    ))}
+                                </Select>
+                                <div className="text-danger italic text-xs">{formDataError.studyProgramId}</div>
                             </div>
                             <div>
                                 <label htmlFor="tanggal_masuk" className="text-primary font-semibold text-sm">Tanggal Masuk Perpustakaan</label>
@@ -380,47 +495,51 @@ export default function UpdateDataTASkripsi(){
                                 />
                                 <div className="text-danger italic text-xs">{formDataError.kode_rak}</div>
                             </div>
-                            <div>
-                                <label htmlFor="stok" className="text-primary font-semibold text-sm">Jumlah Eksemplar</label>
-                                <Input
-                                    type="number"
+                            <div className="sm:col-span-2 col-span-1">
+                                <label htmlFor="abstrak" className="text-primary font-semibold text-sm">Abstrak</label>
+                                <Textarea
                                     aria-label="Nomor Urut"
-                                    id="stok"
+                                    id="abstrak"
                                     variant="bordered"
                                     color="primary"
                                     radius="sm"
-                                    placeholder="book total exemplar here"
-                                    value={String(formData.stok || "")}
-                                    onChange={(e) => setFormData({...formData, stok: Number(e.target.value)})}
+                                    rows={10}
+                                    placeholder="abstract here"
+                                    value={formData.abstrak || ""}
+                                    onChange={(e) => setFormData({...formData, abstrak: e.target.value})}
                                     classNames={{
                                         inputWrapper: "border border-primary rounded",
                                         input: "text-primary text-xs font-medium italic placeholder:text-primary",
                                         label: "text-primary font-semibold text-sm"
                                     }}
                                 />
-                                <div className="text-danger italic text-xs">{formDataError.stok}</div>
+                                <div className="text-danger italic text-xs">{formDataError.abstrak}</div>
                             </div>
-                            <div>
-                                <label htmlFor="denda_harian" className="text-primary font-semibold text-sm">Denda Harian</label>
-                                <Input
-                                    type="number"
-                                    startContent={<div className="text-xs text-center text-primary italic font-semibold">Rp</div>}
-                                    aria-label="Nomor Urut"
-                                    id="denda_harian"
-                                    variant="bordered"
-                                    color="primary"
-                                    radius="sm"
-                                    placeholder="your daily fine here"
-                                    value={String(formData.denda_harian || "")}
-                                    onChange={(e) => setFormData({...formData, denda_harian: Number(e.target.value)})}
-                                    classNames={{
-                                        inputWrapper: "border border-primary rounded",
-                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
-                                        label: "text-primary font-semibold text-sm"
-                                    }}
-                                />
-                                <div className="text-danger italic text-xs">{formDataError.denda_harian}</div>
+                        </div>
+                    </div>
+                    <div className="lg:col-span-4 sm:col-span-3 col-span-1">
+                        <hr className="border-0.5 border-primary" />
+                    </div>
+                    <div className="lg:col-span-4 sm:col-span-3 col-span-1">
+                        <div className="mt-2 w-full">
+                            <div 
+                                className="w-full bg-primary/20 border border-primary rounded-md font-semibold p-2 text-xs text-primary"
+                            >
+                                Dokumen Karya Tulis
                             </div>
+                            <div className="grid lg:grid-cols-5 sm:grid-cols-3 grid-cols-2 mt-2 gap-4">
+                                {document.map((item, index) => (
+                                    <div key={index} className="md:h-40 h-24 flex flex-col items-center justify-center border border-dashed border-primary text-secondary rounded-md gap-2 font-semibold text-center relative">
+                                        <BsXCircle className="absolute right-2 top-2 text-danger cursor-pointer" onClick={() => removeDoc(index)} />
+                                        <BsFiletypePdf size={32} />
+                                        <div className="text-xs">{item.title}</div>
+                                    </div>    
+                                ))}
+                                <div className="md:h-40 h-24 flex items-center justify-center border border-dashed border-primary text-secondary rounded-md cursor-pointer" onClick={onOpenFile}>
+                                    <BsFileArrowUpFill size={32} />
+                                </div>
+                            </div>
+                            <div className="text-danger italic text-xs">{formDataError.document}</div>
                         </div>
                         <div className="pt-2 pb-6">
                             <Button

@@ -15,5 +15,6 @@ export const useGetAllDepartment = (
         queryKey: ["getAllDepartment"],
         queryFn: () => getAllDepartment(facultyId),
         staleTime: 300000,
+        enabled: !!facultyId
     });
 };
