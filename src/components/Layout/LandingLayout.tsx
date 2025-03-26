@@ -1,4 +1,4 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import Logo from "@/assets/images/logo.png";
 import { FaCaretDown, FaRightToBracket, FaBars, FaX } from "react-icons/fa6";
 import { useState } from "react";
@@ -7,8 +7,11 @@ export default function LandingLayout() {
     const [openMenu, setOpenMenu] = useState<number | null>(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    const toggleMenu = (index: number) => {
+    const navigate = useNavigate();
+
+    const toggleMenu = (index: number, link: string) => {
         setOpenMenu(openMenu === index ? null : index);
+        if(index !== 3) navigate(link)
     };
 
     const toggleMobileMenu = () => {
@@ -34,7 +37,7 @@ export default function LandingLayout() {
     return (
         <>
             {/* Navbar */}
-            <div className="fixed w-full flex items-center justify-between bg-white border-b shadow-md py-2 px-8 z-50">
+            <div className="fixed w-full flex items-center justify-between bg-white/10 backdrop-blur-md border-b shadow-md py-2 px-8 z-50">
                 <div className="flex items-center gap-2">
                     <img src={Logo} alt="logo" className="w-12" />
                     <div className="flex flex-col">
@@ -55,7 +58,7 @@ export default function LandingLayout() {
                         <div key={index} className="relative">
                             <Link
                                 to={item.link}
-                                onClick={() => toggleMenu(index)}
+                                onClick={() => toggleMenu(index, item.link)}
                                 className="px-4 text-secondary hover:text-primary/60 text-sm font-semibold flex items-center gap-2 duration-300"
                             >
                                 {item.name === "Login" && <FaRightToBracket />}
@@ -96,7 +99,7 @@ export default function LandingLayout() {
                         {menu.map((item, index) => (
                             <div key={index} className="w-full">
                                 <button
-                                    onClick={() => toggleMenu(index)}
+                                    onClick={() => toggleMenu(index, item.link)}
                                     className="w-full text-left px-4 py-2 text-secondary text-sm font-semibold flex items-center gap-2"
                                 >
                                     {item.name === "Login" && <FaRightToBracket />}
@@ -124,6 +127,10 @@ export default function LandingLayout() {
             )}
 
             <Outlet />
+
+            <div className="bg-secondary text-white text-center font-medium py-2">
+                Perpustakaan UNSURYA &copy; { new Date().getFullYear() }. All right reserve
+            </div>
         </>
     );
 }
