@@ -1,10 +1,8 @@
-import { Card, CardBody, CardFooter, CardHeader, DateRangePicker, DateValue, Divider, RangeValue } from "@nextui-org/react"
+import { Card, CardBody, CardFooter, CardHeader, Divider, Select, SelectItem } from "@nextui-org/react"
 import { BiCaretDown, BiCaretUp } from "react-icons/bi";
 import { IconType } from "react-icons/lib";
-import { Outlet, useNavigate } from "react-router-dom";
-import {parseDate} from "@internationalized/date";
-import { useEffect, useState } from "react";
-import { formatDate } from "@/utils/dateFormat";
+import { useNavigate } from "react-router-dom";
+import { ReactNode } from "react";
 import { ButtonSolid } from "../UI/button";
 
 interface CardDashboard {
@@ -62,60 +60,57 @@ export const CardDashboardHarian = ({ text, count, percentase, category }: CardH
 }
 
 interface CardDashboardChartInterface {
+    isLoading: boolean;
     title: string;
     desc?: string;
-    startDate: Date;
-    endDate: Date;
-    onChangeDate: (newDate: RangeValue<DateValue> | null) => void;
+    dateValue: string;
+    onChangeDate: (value: string) => void;
     linkText: string;
     linkUrl: string;
+    children: ReactNode;
 }
-export const CardDashboardChart = ({ title, desc, startDate, endDate, onChangeDate, linkText, linkUrl } : CardDashboardChartInterface) => {
+export const CardDashboardChart = ({ isLoading, title, desc, dateValue, onChangeDate, linkText, linkUrl, children } : CardDashboardChartInterface) => {
 
     const navigate = useNavigate();
-
-    const [date, setDate] = useState<RangeValue<DateValue>>({
-        start: parseDate(formatDate(startDate)),
-        end: parseDate(formatDate(endDate)),
-    });
-
-    useEffect(() => {   
-        setDate({
-            start: parseDate(formatDate(startDate)),
-            end: parseDate(formatDate(endDate)),
-        })
-    }, [startDate, endDate])
+    const currentYear = new Date().getFullYear();
+    const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
 
     return (
         <Card shadow="none" radius="sm" className="drop-shadow-[0_4px_1px_rgba(0,0,0,0.25)]">
+            {isLoading ? (
+                <div className="inset-0 fixed bg-slate-50/10 z-10 flex items-center justify-center">
+                    <div className="loader ease-linear rounded-full border-[6px] border-t-4 h-20 w-20 mb-4" />
+                </div>
+            ) : null}
             <CardHeader>
                 <div className="grid xl:grid-cols-5 grid-cols-1 gap-2 items-center justify-between w-full">
                     <div className="xl:col-span-3 flex flex-col">
                         <span className="text-primary font-semibold xl:text-xl sm:text-base text-sm">{title}</span>
                         <span className="text-primary font-medium italic md:text-sm text-xs">{desc}</span>
                     </div>
-                    <DateRangePicker
-                        aria-label="select-date"
+                    <Select
+                        aria-label="select-year"
                         variant="bordered"
                         color="primary"
                         radius="sm"
-                        selectorButtonPlacement="start"
-                        showMonthAndYearPickers={true}
-                        disableAnimation={true}
-                        value={date}
-                        onChange={(newDate) => onChangeDate(newDate)}
-                        className="text-primary oveflow-hidden xl:col-span-2"
+                        selectedKeys={[dateValue]}
+                        onChange={(e) => onChangeDate(e.target.value)}
+                        className="text-primary overflow-hidden xl:col-span-2"
                         classNames={{
-                            inputWrapper: 'border border-primary text-primary text-xs',
-                            base: 'overflow-hidden text-xs',
-                            calendar: 'text-xs'
+                            trigger: 'border border-primary text-primary text-xs',
                         }}
-                    />
+                    >
+                        {years.map((year) => (
+                            <SelectItem key={year} value={year.toString()} textValue={year.toString()}>
+                                {year}
+                            </SelectItem>
+                        ))}
+                    </Select>
                 </div>
             </CardHeader>
             <Divider className="bg-primary" />
             <CardBody>
-                <Outlet />
+                {children}
             </CardBody>
             <CardFooter className="pb-6">
                 <ButtonSolid onPress={() => navigate(linkUrl)} className={"bg-primary text-white text-sm h-8 mx-auto"} content={linkText} />

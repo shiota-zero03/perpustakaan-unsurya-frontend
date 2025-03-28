@@ -1,5 +1,4 @@
 import instance from "@/api/axios";
-import { DosenInterfaceReq } from "@/interface/request/Dosen.interface";
 import { SelectedDataReq } from "@/interface/request/Utils.interface";
 import { IDosenDetailRes, IDosenListRes } from "@/interface/response/Dosen.interface";
 import { TrueResponseInterface } from "@/interface/response/Utils.interface";
@@ -34,7 +33,7 @@ export const deleteDosen = async ( userId: string ): Promise<TrueResponseInterfa
   return response.data;
 };
 
-export const storeDosen = async ( data: DosenInterfaceReq ): Promise<IDosenDetailRes> => {
+export const storeDosen = async ( data: FormData ): Promise<IDosenDetailRes> => {
   const response = await instance.post(`/dosen/store`, data);
   return response.data;
 };
@@ -44,8 +43,8 @@ export const getDetailDosen = async ( userId: string ): Promise<IDosenDetailRes>
   return response.data;
 };
 
-export const updateDosen = async ( data: DosenInterfaceReq, userId: string ): Promise<IDosenDetailRes> => {
-  const response = await instance.put(`/dosen/update/${userId}`, data);
+export const updateDosen = async ( data: FormData, userId: string ): Promise<IDosenDetailRes> => {
+  const response = await instance.post(`/dosen/update/${userId}`, data);
   return response.data;
 };
 

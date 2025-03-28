@@ -12,7 +12,7 @@ export interface MahasiswaInterfaceErrorReq {
     validUntil?: string | null;
 }
 export interface MahasiswaInterfaceReq {
-    profilePicture?: string | null;
+    profilePicture?: File | null;
     name?: string | null;
     nim?: string | null;
     gender?: string | null;

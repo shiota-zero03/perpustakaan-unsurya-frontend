@@ -6,7 +6,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
 
 import UserImage from "@/assets/images/buku.png";
-import { convertFileToBase64 } from "@/utils/base64Formater";
 import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
@@ -29,51 +28,46 @@ export default function UpdateBukuDigital(){
         link_book: null,
     })
 
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
+
     const [ formDataError, setFormDataError ] = useState<BukuDigitalInterfaceErrorReq>({})
 
-    const { data, isLoading, isFetching, refetch } = useGetDetailBukuDigital(id || "")
+    const { data, isLoading, isFetching, refetch, error } = useGetDetailBukuDigital(id || "")
 
     const dataFetching = useMemo(() => {
-        if(!data) {
-            setFormData({
-                cover: null,
-                judul: null,
-                penulis: null,
-                penerbit: null,
-                tahun_terbit: null,
-                isbn: null,
-                link_book: null,
-            })
-            return null;
-        } else {
-            setFormData({
-                cover: data.data.cover,
-                judul: data.data.judul,
-                penulis: data.data.penulis,
-                penerbit: data.data.penerbit,
-                tahun_terbit: data.data.tahun_terbit,
-                isbn: data.data.isbn,
-                link_book: data.data.link_book,
-            })
-            return data.data;
-        }
-    }, [data, id])
+        return data ? data.data : null;
+    }, [data, id]);
 
     useEffect(() => {
-        refetch()
-    }, [id])
+        if (dataFetching && Object.keys(dataFetching).length > 0) {
+            setFormData({
+                ...formData,
+                cover: null,
+                judul: dataFetching.judul,
+                penulis: dataFetching.penulis,
+                penerbit: dataFetching.penerbit,
+                tahun_terbit: dataFetching.tahun_terbit,
+                isbn: dataFetching.isbn,
+                link_book: dataFetching.link_book,
+            })
+            setPreviewImage(dataFetching.cover)
+        }
+    }, [dataFetching])
+
+    useEffect(() => {
+        refetch();
+        setFormDataError({})
+    }, [])
 
     const handleChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const base64Icon = await convertFileToBase64(file);
-            setFormData({
-              ...formData,
-              cover: base64Icon,
-            });
-          } else {
-            setFormData((prev) => ({ ...prev, cover: dataFetching?.cover }));
-          }
+        const file = e.target.files?.[0];
+        if (file) {
+            setFormData({ ...formData, cover: file });
+            setPreviewImage(URL.createObjectURL(file));
+        } else {
+            setFormData({ ...formData, cover: null });
+            setPreviewImage(dataFetching?.cover || "");
+        }
     }
 
     const [ loadingSend, setLoadingSend ] = useState<boolean>(false);
@@ -84,20 +78,20 @@ export default function UpdateBukuDigital(){
         setLoadingSend(true)
         setFormDataError({})
 
-        const formToSend: BukuDigitalInterfaceReq = {};
-        if(formData.cover ){
-            if(formData.cover !== dataFetching?.cover) formToSend.cover = formData.cover;
-        }
-        if(formData.judul) formToSend.judul = formData.judul;
-        if(formData.penulis) formToSend.penulis = formData.penulis;
-        if(formData.penerbit) formToSend.penerbit = formData.penerbit;
-        if(formData.tahun_terbit) formToSend.tahun_terbit = formData.tahun_terbit;
-        if(formData.isbn) formToSend.isbn = formData.isbn;
-        if(formData.link_book) formToSend.link_book = formData.link_book;
+        const formDataSend = new FormData();
+
+        formDataSend.append("_method", "PUT");
+        formData.cover && formDataSend.append("cover", formData.cover)
+        formData.judul && formDataSend.append("judul", formData.judul)
+        formData.penulis && formDataSend.append("penulis", formData.penulis)
+        formData.penerbit && formDataSend.append("penerbit", formData.penerbit)
+        formData.tahun_terbit && formDataSend.append("tahun_terbit", String(formData.tahun_terbit))
+        formData.isbn && formDataSend.append("isbn", formData.isbn)
+        formData.link_book && formDataSend.append("link_book", formData.link_book)
 
         try {
             mutatePut(
-                {data: formToSend, userId: id || ""},
+                {data: formDataSend, userId: id || ""},
                 {
                     onSuccess: (res) => {
                         successToast({text: res.message})
@@ -144,6 +138,13 @@ export default function UpdateBukuDigital(){
         onClose();
     }
 
+    useEffect(() => {
+        if(!isFetching && error) {
+            navigate('/data-master/buku-digital');
+            errorToast({ text: "Data tidak ditemukan" })
+        }
+    }, [isFetching])
+
     return (
         <main className="flex flex-col gap-4">
             {isLoading || isFetching ? (
@@ -166,7 +167,7 @@ export default function UpdateBukuDigital(){
                 <div className="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-4">
                     <div className="col-span-1">
                         <div className="border border-primary rounded-md flex items center justify-center md:p-4 p-2 mb-2">
-                            <img src={formData.cover || UserImage} alt="user-image" loading="lazy" className={formData.cover ? "w-full" : "w-1/2"} />
+                            <img src={previewImage || UserImage} alt="user-image" loading="lazy" className={previewImage ? "w-full" : "w-1/2"} />
                         </div>
                         <input type="file" id="cover" className="hidden" onChange={handleChangeImage} accept=".jpg,.jpeg,.png" />
                         <label htmlFor="cover">

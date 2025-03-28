@@ -3,7 +3,11 @@ import { FaBook, FaGavel, FaUniversity } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import Repository from "@/assets/images/repository.jpg";
 import Catalog from "@/assets/images/catalog.jpg";
-
+import { BiRightArrowCircle } from "react-icons/bi";
+import { FaRegFrownOpen } from "react-icons/fa";
+import { useGetNews } from "@/services/landing-page";
+import { useEffect, useMemo } from "react";
+import { Spinner } from "@nextui-org/react";
 
 export default function Home(){
 
@@ -28,16 +32,27 @@ export default function Home(){
         },
     ];
 
-    const threePointSecond: { title: string; icon: JSX.Element; subtitle: string, link: string; }[] = [
+    const twoPointSecond: { title: string; image: string; link: string; }[] = [
         { 
             title: 'Katalog Buku', 
-            image: Catalog
+            image: Catalog,
+            link: '/katalog-buku'
         },
         { 
             title: 'Skripsi, Penelitian, Tesis, Disertasi', 
-            image:Repository
+            image:Repository,
+            link: '/repository'
         },
     ];
+
+    const { data, isFetching, refetch } = useGetNews(6, 1, null, null);
+    const FETCHING_DATA = useMemo(() => {
+        return data ? data.data.data : []
+    }, [data]);
+
+    useEffect(() => {
+        refetch();
+    }, [])
 
     return (
         <div className="bg-[#e0e0e0]">
@@ -62,17 +77,53 @@ export default function Home(){
                     </div>
                 ))}
             </div>
-            <div className="grid md:grid-cols-5 grid-cols-1 xl:px-40 lg:px-36 md:px-28 sm:px-16 px-8 lg:py-20 py-10">
-                <div className="md:col-span-2 col-span-1 md:text-left text-center">
-                    <h1 className="text-3xl font-semibold text-secondary">Informasi Layanan Pustaka Untuk Anda</h1>
-                    <p className="text-base italic mt-2">Layanan yang disediakan oleh Perpustakaan Universitas Dirgantara Marsekal Suryadarma adalah</p>
+            <div className="grid xl:grid-cols-4 grid-cols-1 xl:px-40 lg:px-36 md:px-28 sm:px-16 px-4 lg:py-20 py-10 gap-7 items-center">
+                <div className="xl:col-span-2 col-span-1 lg:text-left text-center xl:pe-4">
+                    <h1 className="lg:text-3xl text-2xl font-semibold text-secondary">Informasi Layanan Pustaka</h1>
+                    <p className="lg:text-sm text-xs italic mt-2">Perpustakaan Universitas Dirgantara Marsekal Suryadarma menyediakan layanan peminjaman buku, akses jurnal, ruang baca, dan bimbingan referensi untuk mendukung kebutuhan akademik Anda.</p>
                 </div>
-                <div className="md:col-span-2 col-span-1"></div>
+                <div className="xl:col-span-2 col-span-1 grid grid-cols-2 gap-2">
+                    {twoPointSecond.map((item, index) => (
+                        <div key={index} className="relative rounded-md overflow-hidden pt-2 bg-gradient-to-r from-primary via-danger to-black sm:h-48 h-32 group">
+                            <img src={item.image} alt={item.title} className="min-h-full" />
+                            <div className="inset-0 absolute group-hover:bg-black/20 duration-300"></div>
+                            <div className="absolute -bottom-24 group-hover:bottom-0 duration-300 bg-black/40 w-full text-white p-4 font-medium md:text-base text-sm">
+                                <Link className="hover:text-blue-200 hover:underline duration-200" to={item.link}>{item.title}</Link>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
-            <div className="bg-gradient-to-b from-primary to-white lg:py-20 py-10">
-                <h1 className="text-center font-semibold text-4xl">Berita Terbaru</h1>
-                <hr className="w-72 mx-auto my-4" />
-                <Link to="/berita-informasi">Lihat Selengkapnya</Link>
+            <div className="bg-gradient-to-b from-primary via-white to-white lg:py-20 py-10">
+                <h1 className="text-center font-semibold lg:text-4xl text-2xl text-white">Berita Terbaru</h1>
+                <hr className="lg:w-72 w-40 mx-auto my-4" />
+                <div className="relative my-8 xl:px-40 lg:px-36 md:px-28 sm:px-16 px-4 w-full overflow-hidden">
+                    {isFetching && (
+                        <div className="w-full flex items-center justify-center scale-150 absolute bg-slate-50/20 inset-0 py-8">
+                            <Spinner />
+                        </div>
+                    )}
+                    {FETCHING_DATA.length > 0 ? (
+                        <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 justify-between gap-4">
+                            {FETCHING_DATA.map((item, index) => (
+                                <div className="flex flex-col items-center text-primary h-[250px] w-full overflow-hidden relative rounded-md" key={index}>
+                                    <img src={item.picture} alt="thumbnail" className="" />
+                                    <div className="absolute bottom-0 bg-black/40 backdrop-blur-lg w-full p-4 text-white text-sm font-medium">
+                                        {item.title}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="my-8">
+                            <div className="flex flex-col items-center text-primary">
+                                <FaRegFrownOpen size={72} />
+                                <span className="italic mt-2 sm:text-lg">Tidak ada berita ditemukan</span>
+                            </div>
+                        </div>
+                    )}
+                </div>
+                <Link to="/berita-informasi" className="mx-auto font-medium border border-primary rounded-md md:p-2 p-1 text-primary hover:bg-primary hover:text-white duration-300 flex items-center gap-3 max-w-48 justify-center md:text-sm text-xs">Lihat Selengkapnya <BiRightArrowCircle size={24} /></Link>
             </div>
         </div>
     )

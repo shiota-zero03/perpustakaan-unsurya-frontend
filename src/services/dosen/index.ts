@@ -5,7 +5,6 @@ import { SelectedDataReq } from "@/interface/request/Utils.interface";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
 import { IDosenDetailRes } from "@/interface/response/Dosen.interface";
-import { DosenInterfaceReq } from "@/interface/request/Dosen.interface";
 
 export const useGetListDosen = (
     limit: number | null,
@@ -52,7 +51,7 @@ export const useDeletedDosen = () => {
 export const useStoreDosen = () => {
     const queryClient = useQueryClient();
   
-    return useMutation<IDosenDetailRes, AxiosError<BaseErrorRes>, DosenInterfaceReq>({
+    return useMutation<IDosenDetailRes, AxiosError<BaseErrorRes>, FormData>({
         mutationFn: ( data ) => storeDosen(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["storeDosen"] });
@@ -76,7 +75,7 @@ export const useGetDetailDosen = (
 export const useUpdateDosen = () => {
     const queryClient = useQueryClient();
   
-    return useMutation<IDosenDetailRes, AxiosError<BaseErrorRes>, {data: DosenInterfaceReq, userId: string}>({
+    return useMutation<IDosenDetailRes, AxiosError<BaseErrorRes>, {data: FormData, userId: string}>({
         mutationFn: ( { data, userId } ) => updateDosen(data, userId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["updateDosen"] });

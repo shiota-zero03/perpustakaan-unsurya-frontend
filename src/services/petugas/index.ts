@@ -5,7 +5,7 @@ import { SelectedDataReq } from "@/interface/request/Utils.interface";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
 import { IPetugasDetailRes } from "@/interface/response/Petugas.interface";
-import { PetugasInterfaceReq } from "@/interface/request/Petugas.interface";
+
 
 export const useGetListPetugas = (
     limit: number | null,
@@ -52,7 +52,7 @@ export const useDeletedPetugas = () => {
 export const useStorePetugas = () => {
     const queryClient = useQueryClient();
   
-    return useMutation<IPetugasDetailRes, AxiosError<BaseErrorRes>, PetugasInterfaceReq>({
+    return useMutation<IPetugasDetailRes, AxiosError<BaseErrorRes>, FormData>({
         mutationFn: ( data ) => storePetugas(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["storePetugas"] });
@@ -76,7 +76,7 @@ export const useGetDetailPetugas = (
 export const useUpdatePetugas = () => {
     const queryClient = useQueryClient();
   
-    return useMutation<IPetugasDetailRes, AxiosError<BaseErrorRes>, {data: PetugasInterfaceReq, userId: string}>({
+    return useMutation<IPetugasDetailRes, AxiosError<BaseErrorRes>, {data: FormData, userId: string}>({
         mutationFn: ( { data, userId } ) => updatePetugas(data, userId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["updatePetugas"] });

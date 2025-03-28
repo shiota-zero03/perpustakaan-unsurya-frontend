@@ -1,6 +1,6 @@
 import { FaUserGraduate } from "react-icons/fa6";
 import BreadcrumbWithCustomSeparator from "@/components/Breadcrumb";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDisclosure } from "@nextui-org/react";
 import { useEffect, useMemo, useState } from "react";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
@@ -10,14 +10,14 @@ import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
 import { SelectedDataReq } from "@/interface/request/Utils.interface";
-import { PetugasInterfaceReq } from "@/interface/request/Petugas.interface";
+import { PetugasInterfaceErrorReq } from "@/interface/request/Petugas.interface";
 import { useGetDetailPetugas, usePostSelectedPetugas } from "@/services/petugas";
 
 export default function DetailPetugas(){
 
     const { id } = useParams();
 
-    const [ formData, setFormData ] = useState<PetugasInterfaceReq>({
+    const [ formData, setFormData ] = useState<PetugasInterfaceErrorReq>({
         id: null,
         profilePicture: null,
         name: null,
@@ -28,38 +28,30 @@ export default function DetailPetugas(){
         position: null
     })
 
-    const { data, isLoading, isFetching, refetch } = useGetDetailPetugas(id || "")
-    useMemo(() => {
-        if(!data) {
+    const { data, isLoading, isFetching, refetch, error } = useGetDetailPetugas(id || "")
+    const dataFetching = useMemo(() => {
+        return data ? data.data : null;
+    }, [data, id]);
+
+    useEffect(() => {
+        if (dataFetching && Object.keys(dataFetching).length > 0) {
             setFormData({
-                id: null,
-                profilePicture: null,
-                name: null,
-                gender: null,
-                email: null,
+                ...formData,
+                profilePicture: dataFetching.profile_picture,
+                id: dataFetching.id,
+                name: dataFetching.name,
+                gender: dataFetching.gender,
+                email: dataFetching.email,
                 password: null,
-                status: null,
-                position: null
+                position: dataFetching.position,
+                status: dataFetching.status === "Aktif" ? "Active" : "InActive",
             })
-            return null;
-        } else {
-            setFormData({
-                id: data.data.id,
-                profilePicture: data.data.profile_picture,
-                name: data.data.name,
-                gender: data.data.gender,
-                email: data.data.email,
-                password: null,
-                status: data.data.status === 'Aktif' ? 'Active' : 'InActive',
-                position: data.data.position
-            })
-            return data.data;
         }
-    }, [data, id])
+    }, [dataFetching])
 
     useEffect(() => {
         refetch()
-    }, [id])
+    }, [])
 
     const [ loadingSend, setLoadingSend ] = useState<boolean>(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -108,6 +100,15 @@ export default function DetailPetugas(){
         setLoadingSend(false);
         onClose();
     }
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if(!isFetching && error) {
+            navigate('/data-master/petugas');
+            errorToast({ text: "Data tidak ditemukan" })
+        }
+    }, [isFetching])
 
     return (
         <main className="flex flex-col gap-4">

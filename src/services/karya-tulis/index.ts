@@ -5,7 +5,6 @@ import { SelectedDataReq } from "@/interface/request/Utils.interface";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
 import { IKaryaTulisDetailRes } from "@/interface/response/KaryaTulis.interface";
-import { KaryaTulisInterfaceReq } from "@/interface/request/KaryaTulis.interface";
 
 export const useGetListKaryaTulis = (
     limit: number | null,
@@ -53,7 +52,7 @@ export const useDeletedKaryaTulis = () => {
 export const useStoreKaryaTulis = () => {
     const queryClient = useQueryClient();
   
-    return useMutation<IKaryaTulisDetailRes, AxiosError<BaseErrorRes>, KaryaTulisInterfaceReq>({
+    return useMutation<IKaryaTulisDetailRes, AxiosError<BaseErrorRes>, FormData>({
         mutationFn: ( data ) => storeKaryaTulis(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["storeKaryaTulis"] });
@@ -77,7 +76,7 @@ export const useGetDetailKaryaTulis = (
 export const useUpdateKaryaTulis = () => {
     const queryClient = useQueryClient();
   
-    return useMutation<IKaryaTulisDetailRes, AxiosError<BaseErrorRes>, {data: KaryaTulisInterfaceReq, userId: string}>({
+    return useMutation<IKaryaTulisDetailRes, AxiosError<BaseErrorRes>, {data: FormData, userId: string}>({
         mutationFn: ( { data, userId } ) => updateKaryaTulis(data, userId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["updateKaryaTulis"] });

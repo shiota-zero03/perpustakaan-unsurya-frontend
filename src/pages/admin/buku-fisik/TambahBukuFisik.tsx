@@ -6,7 +6,6 @@ import React, { useEffect, useState } from "react";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
 
 import UserImage from "@/assets/images/buku.png";
-import { convertFileToBase64 } from "@/utils/base64Formater";
 import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
@@ -33,6 +32,7 @@ export default function TambahDataBukuFisik(){
     })
 
     const [ formDataError, setFormDataError ] = useState<BukuFisikInterfaceErrorReq>({})
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
 
     useEffect(() => {
         setFormData({
@@ -49,21 +49,19 @@ export default function TambahDataBukuFisik(){
             stok: null,
             denda_harian: null,
         });
+        setPreviewImage(null);
         setFormDataError({})
     }, [])
     
     const handleChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const base64Icon = await convertFileToBase64(file);
-            console.log(base64Icon)
-            setFormData({
-              ...formData,
-              cover: base64Icon,
-            });
-          } else {
-            setFormData((prev) => ({ ...prev, cover: null }));
-          }
+        const file = e.target.files?.[0];
+        if (file) {
+            setFormData({ ...formData, cover: file });
+            setPreviewImage(URL.createObjectURL(file));
+        } else {
+            setFormData({ ...formData, cover: null });
+            setPreviewImage(null);
+        }
     }
 
     const [ loadingSend, setLoadingSend ] = useState<boolean>(false);
@@ -73,9 +71,25 @@ export default function TambahDataBukuFisik(){
     const handleSubmit = () => {
         setLoadingSend(true)
         setFormDataError({})
+
+        const formDataSend = new FormData();
+
+        formData.no_urut && formDataSend.append("no_urut", formData.no_urut)
+        formData.cover && formDataSend.append("cover", formData.cover)
+        formData.kode_klasifikasi && formDataSend.append("kode_klasifikasi", formData.kode_klasifikasi)
+        formData.judul && formDataSend.append("judul", formData.judul)
+        formData.penulis && formDataSend.append("penulis", formData.penulis)
+        formData.penerbit && formDataSend.append("penerbit", formData.penerbit)
+        formData.tahun_terbit && formDataSend.append("tahun_terbit", String(formData.tahun_terbit))
+        formData.isbn && formDataSend.append("isbn", formData.isbn)
+        formData.tanggal_masuk && formDataSend.append("tanggal_masuk", formData.tanggal_masuk)
+        formData.kode_rak && formDataSend.append("kode_rak", formData.kode_rak)
+        formData.stok && formDataSend.append("stok", String(formData.stok))
+        formData.denda_harian && formDataSend.append("denda_harian", String(formData.denda_harian))
+
         try {
             mutatePost(
-                formData,
+                formDataSend,
                 {
                     onSuccess: (res) => {
                         successToast({text: res.message})
@@ -144,7 +158,7 @@ export default function TambahDataBukuFisik(){
                 <div className="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-4">
                     <div className="col-span-1">
                         <div className="border border-primary rounded-md flex items center justify-center md:p-4 p-2 mb-2">
-                            <img src={formData.cover || UserImage} alt="user-image" loading="lazy" className={formData.cover ? "w-full" : "w-1/2"} />
+                            <img src={previewImage || UserImage} alt="user-image" loading="lazy" className={previewImage ? "w-full" : "w-1/2"} />
                         </div>
                         <input type="file" id="cover" className="hidden" onChange={handleChangeImage} accept=".jpg,.jpeg,.png" />
                         <label htmlFor="cover">

@@ -1,12 +1,13 @@
 import { FaBook } from "react-icons/fa6";
 import BreadcrumbWithCustomSeparator from "@/components/Breadcrumb";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 
 import UserImage from "@/assets/images/buku.png";
-import { formatDateDMYIn, formatDateYMD } from "@/utils/dateFormat";
+import { formatDateDMYIn } from "@/utils/dateFormat";
 import { useGetDetailBukuFisik } from "@/services/buku-fisik";
 import { BukuFisikInterfaceReq } from "@/interface/request/BukuFisik.interface";
+import { errorToast } from "@/utils/toastMessage";
 
 export default function DetailBukuFisik(){
 
@@ -27,46 +28,45 @@ export default function DetailBukuFisik(){
         denda_harian: null,
     })
 
-    const { data, isLoading, isFetching, refetch } = useGetDetailBukuFisik(id || "")
-    useMemo(() => {
-        if(!data) {
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+    const { data, isLoading, isFetching, refetch, error } = useGetDetailBukuFisik(id || "")
+    const dataFetching = useMemo(() => {
+        return data ? data.data : null;
+    }, [data, id]);
+
+    useEffect(() => {
+        if (dataFetching && Object.keys(dataFetching).length > 0) {
             setFormData({
-                no_urut: null,
-                cover: null,
-                kode_klasifikasi: null,
-                judul: null,
-                penulis: null,
-                penerbit: null,
-                tahun_terbit: null,
-                isbn: null,
-                tanggal_masuk: null,
-                kode_rak: null,
-                stok: null,
-                denda_harian: null,
+                ...formData,
+                no_urut: dataFetching.no_urut,
+                kode_klasifikasi: dataFetching.kode_klasifikasi,
+                judul: dataFetching.judul,
+                penulis: dataFetching.penulis,
+                penerbit: dataFetching.penerbit,
+                tahun_terbit: dataFetching.tahun_terbit,
+                isbn: dataFetching.isbn,
+                tanggal_masuk: dataFetching.tanggal_masuk,
+                kode_rak: dataFetching.kode_rak,
+                stok: dataFetching.stok,
+                denda_harian: dataFetching.denda_harian,
             })
-            return null;
-        } else {
-            setFormData({
-                no_urut: data.data.no_urut,
-                cover: data.data.cover,
-                kode_klasifikasi: data.data.kode_klasifikasi,
-                judul: data.data.judul,
-                penulis: data.data.penulis,
-                penerbit: data.data.penerbit,
-                tahun_terbit: data.data.tahun_terbit,
-                isbn: data.data.isbn,
-                tanggal_masuk: data.data.tanggal_masuk ? formatDateYMD(data.data.tanggal_masuk) : "",
-                kode_rak: data.data.kode_rak,
-                stok: data.data.stok,
-                denda_harian: data.data.denda_harian,
-            })
-            return data.data;
+            setPreviewImage(dataFetching.cover)
         }
-    }, [data, id])
+    }, [dataFetching])
 
     useEffect(() => {
         refetch()
     }, [id])
+
+
+    const navigate = useNavigate();
+    useEffect(() => {
+        if(!isFetching && error) {
+            navigate('/data-master/buku-fisik');
+            errorToast({ text: "Data tidak ditemukan" })
+        }
+    }, [isFetching])
 
     return (
         <main className="flex flex-col gap-4">
@@ -83,7 +83,7 @@ export default function DetailBukuFisik(){
                 <div className="grid lg:grid-cols-4 grid-cols-1 gap-4">
                     <div className="col-span-1">
                         <div className="border border-primary rounded-md flex items center justify-center md:p-4 p-2 mb-2">
-                            <img src={formData.cover || UserImage} alt="user-image" loading="lazy" className="w-full" />
+                            <img src={previewImage || UserImage} alt="user-image" loading="lazy" className="w-full" />
                         </div>
                     </div>
                     <div className="lg:col-span-3 sm:col-span-2 col-span-1 flex flex-col gap-1">

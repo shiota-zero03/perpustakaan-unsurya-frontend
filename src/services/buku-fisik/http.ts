@@ -1,5 +1,4 @@
 import instance from "@/api/axios";
-import { BukuFisikInterfaceReq } from "@/interface/request/BukuFisik.interface";
 import { SelectedDataReq } from "@/interface/request/Utils.interface";
 import { IBukuFisikDetailRes, IBukuFisikListRes } from "@/interface/response/BukuFisik.interface";
 import { TrueResponseInterface } from "@/interface/response/Utils.interface";
@@ -34,7 +33,7 @@ export const deleteBukuFisik = async ( userId: string ): Promise<TrueResponseInt
   return response.data;
 };
 
-export const storeBukuFisik = async ( data: BukuFisikInterfaceReq ): Promise<IBukuFisikDetailRes> => {
+export const storeBukuFisik = async ( data: FormData ): Promise<IBukuFisikDetailRes> => {
   const response = await instance.post(`/buku-fisik/store`, data);
   return response.data;
 };
@@ -44,8 +43,8 @@ export const getDetailBukuFisik = async ( userId: string ): Promise<IBukuFisikDe
   return response.data;
 };
 
-export const updateBukuFisik = async ( data: BukuFisikInterfaceReq, userId: string ): Promise<IBukuFisikDetailRes> => {
-  const response = await instance.put(`/buku-fisik/update/${userId}`, data);
+export const updateBukuFisik = async ( data: FormData, userId: string ): Promise<IBukuFisikDetailRes> => {
+  const response = await instance.post(`/buku-fisik/update/${userId}`, data);
   return response.data;
 };
 

@@ -4,7 +4,6 @@ import { TrueResponseInterface } from "@/interface/response/Utils.interface";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
 import { IBannerDetailRes } from "@/interface/response/Banner.interface";
-import { BannerInterfaceReq } from "@/interface/request/Banner.interface";
 
 export const useGetListBanner = (
     limit: number | null,
@@ -35,7 +34,7 @@ export const useDeletedBanner = () => {
 export const useStoreBanner = () => {
     const queryClient = useQueryClient();
   
-    return useMutation<IBannerDetailRes, AxiosError<BaseErrorRes>, BannerInterfaceReq>({
+    return useMutation<IBannerDetailRes, AxiosError<BaseErrorRes>, FormData>({
         mutationFn: ( data ) => storeBanner(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["storeBanner"] });
@@ -59,7 +58,7 @@ export const useGetDetailBanner = (
 export const useUpdateBanner = () => {
     const queryClient = useQueryClient();
   
-    return useMutation<IBannerDetailRes, AxiosError<BaseErrorRes>, {data: BannerInterfaceReq, id: string}>({
+    return useMutation<IBannerDetailRes, AxiosError<BaseErrorRes>, {data: FormData, id: string}>({
         mutationFn: ( { data, id } ) => updateBanner(data, id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["updateBanner"] });

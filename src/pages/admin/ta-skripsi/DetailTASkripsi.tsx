@@ -1,19 +1,20 @@
 import { FaBook } from "react-icons/fa6";
 import BreadcrumbWithCustomSeparator from "@/components/Breadcrumb";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 
 import UserImage from "@/assets/images/buku.png";
 import { formatDateDMYIn } from "@/utils/dateFormat";
 import { useGetDetailKaryaTulis } from "@/services/karya-tulis";
-import { KaryaTulisInterfaceReq } from "@/interface/request/KaryaTulis.interface";
+import { KaryaTulisInterfaceErrorReq } from "@/interface/request/KaryaTulis.interface";
 import { BsFiletypePdf } from "react-icons/bs";
+import { errorToast } from "@/utils/toastMessage";
 
 export default function DetailTASkripsi(){
 
     const { id } = useParams();
 
-    const [ formData, setFormData ] = useState<KaryaTulisInterfaceReq>({
+    const [ formData, setFormData ] = useState<KaryaTulisInterfaceErrorReq>({
         judul: null,
         cover: null,
         penulis: null,
@@ -32,53 +33,46 @@ export default function DetailTASkripsi(){
 
     const [ document, setDocument ] = useState<{ id: number | null; file: string; title: string; }[]>([])
 
-    const { data, isLoading, isFetching, refetch } = useGetDetailKaryaTulis(id || "")
-    useMemo(() => {
-        if(!data) {
+    const { data, isLoading, isFetching, refetch, error } = useGetDetailKaryaTulis(id || "")
+    const dataFetching = useMemo(() => {
+        return data ? data.data : null;
+    }, [data, id]);
+
+    useEffect(() => {
+        if (dataFetching && Object.keys(dataFetching).length > 0) {
             setFormData({
-                judul: null,
-                cover: null,
-                penulis: null,
-                nim: null,
-                facultyId: null,
-                studyProgramId: null,
-                tahun_terbit: null,
-                jenis: null,
-                no_urut: null,
-                kode_klasifikasi: null,
-                tanggal_masuk: null,
-                kode_rak: null,
-                denda_harian: null,
-                abstrak: null,
+                judul: dataFetching.judul,
+                cover: dataFetching.cover,
+                penulis: dataFetching.penulis,
+                nim: dataFetching.nim,
+                facultyName: dataFetching.faculty?.name || "",
+                facultyId: String(dataFetching.faculty?.id || ""),
+                studyProgramName: dataFetching.department?.name,
+                studyProgramId: String(dataFetching.department?.id || ""),
+                tahun_terbit: String(dataFetching.tahun_terbit || ""),
+                jenis: dataFetching.jenis,
+                no_urut: dataFetching.no_urut,
+                kode_klasifikasi: dataFetching.kode_klasifikasi,
+                tanggal_masuk: dataFetching.tanggal_masuk,
+                kode_rak: dataFetching.kode_rak,
+                denda_harian: String(dataFetching.denda_harian || ""),
+                abstrak: dataFetching.abstrak,
             })
-            return null;
-        } else {
-            setFormData({
-                judul: data.data.judul,
-                cover: data.data.cover,
-                penulis: data.data.penulis,
-                nim: data.data.nim,
-                facultyName: data.data.faculty?.name,
-                facultyId: data.data.faculty?.id,
-                studyProgramName: data.data.department?.name,
-                studyProgramId: data.data.department?.id,
-                tahun_terbit: data.data.tahun_terbit,
-                jenis: data.data.jenis,
-                no_urut: data.data.no_urut,
-                kode_klasifikasi: data.data.kode_klasifikasi,
-                tanggal_masuk: data.data.tanggal_masuk,
-                kode_rak: data.data.kode_rak,
-                denda_harian: data.data.denda_harian,
-                abstrak: data.data.abstrak,
-            })
-            setDocument(data.data.dokumen)
-            return data.data;
+            setDocument(dataFetching.dokumen)
         }
-    }, [data, id])
+    }, [dataFetching])
 
     useEffect(() => {
         refetch()
-    }, [id])
+    }, [])
+
+    const navigate = useNavigate();
+    useEffect(() => {
+        if(!isFetching && error) {
+            navigate('/data-master/ta-&-skripsi');
+            errorToast({ text: "Data tidak ditemukan" })
+        }
+    }, [isFetching])
 
     return (
         <main className="flex flex-col gap-4">

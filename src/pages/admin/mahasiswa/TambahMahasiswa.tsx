@@ -6,7 +6,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
 
 import UserImage from "@/assets/images/user.png";
-import { convertFileToBase64 } from "@/utils/base64Formater";
 import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
@@ -31,28 +30,13 @@ export default function TambahDataMahasiswa(){
         department: null,
         validUntil: null
     })
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
 
     const [ formDataError, setFormDataError ] = useState<MahasiswaInterfaceErrorReq>({})
 
-    useEffect(() => {
-        setFormData({
-            profilePicture: null,
-            name: null,
-            nim: null,
-            gender: null,
-            phoneNumber: null,
-            email: null,
-            password: null,
-            status: null,
-            faculty: null,
-            department: null,
-            validUntil: null
-        });
-        setFormDataError({});
-    }, [])
-
     const {
         data: facultyData,
+        refetch: facultyRefetch,
         isFetching: facultyIsFetching
     } = useGetAllFaculty();
 
@@ -73,6 +57,26 @@ export default function TambahDataMahasiswa(){
     }, [prodiData])
 
     useEffect(() => {
+        setFormData({
+            profilePicture: null,
+            name: null,
+            nim: null,
+            gender: null,
+            phoneNumber: null,
+            email: null,
+            password: null,
+            status: null,
+            faculty: null,
+            department: null,
+            validUntil: null
+        });
+        setPreviewImage(null)
+        setFormDataError({});
+        facultyRefetch();
+        prodiRefetch();
+    }, [])
+
+    useEffect(() => {
         prodiRefetch();
         setFormData({
             ...formData,
@@ -81,17 +85,14 @@ export default function TambahDataMahasiswa(){
     }, [formData.faculty])
     
     const handleChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const base64Icon = await convertFileToBase64(file);
-            console.log(base64Icon)
-            setFormData({
-              ...formData,
-              profilePicture: base64Icon,
-            });
-          } else {
-            setFormData((prev) => ({ ...prev, profilePicture: null }));
-          }
+        const file = e.target.files?.[0];
+        if (file) {
+            setFormData({ ...formData, profilePicture: file });
+            setPreviewImage(URL.createObjectURL(file));
+        } else {
+            setFormData({ ...formData, profilePicture: null });
+            setPreviewImage(null);
+        }
     }
 
     const [ loadingSend, setLoadingSend ] = useState<boolean>(false);
@@ -101,9 +102,24 @@ export default function TambahDataMahasiswa(){
     const handleSubmit = () => {
         setLoadingSend(true)
         setFormDataError({})
+
+        const formDataSend = new FormData();
+
+        formData.profilePicture && formDataSend.append("profilePicture", formData.profilePicture)
+        formData.name && formDataSend.append("name", formData.name)
+        formData.nim && formDataSend.append("nim", formData.nim)
+        formData.gender && formDataSend.append("gender", formData.gender)
+        formData.phoneNumber && formDataSend.append("phoneNumber", formData.phoneNumber)
+        formData.email && formDataSend.append("email", formData.email)
+        formData.password && formDataSend.append("password", formData.password)
+        formData.status && formDataSend.append("status", formData.status)
+        formData.faculty && formDataSend.append("faculty", String(formData.faculty))
+        formData.department && formDataSend.append("department", String(formData.department))
+        formData.validUntil && formDataSend.append("validUntil", formData.validUntil)
+
         try {
             mutatePost(
-                formData,
+                formDataSend,
                 {
                     onSuccess: (res) => {
                         successToast({text: res.message})
@@ -171,7 +187,7 @@ export default function TambahDataMahasiswa(){
                 <div className="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-4">
                     <div className="col-span-1">
                         <div className="border border-primary rounded-md flex items center justify-center md:p-4 p-2 mb-2">
-                            <img src={formData.profilePicture || UserImage} alt="user-image" loading="lazy" className="w-full" />
+                            <img src={previewImage || UserImage} alt="user-image" loading="lazy" className="w-full" />
                         </div>
                         <input type="file" id="profilePicture" className="hidden" onChange={handleChangeImage} accept=".jpg,.jpeg,.png" />
                         <label htmlFor="profilePicture">

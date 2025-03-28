@@ -17,10 +17,13 @@ import ImportBukuDigital from "@/components/Modals/import/ImportBuukuDigital";
 import { useDeletedBukuDigital, useGetListBukuDigital, usePostSelectedBukuDigital } from "@/services/buku-digital";
 import { BukuDigitalListRes } from "@/interface/response/BukuDigital.interface";
 import { DataBukuDigitalExport } from "@/services/buku-digital/http";
+import store from "@/redux/store";
 
 export default function DataBukuDigital(){
 
     const navigate = useNavigate();
+
+    const { auth } = store.getState();
 
     const limit = 10;
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -143,8 +146,8 @@ export default function DataBukuDigital(){
                     return (
                         <div className="flex items-center gap-2">
                             <Button onPress={() => navigate(`/data-master/buku-digital/detail/${id}`)} isIconOnly size="sm" variant="bordered" color="primary"><BsEye /></Button>
-                            <Button onPress={() => navigate(`/data-master/buku-digital/edit-data/${id}`)} isIconOnly size="sm" variant="bordered" color="warning"><BiEdit /></Button>
-                            <Button onPress={() => deletedAction(id)} isIconOnly size="sm" variant="bordered" color="danger"><BiTrash /></Button>
+                            {auth.role !== "Student" && auth.role !== "Teacher" && <Button onPress={() => navigate(`/data-master/buku-digital/edit-data/${id}`)} isIconOnly size="sm" variant="bordered" color="warning"><BiEdit /></Button>}
+                            {auth.role !== "Student" && auth.role !== "Teacher" && <Button onPress={() => deletedAction(id)} isIconOnly size="sm" variant="bordered" color="danger"><BiTrash /></Button>}
                         </div>
                     );
                 },
@@ -319,38 +322,40 @@ export default function DataBukuDigital(){
                 }}
             />
             <BreadcrumbWithCustomSeparator icon={FaBook} />
-            <div className="bg-white p-4 border shadow rounded-md flex flex-col gap-4">
-                <div className="flex items-center justify-between sm:flex-row flex-col gap-2">
-                    <Button
-                        size="sm"
-                        radius="sm"
-                        color="primary"
-                        className="font-semibold flex items-center"
-                        onPress={() => navigate('/data-master/buku-digital/tambah-data')}
-                    >
-                        <BsPlusSquareFill /> Tambah Data Buku
-                    </Button>
-                    <div className="flex items-center gap-2 sm:flex-row flex-col">
+            {auth.role !== "Student" && auth.role !== "Teacher" && 
+                <div className="bg-white p-4 border shadow rounded-md flex flex-col gap-4">
+                    <div className="flex items-center justify-between sm:flex-row flex-col gap-2">
                         <Button
                             size="sm"
                             radius="sm"
-                            className="border border-primary text-primary font-semibold flex items-center sm:w-auto w-full bg-transparent"
-                            onPress={onOpenImport}
+                            color="primary"
+                            className="font-semibold flex items-center"
+                            onPress={() => navigate('/data-master/buku-digital/tambah-data')}
                         >
-                            <BiUpload size={16} /> Import Data
+                            <BsPlusSquareFill /> Tambah Data Buku
                         </Button>
-                        <Button
-                            onPress={handleDownloadExport}
-                            isLoading={isLoadingExport}
-                            size="sm"
-                            radius="sm"
-                            className="bg-black text-white font-semibold flex items-center sm:w-auto w-full"
-                        >
-                            <BiDownload size={16} /> Export Data
-                        </Button>
+                        <div className="flex items-center gap-2 sm:flex-row flex-col">
+                            <Button
+                                size="sm"
+                                radius="sm"
+                                className="border border-primary text-primary font-semibold flex items-center sm:w-auto w-full bg-transparent"
+                                onPress={onOpenImport}
+                            >
+                                <BiUpload size={16} /> Import Data
+                            </Button>
+                            <Button
+                                onPress={handleDownloadExport}
+                                isLoading={isLoadingExport}
+                                size="sm"
+                                radius="sm"
+                                className="bg-black text-white font-semibold flex items-center sm:w-auto w-full"
+                            >
+                                <BiDownload size={16} /> Export Data
+                            </Button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
             <div className="bg-white p-4 border shadow rounded-md flex flex-col gap-4">
                 <div className="flex sm:items-end items-center justify-between sm:flex-row flex-col gap-2">
                     <div className="flex items-center sm:flex-row flex-col gap-2 w-full">

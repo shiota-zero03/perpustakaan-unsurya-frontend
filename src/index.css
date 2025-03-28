@@ -81,3 +81,7 @@ input[type="file"] {
     font-size: 14px;
     width: 100%;
 }
+
+.ck-editor__main, .ck-content {
+    height: 80vh !important;
+}

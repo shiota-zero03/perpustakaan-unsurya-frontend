@@ -21,4 +21,5 @@ export interface PaginationBaseRes {
   totalPages: number | null;
   totalItems: number | null;
   limit: number | null;
+  hasMore?: boolean | null;
 }

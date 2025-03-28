@@ -1,17 +1,38 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import Logo from "@/assets/images/logo.png";
 import { FaCaretDown, FaRightToBracket, FaBars, FaX } from "react-icons/fa6";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function LandingLayout() {
     const [openMenu, setOpenMenu] = useState<number | null>(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+    const [scrolling, setScrolling] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolling(window.scrollY > 50);
+            setOpenMenu(null);
+        };
+
+        document.addEventListener("scroll", handleScroll);
+        return () => document.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (!(event.target as HTMLElement).closest(".menu-container")) {
+                setOpenMenu(null);
+            }
+        };
+
+        document.addEventListener("click", handleClickOutside);
+        return () => document.removeEventListener("click", handleClickOutside);
+    }, []);
 
     const toggleMenu = (index: number, link: string) => {
         setOpenMenu(openMenu === index ? null : index);
-        if(index !== 3) navigate(link)
+        if (index !== 3) navigate(link);
     };
 
     const toggleMobileMenu = () => {
@@ -37,23 +58,22 @@ export default function LandingLayout() {
     return (
         <>
             {/* Navbar */}
-            <div className="fixed w-full flex items-center justify-between bg-white/10 backdrop-blur-md border-b shadow-md py-2 px-8 z-50">
-                <div className="flex items-center gap-2">
-                    <img src={Logo} alt="logo" className="w-12" />
-                    <div className="flex flex-col">
-                        <span className="text-primary font-bold text-sm">
-                            Perpustakaan
-                        </span>
-                        <div className="text-[10px] text-primary italic ms-2 leading-[11px]">
-                            Universitas Dirgantara
-                            <br />
-                            <span className="ms-2">Marsekal Suryadarma</span>
+            <div className={`fixed w-full flex items-center justify-between py-2 px-8 z-50 transition-all duration-300 ${scrolling ? "bg-white shadow-md" : "bg-white/40 backdrop-blur-md border-b"}`}>
+                <Link to={"/"}>
+                    <div className="flex items-center gap-2">
+                        <img src={Logo} alt="logo" className="w-12" />
+                        <div className="flex flex-col">
+                            <span className="text-primary font-bold text-sm">Perpustakaan</span>
+                            <div className="text-[10px] text-primary italic ms-2 leading-[11px]">
+                                Universitas Dirgantara<br />
+                                <span className="ms-2">Marsekal Suryadarma</span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </Link>
 
                 {/* Desktop Menu */}
-                <div className="hidden lg:flex items-center gap-4">
+                <div className="hidden lg:flex items-center gap-4 menu-container">
                     {menu.map((item, index) => (
                         <div key={index} className="relative">
                             <Link
@@ -84,10 +104,7 @@ export default function LandingLayout() {
                 </div>
 
                 {/* Mobile Menu Button */}
-                <button
-                    className="lg:hidden text-secondary"
-                    onClick={toggleMobileMenu}
-                >
+                <button className="lg:hidden text-secondary" onClick={toggleMobileMenu}>
                     {mobileMenuOpen ? <FaX size={24} /> : <FaBars size={24} />}
                 </button>
             </div>
@@ -128,9 +145,11 @@ export default function LandingLayout() {
 
             <Outlet />
 
-            <div className="bg-secondary text-white text-center font-medium py-2">
-                Perpustakaan UNSURYA &copy; { new Date().getFullYear() }. All right reserve
-            </div>
+            <footer>
+                <div className="bg-secondary text-white text-center font-medium py-2">
+                    Perpustakaan UNSURYA &copy; {new Date().getFullYear()}. All rights reserved.
+                </div>
+            </footer>
         </>
     );
 }

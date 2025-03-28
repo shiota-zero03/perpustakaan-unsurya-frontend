@@ -4,7 +4,9 @@ export interface KaryaTulisInterfaceErrorReq {
     penulis?: string | null;
     nim?: string | null;
     facultyId?: string | null;
+    facultyName?: string | null;
     studyProgramId?: string | null;
+    studyProgramName?: string | null;
     tahun_terbit?: string | null;
     jenis?: string | null;
     no_urut?: string | null;
@@ -17,7 +19,7 @@ export interface KaryaTulisInterfaceErrorReq {
 }
 export interface KaryaTulisInterfaceReq {
     judul?: string | null;
-    cover?: string | null;
+    cover?: File | null;
     penulis?: string | null;
     nim?: string | null;
     facultyId?: number | null;
@@ -35,7 +37,7 @@ export interface KaryaTulisInterfaceReq {
 
     document?: {
         id: number | null;
-        file: string;
+        file: File | null;
         title: string;
     }[];
 }

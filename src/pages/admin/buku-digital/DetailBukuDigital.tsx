@@ -1,17 +1,18 @@
 import { FaBook } from "react-icons/fa6";
 import BreadcrumbWithCustomSeparator from "@/components/Breadcrumb";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 
 import UserImage from "@/assets/images/buku.png";
 import { useGetDetailBukuDigital } from "@/services/buku-digital";
-import { BukuDigitalInterfaceReq } from "@/interface/request/BukuDigital.interface";
+import { BukuDigitalInterfaceErrorReq } from "@/interface/request/BukuDigital.interface";
+import { errorToast } from "@/utils/toastMessage";
 
 export default function DetailBukuDigital(){
 
     const { id } = useParams();
 
-    const [ formData, setFormData ] = useState<BukuDigitalInterfaceReq>({
+    const [ formData, setFormData ] = useState<BukuDigitalInterfaceErrorReq>({
         cover: null,
         judul: null,
         penulis: null,
@@ -21,36 +22,38 @@ export default function DetailBukuDigital(){
         link_book: null,
     })
 
-    const { data, isLoading, isFetching, refetch } = useGetDetailBukuDigital(id || "")
-    useMemo(() => {
-        if(!data) {
-            setFormData({
-                cover: null,
-                judul: null,
-                penulis: null,
-                penerbit: null,
-                tahun_terbit: null,
-                isbn: null,
-                link_book: null,
-            })
-            return null;
-        } else {
-            setFormData({
-                cover: data.data.cover,
-                judul: data.data.judul,
-                penulis: data.data.penulis,
-                penerbit: data.data.penerbit,
-                tahun_terbit: data.data.tahun_terbit,
-                isbn: data.data.isbn,
-                link_book: data.data.link_book,
-            })
-            return data.data;
-        }
-    }, [data, id])
+    const { data, isLoading, isFetching, refetch, error } = useGetDetailBukuDigital(id || "")
+    const dataFetching = useMemo(() => {
+        return data ? data.data : null;
+    }, [data, id]);
 
     useEffect(() => {
-        refetch()
-    }, [id])
+        if (dataFetching && Object.keys(dataFetching).length > 0) {
+            setFormData({
+                ...formData,
+                cover: dataFetching.cover,
+                judul: dataFetching.judul,
+                penulis: dataFetching.penulis,
+                penerbit: dataFetching.penerbit,
+                tahun_terbit: String(dataFetching.tahun_terbit),
+                isbn: dataFetching.isbn,
+                link_book: dataFetching.link_book,
+            })
+        }
+    }, [dataFetching])
+
+    useEffect(() => {
+        refetch();
+    }, [])
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if(!isFetching && error) {
+            navigate('/data-master/buku-digital');
+            errorToast({ text: "Data tidak ditemukan" })
+        }
+    }, [isFetching])
 
     return (
         <main className="flex flex-col gap-4">

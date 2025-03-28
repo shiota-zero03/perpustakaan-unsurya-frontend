@@ -1,4 +1,3 @@
-import { convertFileToBase64 } from "@/utils/base64Formater";
 import { errorToast } from "@/utils/toastMessage";
 import { Button, Input, Modal, ModalBody, ModalContent, ModalHeader } from "@nextui-org/react";
 import { useEffect, useState } from "react";
@@ -7,12 +6,12 @@ import { BiX } from "react-icons/bi";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  confirmAction: ( title: string, file: string ) => void;
+  confirmAction: ( title: string, file: File | null ) => void;
 }
 
 const AddFileKarya = ({ isOpen, onClose, confirmAction }: Props) => {
 
-    const [ file, setFile ] = useState<string>("");
+    const [ file, setFile ] = useState<File | null>(null);
     const [ title, setTitle ] = useState<string>("");
 
     const handleSave = () => {
@@ -25,17 +24,16 @@ const AddFileKarya = ({ isOpen, onClose, confirmAction }: Props) => {
     }
 
     const handleChangeFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const base64Icon = await convertFileToBase64(file);
-            setFile(base64Icon);
-        } else {
-            setFile("");
-        }
+      const file = e.target.files?.[0];
+      if (file) {
+          setFile(file);
+      } else {
+          setFile(null);
+      }
     }
 
     useEffect(() => {
-        setFile("");
+        setFile(null);
         setTitle("");
     }, [isOpen])
 

@@ -1,5 +1,4 @@
 import instance from "@/api/axios";
-import { KaryaTulisInterfaceReq } from "@/interface/request/KaryaTulis.interface";
 import { SelectedDataReq } from "@/interface/request/Utils.interface";
 import { IKaryaTulisDetailRes, IKaryaTulisListRes } from "@/interface/response/KaryaTulis.interface";
 import { TrueResponseInterface } from "@/interface/response/Utils.interface";
@@ -36,7 +35,7 @@ export const deleteKaryaTulis = async ( userId: string ): Promise<TrueResponseIn
   return response.data;
 };
 
-export const storeKaryaTulis = async ( data: KaryaTulisInterfaceReq ): Promise<IKaryaTulisDetailRes> => {
+export const storeKaryaTulis = async ( data: FormData ): Promise<IKaryaTulisDetailRes> => {
   const response = await instance.post(`/karya-tulis/store`, data);
   return response.data;
 };
@@ -46,8 +45,8 @@ export const getDetailKaryaTulis = async ( userId: string ): Promise<IKaryaTulis
   return response.data;
 };
 
-export const updateKaryaTulis = async ( data: KaryaTulisInterfaceReq, userId: string ): Promise<IKaryaTulisDetailRes> => {
-  const response = await instance.put(`/karya-tulis/update/${userId}`, data);
+export const updateKaryaTulis = async ( data: FormData, userId: string ): Promise<IKaryaTulisDetailRes> => {
+  const response = await instance.post(`/karya-tulis/update/${userId}`, data);
   return response.data;
 };
 

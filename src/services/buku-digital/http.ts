@@ -1,5 +1,4 @@
 import instance from "@/api/axios";
-import { BukuDigitalInterfaceReq } from "@/interface/request/BukuDigital.interface";
 import { SelectedDataReq } from "@/interface/request/Utils.interface";
 import { IBukuDigitalDetailRes, IBukuDigitalListRes } from "@/interface/response/BukuDigital.interface";
 import { TrueResponseInterface } from "@/interface/response/Utils.interface";
@@ -34,7 +33,7 @@ export const deleteBukuDigital = async ( userId: string ): Promise<TrueResponseI
   return response.data;
 };
 
-export const storeBukuDigital = async ( data: BukuDigitalInterfaceReq ): Promise<IBukuDigitalDetailRes> => {
+export const storeBukuDigital = async ( data: FormData ): Promise<IBukuDigitalDetailRes> => {
   const response = await instance.post(`/buku-digital/store`, data);
   return response.data;
 };
@@ -44,8 +43,8 @@ export const getDetailBukuDigital = async ( userId: string ): Promise<IBukuDigit
   return response.data;
 };
 
-export const updateBukuDigital = async ( data: BukuDigitalInterfaceReq, userId: string ): Promise<IBukuDigitalDetailRes> => {
-  const response = await instance.put(`/buku-digital/update/${userId}`, data);
+export const updateBukuDigital = async ( data: FormData, userId: string ): Promise<IBukuDigitalDetailRes> => {
+  const response = await instance.post(`/buku-digital/update/${userId}`, data);
   return response.data;
 };
 

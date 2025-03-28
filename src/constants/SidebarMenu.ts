@@ -120,19 +120,41 @@ export const AdminSidebar: PropsMenu[] = [
                 link: '/cms/profil-perpustakaan'
             },
             {
-                text: 'Petunjuk',
-                name: 'petunjuk',
-                link: '/cms/petunjuk'
-            },
-            {
-                text: 'Prosedur',
-                name: 'prosedur',
-                link: '/cms/prosedur'
-            },
-            {
                 text: 'Berita dan informasi',
                 name: 'berita-informasi',
                 link: '/cms/berita-informasi'
+            },
+        ]
+    },
+];
+
+export const StudentSidebar: PropsMenu[] = [
+    {
+        text: 'Dashboard',
+        name: 'dashboard',
+        link: '/dashboard',
+        icon: IoGridOutline
+    },
+    {
+        text: 'Data Master',
+        name: 'data-master',
+        link: '#',
+        icon: BsDatabaseFillGear,
+        subMenu: [
+            {
+                text: 'Data Buku Fisik',
+                name: 'buku-fisik',
+                link: '/data-master/buku-fisik'
+            },
+            {
+                text: 'Data Buku Digital',
+                name: 'buku-digital',
+                link: '/data-master/buku-digital'
+            },
+            {
+                text: 'Data TA/Skripsi',
+                name: 'ta-&-skripsi',
+                link: '/data-master/ta-&-skripsi'
             },
         ]
     },

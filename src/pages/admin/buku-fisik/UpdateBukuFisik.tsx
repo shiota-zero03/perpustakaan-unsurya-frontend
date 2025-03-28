@@ -6,7 +6,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
 
 import UserImage from "@/assets/images/buku.png";
-import { convertFileToBase64 } from "@/utils/base64Formater";
 import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
@@ -34,61 +33,51 @@ export default function UpdateDataBukuFisik(){
         denda_harian: null,
     })
 
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
+
     const [ formDataError, setFormDataError ] = useState<BukuFisikInterfaceErrorReq>({})
 
-    const { data, isLoading, isFetching, refetch } = useGetDetailBukuFisik(id || "")
+    const { data, isLoading, isFetching, refetch, error } = useGetDetailBukuFisik(id || "")
 
     const dataFetching = useMemo(() => {
-        if(!data) {
-            setFormData({
-                no_urut: null,
-                cover: null,
-                kode_klasifikasi: null,
-                judul: null,
-                penulis: null,
-                penerbit: null,
-                tahun_terbit: null,
-                isbn: null,
-                tanggal_masuk: null,
-                kode_rak: null,
-                stok: null,
-                denda_harian: null,
-            })
-            return null;
-        } else {
-            setFormData({
-                no_urut: data.data.no_urut,
-                cover: data.data.cover,
-                kode_klasifikasi: data.data.kode_klasifikasi,
-                judul: data.data.judul,
-                penulis: data.data.penulis,
-                penerbit: data.data.penerbit,
-                tahun_terbit: data.data.tahun_terbit,
-                isbn: data.data.isbn,
-                tanggal_masuk: data.data.tanggal_masuk,
-                kode_rak: data.data.kode_rak,
-                stok: data.data.stok,
-                denda_harian: data.data.denda_harian,
-            })
-            return data.data;
-        }
-    }, [data, id])
+        return data ? data.data : null;
+    }, [data, id]);
 
     useEffect(() => {
-        refetch()
-    }, [id])
+        if (dataFetching && Object.keys(dataFetching).length > 0) {
+            setFormData({
+                ...formData,
+                cover: null,
+                no_urut: dataFetching.no_urut,
+                kode_klasifikasi: dataFetching.kode_klasifikasi,
+                judul: dataFetching.judul,
+                penulis: dataFetching.penulis,
+                penerbit: dataFetching.penerbit,
+                tahun_terbit: dataFetching.tahun_terbit,
+                isbn: dataFetching.isbn,
+                tanggal_masuk: dataFetching.tanggal_masuk,
+                kode_rak: dataFetching.kode_rak,
+                stok: dataFetching.stok,
+                denda_harian: dataFetching.denda_harian,
+            })
+            setPreviewImage(dataFetching.cover)
+        }
+    }, [dataFetching])
+
+    useEffect(() => {
+        refetch();
+        setFormDataError({})
+    }, [])
 
     const handleChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const base64Icon = await convertFileToBase64(file);
-            setFormData({
-              ...formData,
-              cover: base64Icon,
-            });
-          } else {
-            setFormData((prev) => ({ ...prev, cover: dataFetching?.cover }));
-          }
+        const file = e.target.files?.[0];
+        if (file) {
+            setFormData({ ...formData, cover: file });
+            setPreviewImage(URL.createObjectURL(file));
+        } else {
+            setFormData({ ...formData, cover: null });
+            setPreviewImage(dataFetching?.cover || "");
+        }
     }
 
     const [ loadingSend, setLoadingSend ] = useState<boolean>(false);
@@ -99,25 +88,25 @@ export default function UpdateDataBukuFisik(){
         setLoadingSend(true)
         setFormDataError({})
 
-        const formToSend: BukuFisikInterfaceReq = {};
-        if(formData.cover ){
-            if(formData.cover !== dataFetching?.cover) formToSend.cover = formData.cover;
-        }
-        if(formData.no_urut) formToSend.no_urut = formData.no_urut;
-        if(formData.kode_klasifikasi) formToSend.kode_klasifikasi = formData.kode_klasifikasi;
-        if(formData.judul) formToSend.judul = formData.judul;
-        if(formData.penulis) formToSend.penulis = formData.penulis;
-        if(formData.penerbit) formToSend.penerbit = formData.penerbit;
-        if(formData.tahun_terbit) formToSend.tahun_terbit = formData.tahun_terbit;
-        if(formData.isbn) formToSend.isbn = formData.isbn;
-        if(formData.tanggal_masuk) formToSend.tanggal_masuk = formData.tanggal_masuk;
-        if(formData.kode_rak) formToSend.kode_rak = formData.kode_rak;
-        if(formData.stok) formToSend.stok = formData.stok;
-        if(formData.denda_harian) formToSend.denda_harian = formData.denda_harian;
+        const formDataSend = new FormData();
+
+        formDataSend.append("_method", "PUT");
+        formData.no_urut && formDataSend.append("no_urut", formData.no_urut)
+        formData.cover && formDataSend.append("cover", formData.cover)
+        formData.kode_klasifikasi && formDataSend.append("kode_klasifikasi", formData.kode_klasifikasi)
+        formData.judul && formDataSend.append("judul", formData.judul)
+        formData.penulis && formDataSend.append("penulis", formData.penulis)
+        formData.penerbit && formDataSend.append("penerbit", formData.penerbit)
+        formData.tahun_terbit && formDataSend.append("tahun_terbit", String(formData.tahun_terbit))
+        formData.isbn && formDataSend.append("isbn", formData.isbn)
+        formData.tanggal_masuk && formDataSend.append("tanggal_masuk", formData.tanggal_masuk)
+        formData.kode_rak && formDataSend.append("kode_rak", formData.kode_rak)
+        formData.stok && formDataSend.append("stok", String(formData.stok))
+        formData.denda_harian && formDataSend.append("denda_harian", String(formData.denda_harian))
 
         try {
             mutatePut(
-                {data: formToSend, userId: id || ""},
+                {data: formDataSend, userId: id || ""},
                 {
                     onSuccess: (res) => {
                         successToast({text: res.message})
@@ -169,6 +158,13 @@ export default function UpdateDataBukuFisik(){
         onClose();
     }
 
+    useEffect(() => {
+        if(!isFetching && error) {
+            navigate('/data-master/buku-fisik');
+            errorToast({ text: "Data tidak ditemukan" })
+        }
+    }, [isFetching])
+
     return (
         <main className="flex flex-col gap-4">
             {isLoading || isFetching ? (
@@ -191,7 +187,7 @@ export default function UpdateDataBukuFisik(){
                 <div className="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-4">
                     <div className="col-span-1">
                         <div className="border border-primary rounded-md flex items center justify-center md:p-4 p-2 mb-2">
-                            <img src={formData.cover || UserImage} alt="user-image" loading="lazy" className={formData.cover ? "w-full" : "w-1/2"} />
+                            <img src={previewImage || UserImage} alt="user-image" loading="lazy" className={previewImage ? "w-full" : "w-1/2"} />
                         </div>
                         <input type="file" id="cover" className="hidden" onChange={handleChangeImage} accept=".jpg,.jpeg,.png" />
                         <label htmlFor="cover">

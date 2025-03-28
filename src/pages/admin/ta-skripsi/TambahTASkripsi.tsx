@@ -6,7 +6,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
 
 import UserImage from "@/assets/images/buku.png";
-import { convertFileToBase64 } from "@/utils/base64Formater";
 import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
@@ -37,7 +36,9 @@ export default function TambahBukuDigital(){
         abstrak: null,
     })
 
-    const [ document, setDocument ] = useState<{ id: number | null; file: string; title: string; }[]>([])
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+    const [ document, setDocument ] = useState<{ id: number | null; file: File | null; title: string; }[]>([])
 
     const removeDoc = (index: number) => {
         setDocument(document.filter((_, i) => i !== index));
@@ -45,28 +46,9 @@ export default function TambahBukuDigital(){
 
     const [ formDataError, setFormDataError ] = useState<KaryaTulisInterfaceErrorReq>({})
 
-    useEffect(() => {
-        setFormData({
-            judul: null,
-            cover: null,
-            penulis: null,
-            nim: null,
-            facultyId: null,
-            studyProgramId: null,
-            tahun_terbit: null,
-            jenis: null,
-            no_urut: null,
-            kode_klasifikasi: null,
-            tanggal_masuk: null,
-            kode_rak: null,
-            denda_harian: null,
-            abstrak: null,
-        });
-        setFormDataError({})
-    }, [])
-
     const {
         data: facultyData,
+        refetch: facultyRefetch,
         isFetching: facultyIsFetching
     } = useGetAllFaculty();
 
@@ -87,6 +69,29 @@ export default function TambahBukuDigital(){
     }, [prodiData])
 
     useEffect(() => {
+        setFormData({
+            judul: null,
+            cover: null,
+            penulis: null,
+            nim: null,
+            facultyId: null,
+            studyProgramId: null,
+            tahun_terbit: null,
+            jenis: null,
+            no_urut: null,
+            kode_klasifikasi: null,
+            tanggal_masuk: null,
+            kode_rak: null,
+            denda_harian: null,
+            abstrak: null,
+        });
+        setPreviewImage(null)
+        facultyRefetch();
+        prodiRefetch();
+        setFormDataError({})
+    }, [])
+
+    useEffect(() => {
         prodiRefetch();
         setFormData({
             ...formData,
@@ -95,16 +100,14 @@ export default function TambahBukuDigital(){
     }, [formData.facultyId])
     
     const handleChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const base64Icon = await convertFileToBase64(file);
-            setFormData({
-              ...formData,
-              cover: base64Icon,
-            });
-          } else {
-            setFormData((prev) => ({ ...prev, cover: null }));
-          }
+        const file = e.target.files?.[0];
+        if (file) {
+            setFormData({ ...formData, cover: file });
+            setPreviewImage(URL.createObjectURL(file));
+        } else {
+            setFormData({ ...formData, cover: null });
+            setPreviewImage(null);
+        }
     }
 
     const [ loadingSend, setLoadingSend ] = useState<boolean>(false);
@@ -116,26 +119,32 @@ export default function TambahBukuDigital(){
         setLoadingSend(true)
         setFormDataError({})
 
-        const formDataToSend: KaryaTulisInterfaceReq = {
-            judul: formData.judul,
-            cover: formData.cover,
-            penulis: formData.penulis,
-            nim: formData.nim,
-            facultyId: formData.facultyId,
-            studyProgramId: formData.studyProgramId,
-            tahun_terbit: formData.tahun_terbit,
-            jenis: formData.jenis,
-            no_urut: formData.no_urut,
-            kode_klasifikasi: formData.kode_klasifikasi,
-            tanggal_masuk: formData.tanggal_masuk,
-            kode_rak: formData.kode_rak,
-            abstrak: formData.abstrak,
-            document: document
-        }
+        const formDataSend = new FormData();
+
+        formData.cover && formDataSend.append("cover", formData.cover)
+        formData.judul && formDataSend.append("judul", formData.judul)
+        formData.penulis && formDataSend.append("penulis", formData.penulis)
+        formData.nim && formDataSend.append("nim", formData.nim)
+        formData.facultyId && formDataSend.append("facultyId", String(formData.facultyId))
+        formData.studyProgramId && formDataSend.append("studyProgramId", String(formData.studyProgramId))
+        formData.tahun_terbit && formDataSend.append("tahun_terbit", String(formData.tahun_terbit))
+        formData.jenis && formDataSend.append("jenis", formData.jenis)
+        formData.no_urut && formDataSend.append("no_urut", formData.no_urut)
+        formData.kode_klasifikasi && formDataSend.append("kode_klasifikasi", formData.kode_klasifikasi)
+        formData.tanggal_masuk && formDataSend.append("tanggal_masuk", formData.tanggal_masuk)
+        formData.kode_rak && formDataSend.append("kode_rak", formData.kode_rak)
+        formData.denda_harian && formDataSend.append("denda_harian", String(formData.denda_harian))
+        formData.abstrak && formDataSend.append("abstrak", formData.abstrak)
+        document?.forEach((doc) => {
+            if (doc.file) {
+                formDataSend.append("document[]", doc.file); // notice "document[]" supaya backend tau ini array
+                formDataSend.append(`document_title[]`, doc.title); // kalau perlu kirim title-nya juga
+            }
+        });
 
         try {
             mutatePost(
-                formDataToSend,
+                formDataSend,
                 {
                     onSuccess: (res) => {
                         successToast({text: res.message})
@@ -185,8 +194,10 @@ export default function TambahBukuDigital(){
         }
     }
 
-    const handleChangeFile = (id: null, title: string, file: string) => {
-        setDocument([...document, { id: id, file: file, title: title }]);
+    const handleChangeFile = (id: null, title: string, file: File | null) => {
+        if(file) {
+            setDocument([...document, { id: id, file: file, title: title }]);
+        }
     }
 
     const isFinished = () => {
@@ -206,7 +217,7 @@ export default function TambahBukuDigital(){
             <AddFileKarya
                 isOpen={isOpenFile}
                 onClose={onCloseFile}
-                confirmAction={(title: string, file: string) => handleChangeFile(null, title, file)}
+                confirmAction={(title: string, file: File | null) => handleChangeFile(null, title, file)}
             />
             <BreadcrumbWithCustomSeparator icon={FaBook} />
             <div className="bg-white lg:p-8 p-4 border shadow rounded-md flex flex-col gap-4">
@@ -217,7 +228,7 @@ export default function TambahBukuDigital(){
                     <div className="col-span-1">
                         <div>
                             <div className="border border-primary rounded-md flex items center justify-center md:p-4 p-2 mb-2">
-                                <img src={formData.cover || UserImage} alt="user-image" loading="lazy" className={formData.cover ? "w-full" : "w-1/2"} />
+                                <img src={previewImage || UserImage} alt="user-image" loading="lazy" className={previewImage ? "w-full" : "w-1/2"} />
                             </div>
                             <input type="file" id="cover" className="hidden" onChange={handleChangeImage} accept=".jpg,.jpeg,.png" />
                             <label htmlFor="cover">

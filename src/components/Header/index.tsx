@@ -1,10 +1,8 @@
 import formatTitle from "@/utils/formatTitle";
-import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input, useDisclosure } from "@nextui-org/react";
-import { BiBell, BiChevronDown, BiPowerOff, BiSearch } from "react-icons/bi";
-import { BsCircleFill } from "react-icons/bs";
+import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, useDisclosure } from "@nextui-org/react";
+import { BiChevronDown, BiPowerOff } from "react-icons/bi";
 import { useLocation, useNavigate } from "react-router-dom";
 import Profile from "@/assets/images/profile.png";
-import { FaUserGear } from "react-icons/fa6";
 import { useAuthLogout } from "@/services/auth";
 import { useState } from "react";
 import { errorToast, successToast } from "@/utils/toastMessage";
@@ -79,26 +77,6 @@ const Header = ({ profile, openSidebar }: { profile: { name: string, email: stri
                     { nameOfPage }
                 </div>
                 <div className="flex items-center gap-8">
-                    <div className="h-8 sm:block hidden">
-                        <Input
-                            aria-label="search"
-                            size="sm"
-                            placeholder="Cari disini ..."
-                            color="primary"
-                            variant="underlined"
-                            classNames={{
-                                inputWrapper: 'border-primary italic',
-                                input: 'italic text-primary'
-                            }}
-                            endContent={
-                                <BiSearch className="text-primary" size={20} />
-                            }
-                        />
-                    </div>
-                    <div className="relative">
-                        <BiBell size={24} className="text-primary" />
-                        <BsCircleFill size={8} className="text-danger absolute top-0.5 right-1" />
-                    </div>
                     <div>
                     <Dropdown radius="sm" shadow="sm" className="border border-primary">
                         <DropdownTrigger>
@@ -111,16 +89,6 @@ const Header = ({ profile, openSidebar }: { profile: { name: string, email: stri
                         <DropdownMenu 
                             aria-label="Menu Dropdown" 
                         >
-                            <DropdownItem
-                                aria-label="profile"
-                                key={'profile'}
-                                className={`text-secondary`}
-                                startContent={
-                                    <FaUserGear className="text-primary" size={20} />
-                                }
-                            >
-                                <span className="font-semibold">Pengaturan Profil</span>
-                            </DropdownItem>
                             <DropdownItem
                                 aria-label="logout"
                                 onPress={onOpen}

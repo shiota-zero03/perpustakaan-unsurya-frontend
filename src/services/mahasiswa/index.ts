@@ -5,7 +5,6 @@ import { SelectedDataReq } from "@/interface/request/Utils.interface";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
 import { IMahasiswaDetailRes } from "@/interface/response/Mahasiswa.interface";
-import { MahasiswaInterfaceReq } from "@/interface/request/Mahasiswa.interface";
 
 export const useGetListMahasiswa = (
     limit: number | null,
@@ -52,7 +51,7 @@ export const useDeletedMahasiswa = () => {
 export const useStoreMahasiswa = () => {
     const queryClient = useQueryClient();
   
-    return useMutation<IMahasiswaDetailRes, AxiosError<BaseErrorRes>, MahasiswaInterfaceReq>({
+    return useMutation<IMahasiswaDetailRes, AxiosError<BaseErrorRes>, FormData>({
         mutationFn: ( data ) => storeMahasiswa(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["storeMahasiswa"] });
@@ -76,7 +75,7 @@ export const useGetDetailMahasiswa = (
 export const useUpdateMahasiswa = () => {
     const queryClient = useQueryClient();
   
-    return useMutation<IMahasiswaDetailRes, AxiosError<BaseErrorRes>, {data: MahasiswaInterfaceReq, userId: string}>({
+    return useMutation<IMahasiswaDetailRes, AxiosError<BaseErrorRes>, {data: FormData, userId: string}>({
         mutationFn: ( { data, userId } ) => updateMahasiswa(data, userId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["updateMahasiswa"] });

@@ -5,7 +5,6 @@ import { SelectedDataReq } from "@/interface/request/Utils.interface";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
 import { IBukuFisikDetailRes } from "@/interface/response/BukuFisik.interface";
-import { BukuFisikInterfaceReq } from "@/interface/request/BukuFisik.interface";
 
 export const useGetListBukuFisik = (
     limit: number | null,
@@ -52,7 +51,7 @@ export const useDeletedBukuFisik = () => {
 export const useStoreBukuFisik = () => {
     const queryClient = useQueryClient();
   
-    return useMutation<IBukuFisikDetailRes, AxiosError<BaseErrorRes>, BukuFisikInterfaceReq>({
+    return useMutation<IBukuFisikDetailRes, AxiosError<BaseErrorRes>, FormData>({
         mutationFn: ( data ) => storeBukuFisik(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["storeBukuFisik"] });
@@ -76,7 +75,7 @@ export const useGetDetailBukuFisik = (
 export const useUpdateBukuFisik = () => {
     const queryClient = useQueryClient();
   
-    return useMutation<IBukuFisikDetailRes, AxiosError<BaseErrorRes>, {data: BukuFisikInterfaceReq, userId: string}>({
+    return useMutation<IBukuFisikDetailRes, AxiosError<BaseErrorRes>, {data: FormData, userId: string}>({
         mutationFn: ( { data, userId } ) => updateBukuFisik(data, userId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["updateBukuFisik"] });

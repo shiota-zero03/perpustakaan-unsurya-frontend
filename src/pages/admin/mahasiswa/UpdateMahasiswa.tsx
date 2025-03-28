@@ -6,7 +6,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
 
 import UserImage from "@/assets/images/user.png";
-import { convertFileToBase64 } from "@/utils/base64Formater";
 import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
@@ -37,10 +36,12 @@ export default function UpdateDataMahasiswa(){
 
     const [ formDataError, setFormDataError ] = useState<MahasiswaInterfaceErrorReq>({})
 
-    const { data, isLoading, isFetching, refetch } = useGetDetailMahasiswa(id || "")
+    const { data, isLoading, isFetching, refetch, error } = useGetDetailMahasiswa(id || "")
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
 
     const {
         data: facultyData,
+        refetch: facultyRefetch,
         isFetching: facultyIsFetching
     } = useGetAllFaculty();
 
@@ -60,59 +61,48 @@ export default function UpdateDataMahasiswa(){
         else return prodiData.data;
     }, [prodiData])
 
+    const dataFetching = useMemo(() => {
+        return data ? data.data : null;
+    }, [data, id]);
+
+    useEffect(() => {
+        if (dataFetching && Object.keys(dataFetching).length > 0) {
+            setFormData({
+                ...formData,
+                name: dataFetching.name,
+                nim: dataFetching.nim,
+                gender: dataFetching.gender,
+                phoneNumber: dataFetching.phone_number,
+                email: dataFetching.email,
+                password: null,
+                faculty: dataFetching.faculty?.id,
+                department: dataFetching.department?.id,
+                status: dataFetching.status === "Aktif" ? "Active" : "InActive",
+                validUntil: dataFetching.valid_until ? formatDateYMD(dataFetching.valid_until) : "",
+            })
+            setPreviewImage(dataFetching.profile_picture)
+        }
+    }, [dataFetching])
+
+    useEffect(() => {
+        refetch();
+        facultyRefetch();
+        prodiRefetch();
+    }, [])
+
     useEffect(() => {
         prodiRefetch();
     }, [formData.faculty])
 
-    const dataFetching = useMemo(() => {
-        if(!data) {
-            setFormData({
-                profilePicture: null,
-                name: null,
-                nim: null,
-                gender: null,
-                phoneNumber: null,
-                email: null,
-                password: null,
-                faculty: null,
-                department: null,
-                status: null,
-                validUntil: null
-            })
-            return null;
-        } else {
-            setFormData({
-                profilePicture: data.data.profile_picture,
-                name: data.data.name,
-                nim: data.data.nim,
-                gender: data.data.gender,
-                phoneNumber: data.data.phone_number,
-                email: data.data.email,
-                faculty: data.data.faculty?.id,
-                department: data.data.department?.id,
-                password: null,
-                status: data.data.status === 'Aktif' ? 'Active' : 'InActive',
-                validUntil: data.data.valid_until ? formatDateYMD(data.data.valid_until) : null
-            })
-            return data.data;
-        }
-    }, [data, id])
-
-    useEffect(() => {
-        refetch()
-    }, [id])
-
     const handleChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const base64Icon = await convertFileToBase64(file);
-            setFormData({
-              ...formData,
-              profilePicture: base64Icon,
-            });
-          } else {
-            setFormData((prev) => ({ ...prev, profilePicture: dataFetching?.profile_picture }));
-          }
+        const file = e.target.files?.[0];
+        if (file) {
+            setFormData({ ...formData, profilePicture: file });
+            setPreviewImage(URL.createObjectURL(file));
+        } else {
+            setFormData({ ...formData, profilePicture: null });
+            setPreviewImage(null);
+        }
     }
 
     const [ loadingSend, setLoadingSend ] = useState<boolean>(false);
@@ -123,24 +113,24 @@ export default function UpdateDataMahasiswa(){
         setLoadingSend(true)
         setFormDataError({})
 
-        const formToSend: MahasiswaInterfaceReq = {};
-        if(formData.profilePicture ){
-            if(formData.profilePicture !== dataFetching?.profile_picture) formToSend.profilePicture = formData.profilePicture;
-        }
-        if(formData.name) formToSend.name = formData.name;
-        if(formData.nim) formToSend.nim = formData.nim;
-        if(formData.gender) formToSend.gender = formData.gender;
-        if(formData.phoneNumber) formToSend.phoneNumber = formData.phoneNumber;
-        if(formData.email) formToSend.email = formData.email;
-        if(formData.password) formToSend.password = formData.password;
-        if(formData.status) formToSend.status = formData.status;
-        if(formData.faculty) formToSend.faculty = formData.faculty;
-        if(formData.department) formToSend.department = formData.department;
-        if(formData.validUntil) formToSend.validUntil = formData.validUntil;
+        const formDataSend = new FormData();
+
+        formDataSend.append("_method", "PUT");
+        formData.profilePicture && formDataSend.append("profilePicture", formData.profilePicture)
+        formData.name && formDataSend.append("name", formData.name)
+        formData.nim && formDataSend.append("nim", formData.nim)
+        formData.gender && formDataSend.append("gender", formData.gender)
+        formData.phoneNumber && formDataSend.append("phoneNumber", formData.phoneNumber)
+        formData.email && formDataSend.append("email", formData.email)
+        formData.password && formDataSend.append("password", formData.password)
+        formData.status && formDataSend.append("status", formData.status)
+        formData.faculty && formDataSend.append("faculty", String(formData.faculty))
+        formData.department && formDataSend.append("department", String(formData.department))
+        formData.validUntil && formDataSend.append("validUntil", formData.validUntil)
 
         try {
             mutatePut(
-                {data: formToSend, userId: id || ""},
+                {data: formDataSend, userId: id || ""},
                 {
                     onSuccess: (res) => {
                         successToast({text: res.message})
@@ -191,6 +181,13 @@ export default function UpdateDataMahasiswa(){
         onClose();
     }
 
+    useEffect(() => {
+        if(!isFetching && error) {
+            navigate('/data-anggota/mahasiswa');
+            errorToast({ text: "Data tidak ditemukan" })
+        }
+    }, [isFetching])
+
     return (
         <main className="flex flex-col gap-4">
             {isLoading || isFetching ? (
@@ -213,9 +210,9 @@ export default function UpdateDataMahasiswa(){
                 <div className="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-4">
                     <div className="col-span-1">
                         <div className="border border-primary rounded-md flex items center justify-center md:p-4 p-2 mb-2">
-                            <img src={formData.profilePicture || UserImage} alt="user-image" loading="lazy" className="w-full" />
+                            <img src={previewImage || UserImage} alt="user-image" loading="lazy" className="w-full" />
                         </div>
-                        <input type="file" id="profilePicture" className="hidden" onChange={handleChangeImage} />
+                        <input type="file" id="profilePicture" className="hidden" onChange={handleChangeImage} accept=".jpg,.jpeg,.png" />
                         <label htmlFor="profilePicture">
                             <div 
                                 className="w-full border border-primary rounded-md font-semibold p-2 text-xs text-center text-primary cursor-pointer"

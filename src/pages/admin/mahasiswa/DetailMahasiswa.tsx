@@ -1,7 +1,7 @@
 import { FaUserGraduate } from "react-icons/fa6";
 import BreadcrumbWithCustomSeparator from "@/components/Breadcrumb";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, useDisclosure } from "@nextui-org/react";
+import { useDisclosure } from "@nextui-org/react";
 import { useEffect, useMemo, useState } from "react";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
 
@@ -9,7 +9,7 @@ import UserImage from "@/assets/images/user.png";
 import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
-import { formatDateDMYIn, formatDateYMD } from "@/utils/dateFormat";
+import { formatDateDMYIn } from "@/utils/dateFormat";
 import { SelectedDataReq } from "@/interface/request/Utils.interface";
 import { MahasiswaInterfaceErrorReq } from "@/interface/request/Mahasiswa.interface";
 import { useGetDetailMahasiswa, usePostSelectedMahasiswa } from "@/services/mahasiswa";
@@ -34,44 +34,33 @@ export default function DetailMahasiswa(){
         validUntil: null
     })
 
-    const { data, isLoading, isFetching, refetch } = useGetDetailMahasiswa(id || "")
-    useMemo(() => {
-        if(!data) {
+    const { data, isLoading, isFetching, refetch, error } = useGetDetailMahasiswa(id || "")
+    const dataFetching = useMemo(() => {
+        return data ? data.data : null;
+    }, [data, id]);
+
+    useEffect(() => {
+        if (dataFetching && Object.keys(dataFetching).length > 0) {
             setFormData({
-                profilePicture: null,
-                name: null,
-                nim: null,
-                gender: null,
-                phoneNumber: null,
-                email: null,
+                ...formData,
+                profilePicture: dataFetching.profile_picture,
+                name: dataFetching.name,
+                nim: dataFetching.nim,
+                gender: dataFetching.gender,
+                phoneNumber: dataFetching.phone_number,
+                email: dataFetching.email,
                 password: null,
-                faculty: null,
-                department: null,
-                status: null,
-                validUntil: null
+                faculty: dataFetching.faculty?.name,
+                department: dataFetching.department?.name,
+                status: dataFetching.status === "Aktif" ? "Active" : "InActive",
+                validUntil: dataFetching.valid_until
             })
-            return null;
-        } else {
-            setFormData({
-                profilePicture: data.data.profile_picture,
-                name: data.data.name,
-                nim: data.data.nim,
-                gender: data.data.gender,
-                phoneNumber: data.data.phone_number,
-                email: data.data.email,
-                faculty: data.data.faculty?.name,
-                department: data.data.department?.name,
-                password: null,
-                status: data.data.status === 'Aktif' ? 'Active' : 'InActive',
-                validUntil: data.data.valid_until ? formatDateYMD(data.data.valid_until) : null
-            })
-            return data.data;
         }
-    }, [data, id])
+    }, [dataFetching])
 
     useEffect(() => {
         refetch()
-    }, [id])
+    }, [])
 
     const [ loadingSend, setLoadingSend ] = useState<boolean>(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -120,6 +109,13 @@ export default function DetailMahasiswa(){
         setLoadingSend(false);
         onClose();
     }
+
+    useEffect(() => {
+        if(!isFetching && error) {
+            navigate('/data-anggota/mahasiswa');
+            errorToast({ text: "Data tidak ditemukan" })
+        }
+    }, [isFetching])
 
     return (
         <main className="flex flex-col gap-4">
@@ -174,16 +170,6 @@ export default function DetailMahasiswa(){
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formatDateDMYIn(formData.validUntil || "")}</div>
                             </div>
                         </div>
-                        <Button
-                            onPress={() => navigate(`/data-anggota/mahasiswa/kartu-anggota/${id}`)}
-                            variant="bordered"
-                            color="primary"
-                            size="md"
-                            radius="md"
-                            className="w-full border rounded mt-4 font-bold"
-                        >
-                            Lihat Kartu Anggota
-                        </Button>
                     </div>
                 </div>
             </div>

@@ -5,6 +5,8 @@ import Banner2 from "@/assets/images/banner-2.jpg";
 import Banner3 from "@/assets/images/auth-background.jpg";
 import { Link } from "react-router-dom";
 import { BsArrowRightCircle } from "react-icons/bs";
+import { useGetBanner } from "@/services/landing-page";
+import { useEffect, useMemo } from "react";
 
 export default function HomeBanner() {
     const settings = {
@@ -19,6 +21,15 @@ export default function HomeBanner() {
         waitForAnimate: false,
         arrows: false
     };
+
+    const { data, refetch } = useGetBanner();
+    const FETCHING_DATA = useMemo(() => {
+        return data ? data.data : []
+    }, [data]);
+
+    useEffect(() => {
+        refetch();
+    }, [])
 
     const dataBanner: BannerRes[] = [
         {
@@ -40,19 +51,33 @@ export default function HomeBanner() {
     return (
         <div className="w-full">
             <Slider {...settings}>
-                {dataBanner.map((item, index) => (
-                    <div className="bg-primary relative w-full h-screen" key={index}>
-                        <img src={item.picture} alt={item.title || `gambar-slider ${index}`} className="object-cover object-center min-h-screen min-w-full" />
-                        <div className="bg-black/60 inset-0 absolute"></div>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="text-center">
-                                <h1 className="text-4xl font-semibold text-white">{item.title}</h1>
-                                <p className="text-white mb-3">{item.subtitle}</p>
-                                <Link to={"/repository"} className="mx-auto max-w-48 text-white border border-white p-1 flex items-center justify-center gap-4 rounded-md hover:bg-white/20 duration-300">Baca Selengkapnya <BsArrowRightCircle /></Link>
+                {FETCHING_DATA.length > 0 ? 
+                    FETCHING_DATA.map((item, index) => (
+                        <div className="bg-primary relative w-full h-screen" key={index}>
+                            <img src={item.picture} alt={item.title || `gambar-slider ${index}`} className="object-cover object-center min-h-screen min-w-full" />
+                            <div className="bg-black/60 inset-0 absolute"></div>
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="text-center">
+                                    <h1 className="text-4xl font-semibold text-white">{item.title}</h1>
+                                    <p className="text-white mb-3">{item.subtitle}</p>
+                                    <Link to={"/repository"} className="mx-auto max-w-48 text-white border border-white p-1 flex items-center justify-center gap-4 rounded-md hover:bg-white/20 duration-300">Baca Selengkapnya <BsArrowRightCircle /></Link>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    )) : dataBanner.map((item, index) => (
+                        <div className="bg-primary relative w-full h-screen" key={index}>
+                            <img src={item.picture} alt={item.title || `gambar-slider ${index}`} className="object-cover object-center min-h-screen min-w-full" />
+                            <div className="bg-black/60 inset-0 absolute"></div>
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="text-center">
+                                    <h1 className="text-4xl font-semibold text-white">{item.title}</h1>
+                                    <p className="text-white mb-3">{item.subtitle}</p>
+                                    <Link to={"/repository"} className="mx-auto max-w-48 text-white border border-white p-1 flex items-center justify-center gap-4 rounded-md hover:bg-white/20 duration-300">Baca Selengkapnya <BsArrowRightCircle /></Link>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                }
             </Slider>
         </div>
     );

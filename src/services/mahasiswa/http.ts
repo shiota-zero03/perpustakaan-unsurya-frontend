@@ -1,5 +1,4 @@
 import instance from "@/api/axios";
-import { MahasiswaInterfaceReq } from "@/interface/request/Mahasiswa.interface";
 import { SelectedDataReq } from "@/interface/request/Utils.interface";
 import { IMahasiswaDetailRes, IMahasiswaListRes } from "@/interface/response/Mahasiswa.interface";
 import { TrueResponseInterface } from "@/interface/response/Utils.interface";
@@ -34,7 +33,7 @@ export const deleteMahasiswa = async ( userId: string ): Promise<TrueResponseInt
   return response.data;
 };
 
-export const storeMahasiswa = async ( data: MahasiswaInterfaceReq ): Promise<IMahasiswaDetailRes> => {
+export const storeMahasiswa = async ( data: FormData ): Promise<IMahasiswaDetailRes> => {
   const response = await instance.post(`/mahasiswa/store`, data);
   return response.data;
 };
@@ -44,8 +43,8 @@ export const getDetailMahasiswa = async ( userId: string ): Promise<IMahasiswaDe
   return response.data;
 };
 
-export const updateMahasiswa = async ( data: MahasiswaInterfaceReq, userId: string ): Promise<IMahasiswaDetailRes> => {
-  const response = await instance.put(`/mahasiswa/update/${userId}`, data);
+export const updateMahasiswa = async ( data: FormData, userId: string ): Promise<IMahasiswaDetailRes> => {
+  const response = await instance.post(`/mahasiswa/update/${userId}`, data);
   return response.data;
 };
 

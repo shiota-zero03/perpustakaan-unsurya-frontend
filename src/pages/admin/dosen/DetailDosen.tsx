@@ -1,17 +1,17 @@
 import { FaUserGraduate } from "react-icons/fa6";
 import BreadcrumbWithCustomSeparator from "@/components/Breadcrumb";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, useDisclosure } from "@nextui-org/react";
+import { useDisclosure } from "@nextui-org/react";
 import { useEffect, useMemo, useState } from "react";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
 
 import UserImage from "@/assets/images/user.png";
-import { DosenInterfaceReq } from "@/interface/request/Dosen.interface";
+import { DosenInterfaceErrorReq } from "@/interface/request/Dosen.interface";
 import { useGetDetailDosen, usePostSelectedDosen } from "@/services/dosen";
 import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
-import { formatDateDMYIn, formatDateYMD } from "@/utils/dateFormat";
+import { formatDateDMYIn } from "@/utils/dateFormat";
 import { SelectedDataReq } from "@/interface/request/Utils.interface";
 
 export default function DetailDosen(){
@@ -20,7 +20,7 @@ export default function DetailDosen(){
 
     const navigate = useNavigate();
 
-    const [ formData, setFormData ] = useState<DosenInterfaceReq>({
+    const [ formData, setFormData ] = useState<DosenInterfaceErrorReq>({
         profilePicture: null,
         name: null,
         nidn: null,
@@ -32,40 +32,32 @@ export default function DetailDosen(){
         validUntil: null
     })
 
-    const { data, isLoading, isFetching, refetch } = useGetDetailDosen(id || "")
-    useMemo(() => {
-        if(!data) {
-            setFormData({
-                profilePicture: null,
-                name: null,
-                nidn: null,
-                gender: null,
-                phoneNumber: null,
-                email: null,
-                password: null,
-                status: null,
-                validUntil: null
-            })
-            return null;
-        } else {
-            setFormData({
-                profilePicture: data.data.profile_picture,
-                name: data.data.name,
-                nidn: data.data.nidn,
-                gender: data.data.gender,
-                phoneNumber: data.data.phone_number,
-                email: data.data.email,
-                password: null,
-                status: data.data.status === 'Aktif' ? 'Active' : 'InActive',
-                validUntil: data.data.valid_until ? formatDateYMD(data.data.valid_until) : null
-            })
-            return data.data;
-        }
-    }, [data, id])
+    const { data, isLoading, isFetching, refetch, error } = useGetDetailDosen(id || "")
+
+    const dataFetching = useMemo(() => {
+        return data ? data.data : null;
+    }, [data, id]);
 
     useEffect(() => {
-        refetch()
-    }, [id])
+        if (dataFetching && Object.keys(dataFetching).length > 0) {
+            setFormData({
+                ...formData,
+                profilePicture: dataFetching.profile_picture,
+                name: dataFetching.name,
+                nidn: dataFetching.nidn,
+                gender: dataFetching.gender,
+                phoneNumber: dataFetching.phone_number,
+                email: dataFetching.email,
+                password: null,
+                status: dataFetching.status === "Aktif" ? "Active" : "InActive",
+                validUntil: dataFetching.valid_until,
+            })
+        }
+    }, [dataFetching])
+
+    useEffect(() => {
+        refetch();
+    }, [])
 
     const [ loadingSend, setLoadingSend ] = useState<boolean>(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -114,6 +106,13 @@ export default function DetailDosen(){
         setLoadingSend(false);
         onClose();
     }
+
+    useEffect(() => {
+        if(!isFetching && error) {
+            navigate('/data-anggota/dosen');
+            errorToast({ text: "Data tidak ditemukan" })
+        }
+    }, [isFetching])
 
     return (
         <main className="flex flex-col gap-4">
@@ -164,16 +163,6 @@ export default function DetailDosen(){
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formatDateDMYIn(formData.validUntil || "")}</div>
                             </div>
                         </div>
-                        <Button
-                            onPress={() => navigate(`/data-anggota/dosen/kartu-anggota/${id}`)}
-                            variant="bordered"
-                            color="primary"
-                            size="md"
-                            radius="md"
-                            className="w-full border rounded mt-4 font-bold"
-                        >
-                            Lihat Kartu Anggota
-                        </Button>
                     </div>
                 </div>
             </div>

@@ -1,5 +1,4 @@
 import instance from "@/api/axios";
-import { PetugasInterfaceReq } from "@/interface/request/Petugas.interface";
 import { SelectedDataReq } from "@/interface/request/Utils.interface";
 import { IPetugasDetailRes, IPetugasListRes } from "@/interface/response/Petugas.interface";
 import { TrueResponseInterface } from "@/interface/response/Utils.interface";
@@ -34,7 +33,7 @@ export const deletePetugas = async ( userId: string ): Promise<TrueResponseInter
   return response.data;
 };
 
-export const storePetugas = async ( data: PetugasInterfaceReq ): Promise<IPetugasDetailRes> => {
+export const storePetugas = async ( data: FormData ): Promise<IPetugasDetailRes> => {
   const response = await instance.post(`/petugas/store`, data);
   return response.data;
 };
@@ -44,8 +43,8 @@ export const getDetailPetugas = async ( userId: string ): Promise<IPetugasDetail
   return response.data;
 };
 
-export const updatePetugas = async ( data: PetugasInterfaceReq, userId: string ): Promise<IPetugasDetailRes> => {
-  const response = await instance.put(`/petugas/update/${userId}`, data);
+export const updatePetugas = async ( data: FormData, userId: string ): Promise<IPetugasDetailRes> => {
+  const response = await instance.post(`/petugas/update/${userId}`, data);
   return response.data;
 };
 

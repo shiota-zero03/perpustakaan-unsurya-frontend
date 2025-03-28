@@ -5,7 +5,6 @@ import { SelectedDataReq } from "@/interface/request/Utils.interface";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
 import { IBukuDigitalDetailRes } from "@/interface/response/BukuDigital.interface";
-import { BukuDigitalInterfaceReq } from "@/interface/request/BukuDigital.interface";
 
 export const useGetListBukuDigital = (
     limit: number | null,
@@ -52,7 +51,7 @@ export const useDeletedBukuDigital = () => {
 export const useStoreBukuDigital = () => {
     const queryClient = useQueryClient();
   
-    return useMutation<IBukuDigitalDetailRes, AxiosError<BaseErrorRes>, BukuDigitalInterfaceReq>({
+    return useMutation<IBukuDigitalDetailRes, AxiosError<BaseErrorRes>, FormData>({
         mutationFn: ( data ) => storeBukuDigital(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["storeBukuDigital"] });
@@ -76,7 +75,7 @@ export const useGetDetailBukuDigital = (
 export const useUpdateBukuDigital = () => {
     const queryClient = useQueryClient();
   
-    return useMutation<IBukuDigitalDetailRes, AxiosError<BaseErrorRes>, {data: BukuDigitalInterfaceReq, userId: string}>({
+    return useMutation<IBukuDigitalDetailRes, AxiosError<BaseErrorRes>, {data: FormData, userId: string}>({
         mutationFn: ( { data, userId } ) => updateBukuDigital(data, userId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["updateBukuDigital"] });

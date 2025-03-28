@@ -1,4 +1,5 @@
 export interface PetugasInterfaceErrorReq {
+    id?: string | null;
     profilePicture?: string | null;
     name?: string | null;
     gender?: string | null;
@@ -9,7 +10,7 @@ export interface PetugasInterfaceErrorReq {
 }
 export interface PetugasInterfaceReq {
     id?: string | null;
-    profilePicture?: string | null;
+    profilePicture?: File | null;
     name?: string | null;
     gender?: string | null;
     email?: string | null;

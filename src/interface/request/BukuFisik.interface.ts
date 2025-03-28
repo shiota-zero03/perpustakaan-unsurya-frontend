@@ -14,7 +14,7 @@ export interface BukuFisikInterfaceErrorReq {
 }
 export interface BukuFisikInterfaceReq {
     no_urut?: string | null;
-    cover?: string | null;
+    cover?: File | null;
     kode_klasifikasi?: string | null;
     judul?: string | null;
     penulis?: string | null;

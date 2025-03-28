@@ -1,5 +1,4 @@
 import instance from "@/api/axios";
-import { BannerInterfaceReq } from "@/interface/request/Banner.interface";
 import { IBannerDetailRes, IBannerListRes } from "@/interface/response/Banner.interface";
 import { TrueResponseInterface } from "@/interface/response/Utils.interface";
 
@@ -24,7 +23,7 @@ export const deleteBanner = async ( userId: string ): Promise<TrueResponseInterf
   return response.data;
 };
 
-export const storeBanner = async ( data: BannerInterfaceReq ): Promise<IBannerDetailRes> => {
+export const storeBanner = async ( data: FormData ): Promise<IBannerDetailRes> => {
   const response = await instance.post(`/banner/store`, data);
   return response.data;
 };
@@ -34,7 +33,11 @@ export const getDetailBanner = async ( userId: string ): Promise<IBannerDetailRe
   return response.data;
 };
 
-export const updateBanner = async ( data: BannerInterfaceReq, id: string ): Promise<IBannerDetailRes> => {
-  const response = await instance.put(`/banner/update/${id}`, data);
+export const updateBanner = async ( data: FormData, id: string ): Promise<IBannerDetailRes> => {
+  const response = await instance.post(`/banner/update/${id}`, data, {
+      headers: {
+          "Content-Type": "multipart/form-data",
+      },
+  });
   return response.data;
 };

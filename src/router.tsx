@@ -1,12 +1,22 @@
 import { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import Loader from "@/components/Loader";
+import ScrollToTop from "./components/Scroll/ScrollToTop";
 
 const LandingLayout = lazy(() => import("@/components/Layout/LandingLayout"));
 const AuthLayout = lazy(() => import("@/components/Layout/AuthLayout"));
 const MainLayout = lazy(() => import("@/components/Layout/MainLayout"));
 
 const Home = lazy(() => import("@/pages/landing-page"));
+const Petunjuk = lazy(() => import("@/pages/landing-page/Petunjuk"));
+const Prosedur = lazy(() => import("@/pages/landing-page/Prosedur"));
+const Profil = lazy(() => import("@/pages/landing-page/Profil"));
+const News = lazy(() => import("@/pages/landing-page/News"));
+const NewsDetail = lazy(() => import("@/pages/landing-page/DetailBerita"));
+const Repository = lazy(() => import("@/pages/landing-page/Repository"));
+const RepositoryDetail = lazy(() => import("@/pages/landing-page/RepositoryDetail"));
+const Katalog = lazy(() => import("@/pages/landing-page/Katalog"));
+const KatalogDetail = lazy(() => import("@/pages/landing-page/KatalogDetail"));
 
 const Auth = lazy(() => import("@/pages/auth"));
 const SignIn = lazy(() => import("@/pages/auth/SignIn"));
@@ -50,17 +60,40 @@ const DetailPetugas = lazy(() => import("@/pages/admin/petugas/DetailPetugas"));
 
 const DataPengunjung = lazy(() => import("@/pages/admin/pengunjung"));
 
+const DataTransaksi = lazy(() => import("@/pages/admin/transaksi"));
+const TambahDataTransaksi = lazy(() => import("@/pages/admin/transaksi/TambahTransaksi"));
+const UpdateDataTransaksi = lazy(() => import("@/pages/admin/transaksi/UpdateTransaksi"));
+const DetailTransaksi = lazy(() => import("@/pages/admin/transaksi/DetailTransaksi"));
+
+const DataDenda = lazy(() => import("@/pages/admin/denda"));
+const UpdateDataDenda = lazy(() => import("@/pages/admin/denda/UpdateDenda"));
+const DetailDenda = lazy(() => import("@/pages/admin/denda/DetailDenda"));
+
 const DataFakultas = lazy(() => import("@/pages/admin/data-fakultas"));
 const DataProdi = lazy(() => import("@/pages/admin/data-prodi"));
-
 const DataBanner = lazy(() => import("@/pages/admin/cms/Banner"));
+const DataProfilPerpustakaan = lazy(() => import("@/pages/admin/cms/ProfilPerpustakaan"));
+const DataBerita = lazy(() => import("@/pages/admin/news"));
+const TambahDataBerita =  lazy(() => import("@/pages/admin/news/TambahBerita"));
+const UpdateDataBerita =  lazy(() => import("@/pages/admin/news/UpdateBerita"));
+const DetailBerita =  lazy(() => import("@/pages/admin/news/DetailBerita"));
 
 export default function Router() {
     return (
       <Suspense fallback={<Loader />}>
+        <ScrollToTop />
         <Routes>
           <Route element={ <LandingLayout /> }>
             <Route path="/" element={<Home />} />
+            <Route path="/petunjuk" element={<Petunjuk />} />
+            <Route path="/prosedur" element={<Prosedur />} />
+            <Route path="/profil-perpustakaan" element={<Profil />} />
+            <Route path="/berita-informasi" element={<News />} />
+            <Route path="/berita-informasi/:slug" element={<NewsDetail />} />
+            <Route path="/repository" element={<Repository />} />
+            <Route path="/repository/:id" element={<RepositoryDetail />} />
+            <Route path="/katalog-buku" element={<Katalog />} />
+            <Route path="/katalog-buku/:id" element={<KatalogDetail />} />
           </Route>
           <Route element={ <AuthLayout /> } >
             <Route path="/auth" element={<Auth />} />
@@ -107,12 +140,25 @@ export default function Router() {
             <Route path="/data-master/ta-&-skripsi/detail/:id" element={<DetailTASkripsi />} />
 
             <Route path="/data-master/pengunjung" element={<DataPengunjung />} />
-            <Route path="/data-transaksi/peminjaman" element={<Dashboard />} />
-            <Route path="/data-transaksi/laporan-denda" element={<Dashboard />} />
+
+            <Route path="/data-transaksi/peminjaman" element={<DataTransaksi />} />
+            <Route path="/data-transaksi/peminjaman/tambah-data" element={<TambahDataTransaksi />} />
+            <Route path="/data-transaksi/peminjaman/edit-data/:slug" element={<UpdateDataTransaksi />} />
+            <Route path="/data-transaksi/peminjaman/detail/:slug" element={<DetailTransaksi />} />
+
+            <Route path="/data-transaksi/laporan-denda" element={<DataDenda />} />
+            <Route path="/data-transaksi/laporan-denda/edit-data/:slug" element={<UpdateDataDenda />} />
+            <Route path="/data-transaksi/laporan-denda/detail/:slug" element={<DetailDenda />} />
 
             <Route path="/cms/fakultas" element={<DataFakultas />} />
             <Route path="/cms/program-studi" element={<DataProdi />} />
             <Route path="/cms/banner" element={<DataBanner />} />
+            <Route path="/cms/profil-perpustakaan" element={<DataProfilPerpustakaan />} />
+            <Route path="/cms/berita-informasi" element={<DataBerita />} />
+            <Route path="/cms/berita-informasi/tambah-data" element={<TambahDataBerita />} />
+            <Route path="/cms/berita-informasi/edit-data/:slug" element={<UpdateDataBerita />} />
+            <Route path="/cms/berita-informasi/detail/:slug" element={<DetailBerita />} />
+
           </Route>
         </Routes>
       </Suspense>

@@ -1,13 +1,11 @@
 import BreadcrumbWithCustomSeparator from "@/components/Breadcrumb";
 import MyReactTable from "@/components/DataTable";
-import CreateModal from "@/components/Modals/cms/fakultas/CreateModal";
-import UpdateModal from "@/components/Modals/cms/fakultas/UpdateModal";
+import CreateModal from "@/components/Modals/cms/banner/CreateModal";
+import UpdateModal from "@/components/Modals/cms/banner/UpdateModal";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
 import { BannerListRes } from "@/interface/response/Banner.interface";
 import { BaseErrorRes } from "@/interface/response/base.interface";
-import { FakultasListRes } from "@/interface/response/Fakultas.interface";
-import { useGetListBanner } from "@/services/banner";
-import { useDeletedFakultas, useGetListFakultas } from "@/services/fakultas";
+import { useDeletedBanner, useGetListBanner } from "@/services/banner";
 import { errorToast, successToast } from "@/utils/toastMessage";
 import { Button, Input, useDisclosure } from "@nextui-org/react";
 import { createColumnHelper, Row } from "@tanstack/react-table";
@@ -24,7 +22,6 @@ export default function DataBanner() {
     const [currentPage, setCurrentPage] = useState<number>(1);
 
     const [nameSearch, setNameSearch] = useState<string | null>(null);
-    const [codeSearch, setCodeSearch] = useState<string | null>(null);
     
     const [totalPage, setTotalPage] = useState(1);
     const [totalData, setTotalData] = useState(1);
@@ -68,7 +65,7 @@ export default function DataBanner() {
                     const pic = info.getValue() as string;
                     return (
                         <div>
-                            <img src={pic} alt="" />
+                            <img src={pic} alt="picture-data" width={120} />
                         </div>
                     )
                 },
@@ -87,7 +84,7 @@ export default function DataBanner() {
             {
                 id: "action",
                 header: () => <span>Aksi</span>,
-                cell: ({ row }: { row: Row<FakultasListRes> }) => {
+                cell: ({ row }: { row: Row<BannerListRes> }) => {
                     const { id } = row.original;
 
                     return (
@@ -109,7 +106,6 @@ export default function DataBanner() {
 
     const handleReset = () => {
         setNameSearch(null);
-        setCodeSearch(null);
         setTimeout(() => {
             setCurrentPage(1);
             refetchData();
@@ -122,10 +118,14 @@ export default function DataBanner() {
     const { isOpen: isOpenCreated, onOpen: onOpenCreated, onClose: onCloseCreated } = useDisclosure();
     const { isOpen: isOpenUpdated, onOpen: onOpenUpdated, onClose: onCloseUpdated } = useDisclosure();
 
-    const {mutate: mutateDeleted} = useDeletedFakultas();
+    const {mutate: mutateDeleted} = useDeletedBanner();
     const deletedAction = (id: string) => {
         setSelectedId(id)
         onOpenDeleted()
+    }
+    const updatedAction = (id: string) => {
+        setSelectedId(id)
+        onOpenUpdated()
     }
     const handleDelete = (id: string) => {
         setLoadingAction(true)
@@ -166,11 +166,6 @@ export default function DataBanner() {
         }
     }
 
-    const updatedAction = (id: string) => {
-        setSelectedId(id)
-        onOpenUpdated()
-    }
-    
     const isFinished = () => {
         setLoadingAction(false);
     }
@@ -204,7 +199,7 @@ export default function DataBanner() {
                         className="font-semibold flex items-center"
                         onPress={() => onOpenCreated()}
                     >
-                        <BsPlusSquareFill /> Tambah Data Fakultas
+                        <BsPlusSquareFill /> Tambah Banner
                     </Button>
                 </div>
             </div>
@@ -212,31 +207,15 @@ export default function DataBanner() {
                 <div className="flex sm:items-end items-center justify-between sm:flex-row flex-col gap-2">
                     <div className="flex items-center sm:flex-row flex-col gap-2 w-full">
                         <div className="w-full">
-                            <label htmlFor="search-name" className="font-semibold text-sm text-primary">Nama</label>
+                            <label htmlFor="search-title" className="font-semibold text-sm text-primary">Judul Banner</label>
                             <Input
-                                id="search-name"
-                                aria-label="Nama"
-                                placeholder="Cari berdasarkan nama"
+                                id="search-title"
+                                aria-label="Judul"
+                                placeholder="Cari berdasarkan judul"
                                 variant="bordered" 
                                 radius="sm"
                                 value={nameSearch || ""}
                                 onChange={(e) => setNameSearch(e.target.value)}
-                                classNames={{
-                                    inputWrapper: 'border border-primary',
-                                    input: 'text-primary'
-                                }}
-                            />
-                        </div>
-                        <div className="w-full">
-                            <label htmlFor="search-nidn" className="font-semibold text-sm text-primary">Kode</label>
-                            <Input
-                                id="search-code"
-                                aria-label="Code"
-                                placeholder="Cari berdasarkan kode"
-                                variant="bordered" 
-                                radius="sm"
-                                value={codeSearch || ""}
-                                onChange={(e) => setCodeSearch(e.target.value)}
                                 classNames={{
                                     inputWrapper: 'border border-primary',
                                     input: 'text-primary'

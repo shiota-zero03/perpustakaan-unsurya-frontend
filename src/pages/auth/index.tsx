@@ -32,7 +32,7 @@ export default function Auth () {
                         <Link to={"/auth/sign-in"} className=" py-1 px-12 rounded-full font-bold text-white">Masuk</Link>
                     </div>
                     <div>
-                        <Link to={"/visitor"} className="text-primary flex items-center gap-2 font-medium sm:text-sm text-xs">Ke halaman pengunjung dan cari buku <BsArrowRight /></Link>
+                        <Link to={"/visitor"} className="text-primary flex items-center gap-2 font-medium sm:text-sm text-xs">Ke halaman pengunjung <BsArrowRight /></Link>
                     </div>
                 </div>
             </div>
