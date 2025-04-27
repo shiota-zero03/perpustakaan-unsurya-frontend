@@ -9,6 +9,7 @@ import { TransaksiInterfaceReq } from "@/interface/request/Transaction.interface
 export const useGetListTransaction = (
     limit: number | null,
     page: number | null,
+    identitasSearch: string | null,
     title: string | null,
     name: string | null,
     startDate: string | null,
@@ -16,7 +17,7 @@ export const useGetListTransaction = (
 ) => {
     return useQuery({
         queryKey: ["getListTransaction"],
-        queryFn: () => getListTransaction(limit, page, title, name, startDate, endDate),
+        queryFn: () => getListTransaction(limit, page, identitasSearch, title, name, startDate, endDate),
         staleTime: 300000,
     });
 };

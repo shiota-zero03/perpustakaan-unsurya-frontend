@@ -349,6 +349,7 @@ export default function UpdateDataMahasiswa(){
                                     id="faculty"
                                     variant="bordered"
                                     color="primary"
+                                    isLoading={facultyIsFetching}
                                     radius="sm"
                                     placeholder="--- Pilih fakultas ---"
                                     selectedKeys={[String(formData.faculty || "")]}
@@ -374,6 +375,7 @@ export default function UpdateDataMahasiswa(){
                                     id="prodi"
                                     variant="bordered"
                                     color="primary"
+                                    isLoading={prodiIsFetching}
                                     radius="sm"
                                     placeholder="--- Pilih program studi ---"
                                     selectedKeys={[String(formData.department || "")]}

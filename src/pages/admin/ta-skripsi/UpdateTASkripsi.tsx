@@ -321,7 +321,6 @@ export default function TambahBukuDigital(){
                                 <SelectItem value={'Skripsi'} key={'Skripsi'}>Skripsi</SelectItem>
                                 <SelectItem value={'TA'} key={'TA'}>TA</SelectItem>
                                 <SelectItem value={'Tesis'} key={'Tesis'}>Tesis</SelectItem>
-                                <SelectItem value={'Disertasi'} key={'Disertasi'}>Disertasi</SelectItem>
                             </Select>
                             <div className="text-danger italic text-xs">{formDataError.jenis}</div>
                         </div>

@@ -74,13 +74,13 @@ export default function TambahDataBukuFisik(){
 
         const formDataSend = new FormData();
 
-        formData.no_urut && formDataSend.append("no_urut", formData.no_urut)
         formData.cover && formDataSend.append("cover", formData.cover)
         formData.kode_klasifikasi && formDataSend.append("kode_klasifikasi", formData.kode_klasifikasi)
         formData.judul && formDataSend.append("judul", formData.judul)
         formData.penulis && formDataSend.append("penulis", formData.penulis)
         formData.penerbit && formDataSend.append("penerbit", formData.penerbit)
         formData.tahun_terbit && formDataSend.append("tahun_terbit", String(formData.tahun_terbit))
+        formData.isbn && formDataSend.append("no_urut", formData.isbn)
         formData.isbn && formDataSend.append("isbn", formData.isbn)
         formData.tanggal_masuk && formDataSend.append("tanggal_masuk", formData.tanggal_masuk)
         formData.kode_rak && formDataSend.append("kode_rak", formData.kode_rak)
@@ -172,26 +172,7 @@ export default function TambahDataBukuFisik(){
                     </div>
                     <div className="lg:col-span-3 sm:col-span-2 col-span-1 flex flex-col gap-1 -mt-2">
                         <div className="grid sm:grid-cols-2 grid-cols-1 gap-2">
-                            <div>
-                                <label htmlFor="no_urut" className="text-primary font-semibold text-sm">No. Urut Buku</label>
-                                <Input
-                                    aria-label="Nomor Urut"
-                                    id="no_urut"
-                                    variant="bordered"
-                                    color="primary"
-                                    radius="sm"
-                                    placeholder="book serial number here"
-                                    value={formData.no_urut || ""}
-                                    onChange={(e) => setFormData({...formData, no_urut: e.target.value})}
-                                    classNames={{
-                                        inputWrapper: "border border-primary rounded",
-                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
-                                        label: "text-primary font-semibold text-sm"
-                                    }}
-                                />
-                                <div className="text-danger italic text-xs">{formDataError.no_urut}</div>
-                            </div>
-                            <div>
+                            <div className="sm:col-span-2 col-span-1">
                                 <label htmlFor="kode_klasifikasi" className="text-primary font-semibold text-sm">Kode Klasifikasi Koleksi Perpustakaan</label>
                                 <Input
                                     aria-label="Nomor Urut"

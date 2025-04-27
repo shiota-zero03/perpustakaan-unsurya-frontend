@@ -4,8 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import Sidebar from "../Sidebar";
 import Header from "../Header";
 import { useGetProfile } from "@/services/profile";
+import store from "@/redux/store";
 
 const MainLayout = () => {
+
+    const { role } = store.getState().auth;
 
     const [ openSidebar, setOpenSidebar ] = useState<boolean>(true)
 
@@ -25,7 +28,11 @@ const MainLayout = () => {
             setDataLayoutProfile({
                 name: dataProfile.data.name,
                 email: dataProfile.data.email,
-                picture: dataProfile.data.profile?.profilePicture || null
+                picture: role === "Admin" ? (dataProfile.data.admin?.profilePicture || null) : (
+                    role === "Teacher" ? (dataProfile.data.teacher?.profilePicture || null) : (
+                        dataProfile.data.student?.profilePicture || null
+                    )
+                )
             })
         }
     }, [dataProfile, isLoadingProfile, refetchProfile])

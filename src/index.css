@@ -85,3 +85,11 @@ input[type="file"] {
 .ck-editor__main, .ck-content {
     height: 80vh !important;
 }
+
+@media print {
+    body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+}

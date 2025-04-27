@@ -41,7 +41,7 @@ export default function LandingLayout() {
 
     const menu = [
         { name: "Profil", link: "/profil-perpustakaan" },
-        { name: "Petunjuk", link: "/petunjuk" },
+        // { name: "Petunjuk", link: "/petunjuk" },
         { name: "Prosedur", link: "/prosedur" },
         {
             name: "Layanan",
@@ -49,6 +49,7 @@ export default function LandingLayout() {
             subMenu: [
                 { name: "Repository", link: "/repository" },
                 { name: "Katalog Buku", link: "/katalog-buku" },
+                { name: "Jurnal", link: "https://journal.universitassuryadarma.ac.id/" },
             ],
         },
         { name: "Berita dan Informasi", link: "/berita-informasi" },

@@ -18,6 +18,7 @@ export default {
         'accent-green': '#085F07',
       }
     },
+    display: ["print"],
   },
   darkMode: "class",
   plugins: [nextui()],

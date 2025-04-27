@@ -25,6 +25,7 @@ export interface OptionBukuRes {
     id: string;
     type: string | null;
     book_id: string | null;
+    isbn: string | null;
     judul: string | null;
     penulis: string | null;
 }

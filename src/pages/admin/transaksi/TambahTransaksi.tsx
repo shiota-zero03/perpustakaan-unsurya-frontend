@@ -11,6 +11,8 @@ import { TbReport } from "react-icons/tb";
 import { TransaksiInterfaceErrorReq, TransaksiInterfaceReq } from "@/interface/request/Transaction.interface";
 import { useGetAllAnggota, useGetAllBuku } from "@/services/option";
 import { useStoreTransaction } from "@/services/transaksi";
+import { FaQrcode } from "react-icons/fa6";
+import { ScanAnggota, ScanBuku } from "@/components/Modals/scan/ScanBarcode";
 
 export default function TambahTransaksi(){
 
@@ -111,6 +113,30 @@ export default function TambahTransaksi(){
         onClose();
     }
 
+    const { isOpen: isOpenScanAnggota, onOpen: onOpenScanAnggota, onClose: onCloseScanAnggota } = useDisclosure();
+    const { isOpen: isOpenScanBuku, onOpen: onOpenScanBuku, onClose: onCloseScanBuku } = useDisclosure();
+
+    const handleConfirmAnggota = (data: string) => {
+        let dataAnggota = DATA_ANGGOTA.find(item => item.identityNumber === data);
+        if(dataAnggota) {
+            setFormData({...formData, userId: String(dataAnggota.id)})
+            onCloseScanAnggota()
+        } else {
+            setFormData({...formData, userId: ""})
+            errorToast({ text: "Nomor identitas tidak ditemukan" })
+        }
+    }
+
+    const handleConfirmBuku = (data: string) => {
+        let dataBuku = DATA_BUKU.find(item => item.isbn === data);
+        if(dataBuku) {
+            setFormData({...formData, bukuId: String(dataBuku.id)})
+            onCloseScanBuku()
+        } else {
+            setFormData({...formData, bukuId: ""})
+            errorToast({ text: "ISBN buku tidak ditemukan" })
+        }
+    }
 
     return (
         <main className="flex flex-col gap-4">
@@ -120,6 +146,16 @@ export default function TambahTransaksi(){
                 text={"Apakah anda yakin untuk menyimpan data ini ?"} 
                 onClose={onClose}
                 confirmAction={() => handleSubmit()}
+            />
+            <ScanAnggota
+                isOpen={isOpenScanAnggota}
+                onClose={onCloseScanAnggota}
+                confirmAction={(data: string) => handleConfirmAnggota(data)}
+            />
+            <ScanBuku
+                isOpen={isOpenScanBuku}
+                onClose={onCloseScanBuku}
+                confirmAction={(data: string) => handleConfirmBuku(data)}
             />
             <BreadcrumbWithCustomSeparator icon={TbReport} />
             <div className="bg-white lg:p-8 p-4 border shadow rounded-md flex flex-col gap-4">
@@ -147,7 +183,10 @@ export default function TambahTransaksi(){
                                 />
                             </div>
                             <div className="sm:col-span-2">
-                                <label htmlFor="author" className="text-primary font-semibold text-sm">Pilih Peminjam (Anggota)</label><br />
+                                <div className="w-full flex items-center justify-between mb-2">
+                                    <label htmlFor="author" className="text-primary font-semibold text-sm">Pilih Peminjam (Anggota)</label><br />
+                                    <Button onPress={onOpenScanAnggota} variant="bordered" color="primary" size="sm" className="flex items-center justify-center"><FaQrcode /> Scan</Button>
+                                </div>
                                 <Autocomplete
                                     id="provinceId"
                                     onSelectionChange={(value) => setFormData({...formData, userId: String(value)})}
@@ -155,6 +194,7 @@ export default function TambahTransaksi(){
                                         dt.name?.toLowerCase().includes(searchAnggota.toLowerCase()) ||
                                         dt.identityNumber?.toLowerCase().includes(searchAnggota.toLowerCase())
                                     )}
+                                    selectedKey={formData.userId}
                                     aria-label="Data pengguna"
                                     placeholder="Cari berdasarkan nama / id peminjam"
                                     variant="bordered"
@@ -175,7 +215,10 @@ export default function TambahTransaksi(){
                                 <Divider className="bg-primary my-4" />
                             </div>
                             <div className="sm:col-span-2">
-                                <label htmlFor="author" className="text-primary font-semibold text-sm">Pilih Buku</label><br />
+                                <div className="w-full flex items-center justify-between mb-2">
+                                    <label htmlFor="author" className="text-primary font-semibold text-sm">Pilih Buku</label><br />
+                                    <Button onPress={onOpenScanBuku} variant="bordered" color="primary" size="sm" className="flex items-center justify-center"><FaQrcode /> Scan</Button>
+                                </div>
                                 <Autocomplete
                                     id="bukuId"
                                     onSelectionChange={(value) => setFormData({...formData, bukuId: String(value)})}
@@ -183,6 +226,7 @@ export default function TambahTransaksi(){
                                         dt.judul?.toLowerCase().includes(searchBuku.toLowerCase()) ||
                                         dt.penulis?.toLowerCase().includes(searchBuku.toLowerCase())
                                     )}
+                                    selectedKey={formData.bukuId}
                                     aria-label="Data pengguna"
                                     placeholder="Cari berdasarkan judul / penulis"
                                     variant="bordered"

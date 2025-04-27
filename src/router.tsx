@@ -31,17 +31,21 @@ const DataDosen = lazy(() => import("@/pages/admin/dosen"));
 const TambahDataDosen = lazy(() => import("@/pages/admin/dosen/TambahDosen"));
 const UpdateDataDosen = lazy(() => import("@/pages/admin/dosen/UpdateDosen"));
 const DetailDosen = lazy(() => import("@/pages/admin/dosen/DetailDosen"));
-const KartuAnggotaDosen = lazy(() => import("@/pages/admin/dosen/KartuAnggotaDosen"));
+const KartuAnggotaDosen = lazy(() => import("@/pages/admin/dosen/KartuAnggota"));
+const CetakKartuAnggotaDosen = lazy(() => import("@/pages/admin/dosen/CetakKartu"));
 
 const DataMahasiswa = lazy(() => import("@/pages/admin/mahasiswa"));
 const TambahDataMahasiswa = lazy(() => import("@/pages/admin/mahasiswa/TambahMahasiswa"));
 const UpdateDataMahasiswa = lazy(() => import("@/pages/admin/mahasiswa/UpdateMahasiswa"));
 const DetailMahasiswa = lazy(() => import("@/pages/admin/mahasiswa/DetailMahasiswa"));
+const KartuAnggotaMahasiswa = lazy(() => import("@/pages/admin/mahasiswa/KartuAnggota"));
+const CetakKartuAnggotaMahasiswa = lazy(() => import("@/pages/admin/mahasiswa/CetakKartu"));
 
 const DataBukuFisik = lazy(() => import("@/pages/admin/buku-fisik"));
 const TambahDataBukuFisik =  lazy(() => import("@/pages/admin/buku-fisik/TambahBukuFisik"));
 const UpdateDataBukuFisik =  lazy(() => import("@/pages/admin/buku-fisik/UpdateBukuFisik"));
 const DetailBukuFisik =  lazy(() => import("@/pages/admin/buku-fisik/DetailBukuFisik"));
+const CetakBarcodeBukuFisik =  lazy(() => import("@/pages/admin/buku-fisik/CetakBarcode"));
 
 const DataBukuDigital = lazy(() => import("@/pages/admin/buku-digital"));
 const TambahDataBukuDigital =  lazy(() => import("@/pages/admin/buku-digital/TambahBukuDigital"));
@@ -78,6 +82,8 @@ const TambahDataBerita =  lazy(() => import("@/pages/admin/news/TambahBerita"));
 const UpdateDataBerita =  lazy(() => import("@/pages/admin/news/UpdateBerita"));
 const DetailBerita =  lazy(() => import("@/pages/admin/news/DetailBerita"));
 
+const UpdateProfil =  lazy(() => import("@/pages/admin/profil"));
+
 export default function Router() {
     return (
       <Suspense fallback={<Loader />}>
@@ -105,8 +111,13 @@ export default function Router() {
             <Route path="/visitor" element={<Visitor />} />
           </Route>
 
+          <Route path="/data-anggota/dosen/cetak-kartu/:id" element={<CetakKartuAnggotaDosen />} />
+          <Route path="/data-anggota/mahasiswa/cetak-kartu/:id" element={<CetakKartuAnggotaMahasiswa />} />
+          <Route path="/data-master/buku-fisik/barcode/:id" element={<CetakBarcodeBukuFisik />} />
+
           <Route element={ <MainLayout /> } >
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/edit-profil" element={<UpdateProfil />} />
 
             <Route path="/data-anggota/dosen" element={<DataDosen />} />
             <Route path="/data-anggota/dosen/tambah-data" element={<TambahDataDosen />} />
@@ -118,6 +129,7 @@ export default function Router() {
             <Route path="/data-anggota/mahasiswa/tambah-data" element={<TambahDataMahasiswa />} />
             <Route path="/data-anggota/mahasiswa/edit-data/:id" element={<UpdateDataMahasiswa />} />
             <Route path="/data-anggota/mahasiswa/detail/:id" element={<DetailMahasiswa />} />
+            <Route path="/data-anggota/mahasiswa/kartu-anggota/:id" element={<KartuAnggotaMahasiswa />} />
 
             <Route path="/data-master/petugas" element={<DataPetugas />} />
             <Route path="/data-master/petugas/tambah-data" element={<TambahDataPetugas />} />

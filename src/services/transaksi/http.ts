@@ -6,6 +6,7 @@ import { TrueResponseInterface } from "@/interface/response/Utils.interface";
 export const getListTransaction = async (
   limit: number | null,
   page: number | null,
+  identitasSearch: string | null,
   title: string | null,
   name: string | null,
   startDate: string | null,
@@ -15,6 +16,7 @@ export const getListTransaction = async (
 
   if (page) params.set("page", page.toString());
   if (limit) params.set("limit", limit.toString());
+  if (identitasSearch) params.set("identityNumber", identitasSearch);
   if (title) params.set("title", title);
   if (name) params.set("name", name);
   if (startDate) params.set("startDate", startDate);

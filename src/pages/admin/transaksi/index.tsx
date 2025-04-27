@@ -15,6 +15,8 @@ import { TransactionRes } from "@/interface/response/Transaction.interface";
 import { useDeletedTransaction, useGetListTransaction } from "@/services/transaksi";
 import { formatDateDMYIn } from "@/utils/dateFormat";
 import { TransaksiExport } from "@/services/transaksi/http";
+import { FaQrcode } from "react-icons/fa6";
+import { ScanAnggota } from "@/components/Modals/scan/ScanBarcode";
 
 export default function DataBerita(){
 
@@ -24,6 +26,7 @@ export default function DataBerita(){
     const [currentPage, setCurrentPage] = useState<number>(1);
 
     const [judulSearch, setJudulSearch] = useState<string | null>(null);
+    const [identitasSearch, setIdentitasSearch] = useState<string | null>(null);
     const [penulisSearch, setPenulisSearch] = useState<string | null>(null);
     const [startDate, setStartDate] = useState<string | null>(null);
     const [endDate, setEndDate] = useState<string | null>(null);
@@ -44,6 +47,7 @@ export default function DataBerita(){
     } = useGetListTransaction(
         limit,
         currentPage,
+        identitasSearch,
         judulSearch,
         penulisSearch,
         startDate,
@@ -156,6 +160,7 @@ export default function DataBerita(){
         setStartDate(null);
         setEndDate(null);
         setDateRange(null);
+        setIdentitasSearch(null)
         setTimeout(() => {
             setCurrentPage(1);
             refetchNews();
@@ -244,6 +249,22 @@ export default function DataBerita(){
         }
     };
 
+    const { isOpen: isOpenScanAnggota, onOpen: onOpenScanAnggota, onClose: onCloseScanAnggota } = useDisclosure();
+
+    const handleConfirmAnggota = (data: string) => {
+        setJudulSearch(null);
+        setPenulisSearch(null);
+        setStartDate(null);
+        setEndDate(null);
+        setDateRange(null);
+        setIdentitasSearch(data)
+        setTimeout(() => {
+            onCloseScanAnggota();
+            setCurrentPage(1);
+            refetchNews();
+        }, 500);
+    }
+
     return (
         <main className="flex flex-col gap-4">
             <ConfirmAlert 
@@ -252,6 +273,12 @@ export default function DataBerita(){
                 text={"Apakah anda yakin untuk menghapus data terpilih? Data yang dihapus tidak bisa dikembalikan"} 
                 onClose={onCloseDeleted}
                 confirmAction={() => handleDelete(selectedId)}
+            />
+
+            <ScanAnggota
+                isOpen={isOpenScanAnggota}
+                onClose={onCloseScanAnggota}
+                confirmAction={(data: string) => handleConfirmAnggota(data)}
             />
 
             <BreadcrumbWithCustomSeparator icon={TbReport} />
@@ -278,22 +305,25 @@ export default function DataBerita(){
                 </div>
             </div>
             <div className="bg-white p-4 border shadow rounded-md flex flex-col gap-4">
-                <div className="flex sm:items-end items-center justify-between sm:flex-row flex-col gap-2">
-                    <div className="flex items-center sm:flex-row flex-col gap-2 w-full">
-                        <div className="w-full">
-                            <label htmlFor="search-name" className="font-semibold text-sm text-primary">Judul Buku</label>
+                <div className="flex sm:items-end items-center justify-between lg:flex-row flex-col gap-2">
+                    <div className="flex items-center lg:flex-row flex-col gap-2 w-full">
+                    <div className="w-full">
+                            <label htmlFor="search-id" className="font-semibold text-sm text-primary">ID Peminjam</label>
                             <Input
-                                id="search-name"
-                                aria-label="Nama"
-                                placeholder="Cari berdasarkan judul buku"
+                                id="search-id"
+                                aria-label="id"
+                                placeholder="Cari berdasarkan id peminjam"
                                 variant="bordered" 
                                 radius="sm"
-                                value={judulSearch || ""}
-                                onChange={(e) => setJudulSearch(e.target.value)}
+                                value={identitasSearch || ""}
+                                onChange={(e) => setIdentitasSearch(e.target.value)}
                                 classNames={{
                                     inputWrapper: 'border border-primary',
                                     input: 'text-primary'
                                 }}
+                                startContent={
+                                    <Button onPress={onOpenScanAnggota} size="sm" variant="bordered" color="primary" className="border-none" isIconOnly><FaQrcode /></Button>
+                                }
                             />
                         </div>
                         <div className="w-full">
@@ -306,6 +336,22 @@ export default function DataBerita(){
                                 radius="sm"
                                 value={penulisSearch || ""}
                                 onChange={(e) => setPenulisSearch(e.target.value)}
+                                classNames={{
+                                    inputWrapper: 'border border-primary',
+                                    input: 'text-primary'
+                                }}
+                            />
+                        </div>
+                        <div className="w-full">
+                            <label htmlFor="search-name" className="font-semibold text-sm text-primary">Judul Buku</label>
+                            <Input
+                                id="search-name"
+                                aria-label="Nama"
+                                placeholder="Cari berdasarkan judul buku"
+                                variant="bordered" 
+                                radius="sm"
+                                value={judulSearch || ""}
+                                onChange={(e) => setJudulSearch(e.target.value)}
                                 classNames={{
                                     inputWrapper: 'border border-primary',
                                     input: 'text-primary'

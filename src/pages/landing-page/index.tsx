@@ -39,7 +39,7 @@ export default function Home(){
             link: '/katalog-buku'
         },
         { 
-            title: 'Skripsi, Penelitian, Tesis, Disertasi', 
+            title: 'Skripsi, Penelitian, Tesis', 
             image:Repository,
             link: '/repository'
         },

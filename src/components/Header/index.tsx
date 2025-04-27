@@ -10,6 +10,7 @@ import { BaseErrorRes } from "@/interface/response/base.interface";
 import { AxiosError } from "axios";
 import LogoutAlert from "../Modals/LogoutAlert";
 import useTitle from "@/utils/hooks/useTitle";
+import { FaUserCog } from "react-icons/fa";
 
 const Header = ({ profile, openSidebar }: { profile: { name: string, email: string, picture: string | null}, openSidebar: boolean }) => {
     const { pathname } = useLocation();
@@ -89,6 +90,17 @@ const Header = ({ profile, openSidebar }: { profile: { name: string, email: stri
                         <DropdownMenu 
                             aria-label="Menu Dropdown" 
                         >
+                            <DropdownItem
+                                aria-label="profil"
+                                onPress={() => navigate('/edit-profil')}
+                                key={'profil'}
+                                className={`text-primary`}
+                                startContent={
+                                    <FaUserCog className="text-primary" size={20} />
+                                }
+                            >
+                                <span className="font-semibold">Edit Profil</span>
+                            </DropdownItem>
                             <DropdownItem
                                 aria-label="logout"
                                 onPress={onOpen}

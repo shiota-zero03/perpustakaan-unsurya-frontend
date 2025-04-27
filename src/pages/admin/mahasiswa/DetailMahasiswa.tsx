@@ -1,7 +1,7 @@
 import { FaUserGraduate } from "react-icons/fa6";
 import BreadcrumbWithCustomSeparator from "@/components/Breadcrumb";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDisclosure } from "@nextui-org/react";
+import { Button, useDisclosure } from "@nextui-org/react";
 import { useEffect, useMemo, useState } from "react";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
 
@@ -143,7 +143,7 @@ export default function DetailMahasiswa(){
                         </div>
                     </div>
                     <div className="lg:col-span-3 sm:col-span-2 col-span-1 flex flex-col gap-1">
-                        <div className="border border-primary rounded-md md:px-6 md:py-4 px-2 py-2">
+                        <div className="border border-primary rounded-md md:px-6 md:py-4 px-2 py-2 mb-2">
                             <div className="grid grid-cols-3">
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">NIM</div>
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.nim}</div>
@@ -170,6 +170,9 @@ export default function DetailMahasiswa(){
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formatDateDMYIn(formData.validUntil || "")}</div>
                             </div>
                         </div>
+                        <Button onPress={() => navigate(`/data-anggota/mahasiswa/kartu-anggota/${id}`)} variant="bordered" radius="sm" className="border-[0.8px] border-primary text-secondary font-semibold">
+                            Lihat Kartu Anggota
+                        </Button>
                     </div>
                 </div>
             </div>

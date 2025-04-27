@@ -91,13 +91,13 @@ export default function UpdateDataBukuFisik(){
         const formDataSend = new FormData();
 
         formDataSend.append("_method", "PUT");
-        formData.no_urut && formDataSend.append("no_urut", formData.no_urut)
         formData.cover && formDataSend.append("cover", formData.cover)
         formData.kode_klasifikasi && formDataSend.append("kode_klasifikasi", formData.kode_klasifikasi)
         formData.judul && formDataSend.append("judul", formData.judul)
         formData.penulis && formDataSend.append("penulis", formData.penulis)
         formData.penerbit && formDataSend.append("penerbit", formData.penerbit)
         formData.tahun_terbit && formDataSend.append("tahun_terbit", String(formData.tahun_terbit))
+        formData.isbn && formDataSend.append("no_urut", formData.isbn)
         formData.isbn && formDataSend.append("isbn", formData.isbn)
         formData.tanggal_masuk && formDataSend.append("tanggal_masuk", formData.tanggal_masuk)
         formData.kode_rak && formDataSend.append("kode_rak", formData.kode_rak)

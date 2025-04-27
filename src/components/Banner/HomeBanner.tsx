@@ -54,7 +54,7 @@ export default function HomeBanner() {
                 {FETCHING_DATA.length > 0 ? 
                     FETCHING_DATA.map((item, index) => (
                         <div className="bg-primary relative w-full h-screen" key={index}>
-                            <img src={item.picture} alt={item.title || `gambar-slider ${index}`} className="object-cover object-center min-h-screen min-w-full" />
+                            <img src={item.picture} alt={item.title || `gambar-slider ${index}`} className="object-cover object-center h-screen min-w-full" />
                             <div className="bg-black/60 inset-0 absolute"></div>
                             <div className="absolute inset-0 flex items-center justify-center">
                                 <div className="text-center">

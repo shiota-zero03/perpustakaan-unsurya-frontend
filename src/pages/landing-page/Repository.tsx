@@ -24,12 +24,14 @@ export default function Repository() {
     const { data, isFetching, refetch } = useGetListKaryaTulis(12, page, nimSearch, judulSearch, penulisSearch, tahunSearch);
 
     const DATA_FETCHING = useMemo(() => {
-        if (data) {
+        if (data && (judulSearch || penulisSearch || tahunSearch)) {
             setTotalPage(data.data.pagination.totalPages || 0);
             setTotalData(data.data.pagination.totalItems || 0);
             setFromPage(data.data.pagination.from || 0);
             setToPage(data.data.pagination.to || 0);
             return data.data.data;
+        } else {
+            return [];
         }
     }, [data, page]);
 
@@ -76,7 +78,7 @@ export default function Repository() {
                 <div className="flex sm:items-end items-center justify-between sm:flex-row flex-col gap-2 mb-8">
                     <div className="flex items-center sm:flex-row flex-col gap-2 w-full">
                         <div className="w-full text-justify">
-                            <label htmlFor="search-name" className="font-semibold text-sm text-primary">Judul Buku</label>
+                            <label htmlFor="search-name" className="font-semibold text-sm text-primary">Judul Buku / Karya Tulis</label>
                             <Input
                                 id="search-name"
                                 aria-label="Nama"
@@ -101,22 +103,6 @@ export default function Repository() {
                                 radius="sm"
                                 value={penulisSearch || ""}
                                 onChange={(e) => setPenulisSearch(e.target.value)}
-                                classNames={{
-                                    inputWrapper: 'border border-primary',
-                                    input: 'text-primary'
-                                }}
-                            />
-                        </div>
-                        <div className="w-full text-justify">
-                            <label htmlFor="search-nim" className="font-semibold text-sm text-primary">NIM</label>
-                            <Input
-                                id="search-nim"
-                                aria-label="NIM"
-                                placeholder="Cari berdasarkan nim"
-                                variant="bordered" 
-                                radius="sm"
-                                value={nimSearch || ""}
-                                onChange={(e) => setNIMSearch(e.target.value)}
                                 classNames={{
                                     inputWrapper: 'border border-primary',
                                     input: 'text-primary'
@@ -167,9 +153,9 @@ export default function Repository() {
                         </div>
                     )}
                     {DATA_FETCHING?.length === 0 && !isFetching ? (
-                        <div className="flex flex-col items-center text-primary">
+                        <div className="flex flex-col items-center text-primary py-8">
                             <FaRegFrownOpen size={72} />
-                            <span className="italic mt-2 sm:text-lg">Tidak ada repository ditemukan</span>
+                            <span className="italic mt-4 sm:text-lg">Data tidak ditemukan silahkan masukkan kata kunci lain</span>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 gap-4">

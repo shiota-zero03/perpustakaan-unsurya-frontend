@@ -3,19 +3,21 @@ import { BaseRes } from "./base.interface";
 export interface GetProfileInterface extends BaseRes {
     data: {
         id: number;
-        user_id: string;
+        userId: string;
         name: string;
         email: string;
-        identity_number: string | null;
+        identityNumber: string | null;
         status: string;
-        profile?: {
+        student?: {
             id: number;
             userId: number;
             profilePicture: string | null;
             gender: string | null;
             position?: string | null;
             phoneNumber?: string | null;
-            validUntil?: Date | null;
+            validUntil?: string | null;
+            facultyId?: number;
+            studyProgramId?: number;
             faculty?: {
                 id: number;
                 name: string;
@@ -26,6 +28,20 @@ export interface GetProfileInterface extends BaseRes {
                 name: string;
                 code: string;
             } | null;
+        } | null;
+        teacher?: {
+            id: number;
+            userId: number;
+            profilePicture: string | null;
+            gender: string | null;
+            phoneNumber?: string | null;
+            validUntil?: string | null;
+        } | null;
+        admin?: {
+            userId: number;
+            profilePicture: string | null;
+            gender: string | null;
+            position?: string | null;
         } | null;
     }
 };

@@ -11,6 +11,9 @@ import store from "@/redux/store";
 import { Card, CardBody } from "@nextui-org/react";
 
 export default function Dashboard(){
+
+    const { role } = store.getState().auth;
+
     const [ dataLayoutProfile, setDataLayoutProfile ] = useState<{name: string, picture: string | null}>({
         name: 'Anonymous',
         picture: null
@@ -21,7 +24,11 @@ export default function Dashboard(){
         if(dataProfile && dataProfile.data) {
             setDataLayoutProfile({
                 name: dataProfile.data.name,
-                picture: dataProfile.data.profile?.profilePicture || null
+                picture: role === "Admin" ? (dataProfile.data.admin?.profilePicture || null) : (
+                    role === "Teacher" ? (dataProfile.data.teacher?.profilePicture || null) : (
+                        dataProfile.data.student?.profilePicture || null
+                    )
+                )
             })
         }
     }, [dataProfile, isLoadingProfile, refetchProfile])

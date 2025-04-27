@@ -1,0 +1,22 @@
+/* src/assets/css/printCard.css */
+@media print {
+    @page {
+        size: 60mm 60mm; /* ukuran ID card CR80 */
+        margin: 0;
+    }
+  
+    html, body {
+        padding: 0;
+        margin: 0;
+        background: white;
+    }
+
+    /* Aturan untuk memisahkan kartu ke halaman baru */
+    .page-break-before {
+        page-break-before: always;
+    }
+
+    .page-break-after {
+        page-break-after: always;
+    }
+}
