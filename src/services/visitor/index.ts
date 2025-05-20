@@ -24,11 +24,12 @@ export const useGetListVisitor = (
     page: number | null,
     identityNumber: string | null,
     name: string | null,
-    date: string | null
+    date: string | null,
+    end: string | null
 ) => {
     return useQuery({
         queryKey: ["getListVisitor"],
-        queryFn: () => getListVisitor(limit, page, identityNumber, name, date),
+        queryFn: () => getListVisitor(limit, page, identityNumber, name, date, end),
         staleTime: 300000,
     });
 };

@@ -109,8 +109,8 @@ export default function Dashboard(){
                     </div>
                     <Card radius="sm" shadow="sm">
                         <CardBody className="md:text-xl md:p-8 text-sm p-4 text-justify font-medium">
-                            Selamat Datang di Sistem Informasi Perpustakaan Online UNSURYA. Dengan adanya sistem informasi ini, diharapkan para mahasiswa dapat menambah wawasan mengenai buku-buku mata kuliah yang tersedia di Perpustakaan ini. Koleksi buku yang ada di perpustakaan UNSURYA dapat diakses melalui website ini. Selamat menikmati layanan perpustakaan online kami.<br /><br />
-                            Semoga dengan adanya Sistem Informasi Perpustakaan Online ini, fasilitas dan minat baca di kalangan para mahasiswa UNSURYA semakin meningkat.
+                            Selamat Datang di Sistem Informasi Perpustakaan Online UNSURYA. Dengan adanya sistem informasi ini, diharapkan para akademisi dapat menambah wawasan mengenai buku-buku mata kuliah yang tersedia di Perpustakaan ini. Koleksi buku yang ada di perpustakaan UNSURYA dapat diakses melalui website ini. Selamat menikmati layanan perpustakaan online kami.<br /><br />
+                            Semoga dengan adanya Sistem Informasi Perpustakaan Online ini, fasilitas dan minat baca di kalangan para akademisi UNSURYA semakin meningkat.
                         </CardBody>
                     </Card>
                 </main>

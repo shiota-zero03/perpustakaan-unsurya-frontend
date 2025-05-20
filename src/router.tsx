@@ -84,6 +84,9 @@ const DetailBerita =  lazy(() => import("@/pages/admin/news/DetailBerita"));
 
 const UpdateProfil =  lazy(() => import("@/pages/admin/profil"));
 
+const ProfileKartuAnggota = lazy(() => import("@/pages/admin/profil/kartu-anggota"));
+const CetakProfileKartuAnggota = lazy(() => import("@/pages/admin/profil/cetak-kartu"));
+
 export default function Router() {
     return (
       <Suspense fallback={<Loader />}>
@@ -114,10 +117,12 @@ export default function Router() {
           <Route path="/data-anggota/dosen/cetak-kartu/:id" element={<CetakKartuAnggotaDosen />} />
           <Route path="/data-anggota/mahasiswa/cetak-kartu/:id" element={<CetakKartuAnggotaMahasiswa />} />
           <Route path="/data-master/buku-fisik/barcode/:id" element={<CetakBarcodeBukuFisik />} />
+          <Route path="/edit-profil/cetak-kartu/:id" element={<CetakProfileKartuAnggota />} />
 
           <Route element={ <MainLayout /> } >
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/edit-profil" element={<UpdateProfil />} />
+            <Route path="/edit-profil/lihat-kartu-anggota" element={<ProfileKartuAnggota />} />
 
             <Route path="/data-anggota/dosen" element={<DataDosen />} />
             <Route path="/data-anggota/dosen/tambah-data" element={<TambahDataDosen />} />

@@ -18,6 +18,7 @@ export default function DataPengunjung(){
     const [nameSearch, setNameSearch] = useState<string | null>(null);
     const [memberSearch, setMemberSearch] = useState<string | null>(null);
     const [dateSearch, setDateSearch] = useState<string | null>(null);
+    const [dateSearch2, setDateSearch2] = useState<string | null>(null);
     
     const [totalPage, setTotalPage] = useState(1);
     const [totalData, setTotalData] = useState(1);
@@ -34,7 +35,8 @@ export default function DataPengunjung(){
         currentPage,
         memberSearch,
         nameSearch,
-        dateSearch
+        dateSearch,
+        dateSearch2
     );
     
     const PETUGAS_DATA = useMemo(() => {
@@ -137,7 +139,7 @@ export default function DataPengunjung(){
                             />
                         </div>
                         <div className="w-full">
-                            <label htmlFor="search-date" className="font-semibold text-sm text-primary">Tanggal Kunjungan</label>
+                            <label htmlFor="search-date" className="font-semibold text-sm text-primary">Tanggal Kunjungan (Dari)</label>
                             <Input
                                 id="search-date"
                                 aria-label="date"
@@ -147,6 +149,23 @@ export default function DataPengunjung(){
                                 radius="sm"
                                 value={dateSearch || ""}
                                 onChange={(e) => setDateSearch(e.target.value)}
+                                classNames={{
+                                    inputWrapper: 'border border-primary',
+                                    input: 'text-primary'
+                                }}
+                            />
+                        </div>
+                        <div className="w-full">
+                            <label htmlFor="search-date" className="font-semibold text-sm text-primary">Tanggal Kunjungan (Sampai)</label>
+                            <Input
+                                id="search-date"
+                                aria-label="date"
+                                type="date"
+                                placeholder="Cari berdasarkan tanggal"
+                                variant="bordered" 
+                                radius="sm"
+                                value={dateSearch2 || ""}
+                                onChange={(e) => setDateSearch2(e.target.value)}
                                 classNames={{
                                     inputWrapper: 'border border-primary',
                                     input: 'text-primary'

@@ -15,7 +15,10 @@ const Pengunjung = () => {
     const [ visitName, setVisitName ] = useState<string>('')
 
     const [formData, setFormData] = useState<VisitorPost>({
+        type: '',
         member: '',
+        email: '',
+        name: '',
         activity: ''
     });
 
@@ -50,6 +53,7 @@ const Pengunjung = () => {
                             if(status === 422) {
                                 setFormDataError({
                                     ...formDataError,
+                                    type: errors.type,
                                     member: errors.member,
                                     activity: errors.activity
                                 })
@@ -90,28 +94,106 @@ const Pengunjung = () => {
                 >
                     <div className="w-full">
                         <div>
-                            <label htmlFor="member" className="font-bold text-primary text-sm">NIM / NIDN</label>
+                            <label htmlFor="member" className="font-bold text-primary text-sm">Tipe Pengunjung</label>
                         </div>
-                        <Input
-                            id="member"
-                            value={formData.member || ""}
-                            onChange={(e) => setFormData({...formData, member: e.target.value})}
-                            type="text"
+                        <Select
+                            id="type"
+                            selectedKeys={[formData.type || ""]}
+                            onChange={(e) => setFormData({...formData, type: e.target.value})}
                             variant="bordered"
                             aria-label="member"
                             labelPlacement="outside"
                             radius="sm"
                             className="w-full"
-                            placeholder="NIM / NIDN anda disini"
+                            placeholder="Pilih tipe pengunjung"
                             color="primary"
                             classNames={{
-                                base: 'flex justify-center',
-                                inputWrapper: 'border-primary text-primary',
-                                input: 'text-primary italic font-semibold placehorder:text-primary placeholder:font-italic',
+                                trigger: 'border-primary'
                             }}
-                        />
-                        <div className="-mt-1"><small><em className="text-danger">{formDataError.member}</em></small></div>
+                        >
+                            <SelectItem key={"Akademisi"}>Akademisi (Dosen / Mahasiswa)</SelectItem>
+                            <SelectItem key={"Umum"}>Umum</SelectItem>
+                        </Select>
+                        <div className="-mt-1"><small><em className="text-danger">{formDataError.type}</em></small></div>
                     </div>
+                    {formData.type === "Akademisi" && (
+                        <div className="w-full">
+                            <div>
+                                <label htmlFor="member" className="font-bold text-primary text-sm">NIM / NIDN</label>
+                            </div>
+                            <Input
+                                id="member"
+                                value={formData.member || ""}
+                                onChange={(e) => setFormData({...formData, member: e.target.value})}
+                                type="text"
+                                variant="bordered"
+                                aria-label="member"
+                                labelPlacement="outside"
+                                radius="sm"
+                                className="w-full"
+                                placeholder="NIM / NIDN anda disini"
+                                color="primary"
+                                classNames={{
+                                    base: 'flex justify-center',
+                                    inputWrapper: 'border-primary text-primary',
+                                    input: 'text-primary italic font-semibold placehorder:text-primary placeholder:font-italic',
+                                }}
+                            />
+                            <div className="-mt-1"><small><em className="text-danger">{formDataError.member}</em></small></div>
+                        </div>
+                    )}
+                    {formData.type === "Umum" && (
+                        <div className="w-full">
+                            <div>
+                                <label htmlFor="member" className="font-bold text-primary text-sm">Nama</label>
+                            </div>
+                            <Input
+                                id="name"
+                                value={formData.name || ""}
+                                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                type="text"
+                                variant="bordered"
+                                aria-label="member"
+                                labelPlacement="outside"
+                                radius="sm"
+                                className="w-full"
+                                placeholder="Nama anda disini"
+                                color="primary"
+                                classNames={{
+                                    base: 'flex justify-center',
+                                    inputWrapper: 'border-primary text-primary',
+                                    input: 'text-primary italic font-semibold placehorder:text-primary placeholder:font-italic',
+                                }}
+                            />
+                            <div className="-mt-1"><small><em className="text-danger">{formDataError.name}</em></small></div>
+                        </div>
+                    )}
+                    {formData.type === "Umum" && (
+                        <div className="w-full">
+                            <div>
+                                <label htmlFor="member" className="font-bold text-primary text-sm">Email</label>
+                            </div>
+                            <Input
+                                id="email"
+                                value={formData.email || ""}
+                                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                type="text"
+                                variant="bordered"
+                                aria-label="member"
+                                labelPlacement="outside"
+                                radius="sm"
+                                className="w-full"
+                                placeholder="Email anda disini"
+                                color="primary"
+                                classNames={{
+                                    base: 'flex justify-center',
+                                    inputWrapper: 'border-primary text-primary',
+                                    input: 'text-primary italic font-semibold placehorder:text-primary placeholder:font-italic',
+                                }}
+                            />
+                            <div className="-mt-1"><small><em className="text-danger">{formDataError.email}</em></small></div>
+                        </div>
+                    )}
                     <div className="w-full">
                         <div>
                             <label htmlFor="type" className="font-bold text-primary text-sm">Kegiatan di Perpustakaan</label>

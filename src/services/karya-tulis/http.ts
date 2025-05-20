@@ -15,7 +15,7 @@ export const getListKaryaTulis = async (
 
   if (page) params.set("page", page.toString());
   if (limit) params.set("limit", limit.toString());
-  if (nim) params.set("nim", nim);
+  if (nim) params.set("prodi", nim);
   if (judul) params.set("judul", judul);
   if (penulis) params.set("penulis", penulis);
   if (tahun) params.set("tahun", tahun);

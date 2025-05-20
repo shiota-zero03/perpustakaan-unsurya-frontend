@@ -7,6 +7,7 @@ export interface KaryaTulisListRes {
     penulis: string;
     nim: string;
     tahun_terbit: string;
+    program_studi: string | null;
 }
 
 export interface IKaryaTulisListRes extends BaseRes {

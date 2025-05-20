@@ -78,7 +78,7 @@ export default function Repository() {
                 <div className="flex sm:items-end items-center justify-between sm:flex-row flex-col gap-2 mb-8">
                     <div className="flex items-center sm:flex-row flex-col gap-2 w-full">
                         <div className="w-full text-justify">
-                            <label htmlFor="search-name" className="font-semibold text-sm text-primary">Judul Buku / Karya Tulis</label>
+                            <label htmlFor="search-name" className="font-semibold text-sm text-primary">Judul Koleksi (TA/Skripsi/Tesis)</label>
                             <Input
                                 id="search-name"
                                 aria-label="Nama"

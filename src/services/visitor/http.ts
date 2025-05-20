@@ -7,7 +7,8 @@ export const getListVisitor = async (
     page: number | null,
     identityNumber: string | null,
     name: string | null,
-    date: string | null
+    date: string | null,
+    end: string | null
 ): Promise<IListVisitorRes> => {
     const params = new URLSearchParams();
   
@@ -16,6 +17,7 @@ export const getListVisitor = async (
     if (identityNumber) params.set("identityNumber", identityNumber);
     if (name) params.set("name", name);
     if (date) params.set("date", date);
+    if (end) params.set("end", end);
   
     const link = `/visitor?${params.toString()}`;
     const response = await instance.get(link);

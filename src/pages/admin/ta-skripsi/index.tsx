@@ -128,6 +128,11 @@ export default function DataTASkripsi(){
                 cell: (info) => info.getValue(),
                 header: () => <span>NIM</span>,
             }),
+            columnHelper.accessor("program_studi", {
+                id: "program_studi",
+                cell: (info) => info.getValue() || "-",
+                header: () => <span>Program Studi</span>,
+            }),
             columnHelper.accessor("tahun_terbit", {
                 id: "tahun_terbit",
                 cell: (info) => info.getValue(),
@@ -371,11 +376,11 @@ export default function DataTASkripsi(){
                             />
                         </div>
                         <div className="w-full">
-                            <label htmlFor="search-nim" className="font-semibold text-sm text-primary">NIM</label>
+                            <label htmlFor="search-nim" className="font-semibold text-sm text-primary">Program Studi</label>
                             <Input
                                 id="search-nim"
                                 aria-label="NIM"
-                                placeholder="Cari berdasarkan nim"
+                                placeholder="Cari berdasarkan nama program studi"
                                 variant="bordered" 
                                 radius="sm"
                                 value={nimSearch || ""}

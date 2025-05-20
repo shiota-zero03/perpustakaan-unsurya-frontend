@@ -1,6 +1,6 @@
 import { FaUserGraduate } from "react-icons/fa6";
 import BreadcrumbWithCustomSeparator from "@/components/Breadcrumb";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, Input, Select, SelectItem, Tooltip, useDisclosure } from "@nextui-org/react";
 import React, { useEffect, useMemo, useState } from "react";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
@@ -536,6 +536,9 @@ export default function UpdateProfil(){
                     </div>
                 ) : (
                     <div className="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-4">
+                        <div className="lg:col-span-4 sm:col-span-3 col-span-1 flex justify-end">
+                            <Link to={'/edit-profil/lihat-kartu-anggota'} className="border bg-secondary text-white p-2 rounded-md">Lihat Kartu Anggota</Link>
+                        </div>
                         <div className="col-span-1">
                             <div className="border border-primary rounded-md flex items center justify-center md:p-4 p-2 mb-2">
                                 <img src={previewImage || UserImage} alt="user-image" loading="lazy" className="w-full" />
