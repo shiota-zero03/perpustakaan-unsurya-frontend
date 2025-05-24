@@ -24,6 +24,8 @@ export default function DetailBuku(){
         kode_rak: "",
         stok: "",
         denda_harian: "",
+        desctiption: "",
+        prodi: "",
     })
 
     const { data, isLoading, isFetching, refetch, error } = useGetDetailBuku(id || "")
@@ -48,6 +50,8 @@ export default function DetailBuku(){
                 kode_rak: dataFetching.kode_rak || "",
                 stok: dataFetching.stok ? String(dataFetching.stok) : "",
                 denda_harian: dataFetching.denda_harian ? String(dataFetching.denda_harian) : "",
+                desctiption: dataFetching.book_description || "",
+                prodi: dataFetching.prodi?.name || "",
             })
         }
     }, [dataFetching])
@@ -106,6 +110,8 @@ export default function DetailBuku(){
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.penerbit || "-"}</div>
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Tahun Terbit</div>
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.tahun_terbit || "-"}</div>
+                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Program Studi</div>
+                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.prodi || "-"}</div>
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">ISBN</div>
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.isbn || "-"}</div>
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Nomor Urut Buku</div>
@@ -114,6 +120,8 @@ export default function DetailBuku(){
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.kode_klasifikasi || "-"}</div>
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Kode Rak Buku</div>
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.kode_rak || "-"}</div>
+                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Deskripsi Buku</div>
+                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.desctiption || "-"}</div>
                             </div>
                         </div>
                     </div>

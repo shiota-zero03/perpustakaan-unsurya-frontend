@@ -70,11 +70,12 @@ export const useGetListBuku = (
     page: number | null,
     judul: string | null,
     penulis: string | null,
-    tahun: string | null
+    tahun: string | null,
+    prodi: string | null,
 ) => {
     return useQuery({
         queryKey: ["getListBukuLanding"],
-        queryFn: () => getListBuku(limit, page, judul, penulis, tahun),
+        queryFn: () => getListBuku(limit, page, judul, penulis, tahun, prodi),
         staleTime: 300000,
     });
 };

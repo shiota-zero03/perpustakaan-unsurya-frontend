@@ -1,4 +1,4 @@
-import Background from "@/assets/images/backgroundlanding.jpg"
+import Background from "@/assets/images/profil-unsurya.jpg"
 import { useGetSetting } from "@/services/landing-page";
 import { useMemo } from "react";
 import { Card, CardBody, CardHeader, Divider, Spinner } from "@nextui-org/react";
@@ -12,7 +12,7 @@ export default function Prosedur(){
     return (
         <div className="bg-[#e0e0e0]">
             <div className="relative md:h-[32rem] h-60 bg-danger">
-                <img src={Background} alt="Background-landing-page" className="h-full object-cover" />
+                <img src={Background} alt="Background-landing-page" className="h-full w-full object-cover" />
                 <div className="bg-black/20 absolute inset-0"></div>
                 <div className="absolute bottom-0 bg-black/20 backdrop-blur-lg w-full px-4 sm:py-8 py-4 text-white sm:text-2xl font-medium">
                     Prosedur di Perpustakaan

@@ -2,6 +2,8 @@ export interface BukuFisikInterfaceErrorReq {
     no_urut?: string;
     cover?: string;
     kode_klasifikasi?: string;
+    book_description?: string;
+    studyProgramId?: string;
     judul?: string;
     penulis?: string;
     penerbit?: string;
@@ -25,4 +27,7 @@ export interface BukuFisikInterfaceReq {
     kode_rak?: string | null;
     stok?: number | null;
     denda_harian?: number | null;
+    book_description?: string | null;
+    prodi?: string | null;
+    studyProgramId?: number | null;
 }

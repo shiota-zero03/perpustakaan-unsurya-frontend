@@ -1,8 +1,8 @@
 import { FaBook } from "react-icons/fa6";
 import BreadcrumbWithCustomSeparator from "@/components/Breadcrumb";
 import { useNavigate } from "react-router-dom";
-import { Button, Input, useDisclosure } from "@nextui-org/react";
-import React, { useEffect, useState } from "react";
+import { Button, Input, Select, SelectItem, Textarea, useDisclosure } from "@nextui-org/react";
+import React, { useEffect, useMemo, useState } from "react";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
 
 import UserImage from "@/assets/images/buku.png";
@@ -11,6 +11,7 @@ import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
 import { BukuFisikInterfaceErrorReq, BukuFisikInterfaceReq } from "@/interface/request/BukuFisik.interface";
 import { useStoreBukuFisik } from "@/services/buku-fisik";
+import { useGetAllDepartment } from "@/services/option";
 
 export default function TambahDataBukuFisik(){
 
@@ -29,10 +30,23 @@ export default function TambahDataBukuFisik(){
         kode_rak: null,
         stok: null,
         denda_harian: null,
+        studyProgramId: null,
+        book_description: null,
     })
 
     const [ formDataError, setFormDataError ] = useState<BukuFisikInterfaceErrorReq>({})
     const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+    const {
+        data: prodiData,
+        refetch: prodiRefetch,
+        isFetching: prodiIsFetching
+    } = useGetAllDepartment(null);
+
+    const PRODI_DATA = useMemo(() => {
+        if(!prodiData) return [];
+        else return prodiData.data;
+    }, [prodiData])
 
     useEffect(() => {
         setFormData({
@@ -48,9 +62,12 @@ export default function TambahDataBukuFisik(){
             kode_rak: null,
             stok: null,
             denda_harian: null,
+            studyProgramId: null,
+            book_description: null,
         });
         setPreviewImage(null);
         setFormDataError({})
+        prodiRefetch();
     }, [])
     
     const handleChangeImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,6 +103,9 @@ export default function TambahDataBukuFisik(){
         formData.kode_rak && formDataSend.append("kode_rak", formData.kode_rak)
         formData.stok && formDataSend.append("stok", String(formData.stok))
         formData.denda_harian && formDataSend.append("denda_harian", String(formData.denda_harian))
+        formData.kode_rak && formDataSend.append("kode_rak", formData.kode_rak)
+        formData.book_description && formDataSend.append("book_description", formData.book_description)
+        formData.studyProgramId && formDataSend.append("studyProgramId", String(formData.studyProgramId))
 
         try {
             mutatePost(
@@ -119,6 +139,8 @@ export default function TambahDataBukuFisik(){
                                     kode_rak: errors.kode_rak || "",
                                     stok: errors.stok || "",
                                     denda_harian: errors.denda_harian || "",
+                                    book_description: errors.book_description || "",
+                                    studyProgramId: errors.studyProgramId || "",
                                 })
                             }
                         } else {
@@ -191,7 +213,7 @@ export default function TambahDataBukuFisik(){
                                 />
                                 <div className="text-danger italic text-xs">{formDataError.kode_klasifikasi}</div>
                             </div>
-                            <div className="sm:col-span-2">
+                            <div>
                                 <label htmlFor="judul" className="text-primary font-semibold text-sm">Judul Buku</label>
                                 <Input
                                     aria-label="Nomor Urut"
@@ -269,6 +291,32 @@ export default function TambahDataBukuFisik(){
                                     }}
                                 />
                                 <div className="text-danger italic text-xs">{formDataError.tahun_terbit}</div>
+                            </div>
+                            <div>
+                                <label htmlFor="prodi" className="text-primary font-semibold text-sm">Program Studi</label>
+                                <Select
+                                    aria-label="prodi"
+                                    id="prodi"
+                                    variant="bordered"
+                                    color="primary"
+                                    isLoading={prodiIsFetching}
+                                    radius="sm"
+                                    placeholder="--- Pilih program studi ---"
+                                    selectedKeys={[String(formData.studyProgramId || "")]}
+                                    onChange={(e) => setFormData({...formData, studyProgramId: Number(e.target.value)})}
+                                    classNames={{
+                                        trigger: "border border-primary rounded",
+                                        value: "text-primary text-xs font-medium italic placeholder:text-primary",
+                                        label: "text-primary font-semibold text-sm"
+                                    }}
+                                >
+                                    {prodiIsFetching ? (
+                                        <SelectItem value={""} key={""}>Loading ...</SelectItem>
+                                    ) : PRODI_DATA.map(item => (
+                                        <SelectItem value={item.id} key={item.id}>{item.name}</SelectItem>
+                                    ))}
+                                </Select>
+                                <div className="text-danger italic text-xs">{formDataError.studyProgramId}</div>
                             </div>
                             <div>
                                 <label htmlFor="isbn" className="text-primary font-semibold text-sm">ISBN</label>
@@ -368,6 +416,25 @@ export default function TambahDataBukuFisik(){
                                     }}
                                 />
                                 <div className="text-danger italic text-xs">{formDataError.denda_harian}</div>
+                            </div>
+                            <div className="sm:col-span-2 col-span-1">
+                                <label htmlFor="book_description" className="text-primary font-semibold text-sm">Deskripsi Buku</label>
+                                <Textarea
+                                    aria-label="Nomor Urut"
+                                    id="book_description"
+                                    variant="bordered"
+                                    color="primary"
+                                    radius="sm"
+                                    placeholder="book description code here"
+                                    value={formData.book_description || ""}
+                                    onChange={(e) => setFormData({...formData, book_description: e.target.value})}
+                                    classNames={{
+                                        inputWrapper: "border border-primary rounded",
+                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
+                                        label: "text-primary font-semibold text-sm"
+                                    }}
+                                />
+                                <div className="text-danger italic text-xs">{formDataError.book_description}</div>
                             </div>
                         </div>
                         <div className="pt-2 pb-6">

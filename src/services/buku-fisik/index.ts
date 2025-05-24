@@ -11,11 +11,12 @@ export const useGetListBukuFisik = (
     page: number | null,
     judul: string | null,
     penulis: string | null,
-    tahun: string | null
+    tahun: string | null,
+    prodi: string | null
 ) => {
     return useQuery({
         queryKey: ["getListBukuFisik"],
-        queryFn: () => getListBukuFisik(limit, page, judul, penulis, tahun),
+        queryFn: () => getListBukuFisik(limit, page, judul, penulis, tahun, prodi),
         staleTime: 300000,
     });
 };

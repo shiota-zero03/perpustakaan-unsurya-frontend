@@ -1,4 +1,4 @@
-import Background from "@/assets/images/bg-repository.jpg";
+import Background from "@/assets/images/profil-unsurya.jpg"
 import { useGetListBuku } from "@/services/landing-page";
 import { useEffect, useMemo, useState } from "react";
 import { Button, Card, Input, Pagination, Spinner } from "@nextui-org/react";
@@ -14,16 +14,17 @@ export default function Katalog() {
     const [judulSearch, setJudulSearch] = useState<string | null>(null);
     const [penulisSearch, setPenulisSearch] = useState<string | null>(null);
     const [tahunSearch, setTahunSearch] = useState<string | null>(null);
+    const [prodi, setProdi] = useState<string | null>(null);
 
     const [totalPage, setTotalPage] = useState(1);
     const [totalData, setTotalData] = useState(1);
     const [fromPage, setFromPage] = useState(1);
     const [toPage, setToPage] = useState(1);
 
-    const { data, isFetching, refetch } = useGetListBuku(12, page, judulSearch, penulisSearch, tahunSearch);
+    const { data, isFetching, refetch } = useGetListBuku(12, page, judulSearch, penulisSearch, tahunSearch, prodi);
 
     const DATA_FETCHING = useMemo(() => {
-        if (data && (judulSearch || tahunSearch)) {
+        if (data && (judulSearch || tahunSearch || penulisSearch || prodi)) {
             setTotalPage(data.data.pagination.totalPages || 0);
             setTotalData(data.data.pagination.totalItems || 0);
             setFromPage(data.data.pagination.from || 0);
@@ -43,6 +44,7 @@ export default function Katalog() {
         setJudulSearch("");
         setPenulisSearch("");
         setTahunSearch("");
+        setProdi("");
     }, []);
 
     const handleSearch = () => {
@@ -54,6 +56,7 @@ export default function Katalog() {
         setJudulSearch("");
         setPenulisSearch("");
         setTahunSearch("");
+        setProdi("");
 
         setTimeout(() => {
             setPage(1);
@@ -64,7 +67,7 @@ export default function Katalog() {
 
     return (
         <div className="bg-[#e0e0e0]">
-            <div className="relative md:h-[32rem] h-60 bg-danger">
+            <div className="relative md:h-[36rem] h-60">
                 <img src={Background} alt="Background-landing-page" className="h-full w-full object-cover" />
                 <div className="bg-black/40 absolute inset-0"></div>
                 <div className="absolute bottom-0 bg-black/20 backdrop-blur-lg w-full px-4 sm:py-8 py-4 text-white sm:text-2xl font-medium">
@@ -117,6 +120,22 @@ export default function Katalog() {
                                 radius="sm"
                                 value={tahunSearch || ""}
                                 onChange={(e) => setTahunSearch(e.target.value)}
+                                classNames={{
+                                    inputWrapper: 'border border-primary',
+                                    input: 'text-primary'
+                                }}
+                            />
+                        </div>
+                        <div className="w-full text-justify">
+                            <label htmlFor="search-prodi" className="font-semibold text-sm text-primary">Program Studi</label>
+                            <Input
+                                id="search-year"
+                                aria-label="year"
+                                placeholder="Cari berdasarkan nama program studi"
+                                variant="bordered" 
+                                radius="sm"
+                                value={prodi || ""}
+                                onChange={(e) => setProdi(e.target.value)}
                                 classNames={{
                                     inputWrapper: 'border border-primary',
                                     input: 'text-primary'

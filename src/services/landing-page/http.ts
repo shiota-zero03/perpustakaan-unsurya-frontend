@@ -71,7 +71,8 @@ export const getListBuku = async (
   page: number | null,
   judul: string | null,
   penulis: string | null,
-  tahun: string | null
+  tahun: string | null,
+  prodi: string | null,
 ): Promise<IBukuListRes> => {
   const params = new URLSearchParams();
 
@@ -80,6 +81,7 @@ export const getListBuku = async (
   if (judul) params.set("judul", judul);
   if (penulis) params.set("penulis", penulis);
   if (tahun) params.set("tahun", tahun);
+  if (prodi) params.set("prodi", prodi);
 
   const link = `/landing-page/katalog?${params.toString()}`;
   const response = await instance.get(link);

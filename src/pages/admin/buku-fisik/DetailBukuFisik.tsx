@@ -26,6 +26,8 @@ export default function DetailBukuFisik(){
         kode_rak: null,
         stok: null,
         denda_harian: null,
+        book_description: null,
+        prodi: null,
     })
 
     const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -50,6 +52,8 @@ export default function DetailBukuFisik(){
                 kode_rak: dataFetching.kode_rak,
                 stok: dataFetching.stok,
                 denda_harian: dataFetching.denda_harian,
+                book_description: dataFetching.book_description,
+                prodi: dataFetching.prodi?.name ?? "-",
             })
             setPreviewImage(dataFetching.cover)
         }
@@ -99,6 +103,8 @@ export default function DetailBukuFisik(){
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.penerbit || "-"}</div>
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Tahun Terbit</div>
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.tahun_terbit || "-"}</div>
+                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Program Studi</div>
+                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.prodi || "-"}</div>
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">ISBN</div>
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.isbn || "-"}</div>
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Tanggal Masuk Perpustakaan</div>
@@ -109,6 +115,8 @@ export default function DetailBukuFisik(){
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.stok ? formData.stok.toLocaleString('id-ID') : "-"}</div>
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Denda / Hari</div>
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>Rp {formData.denda_harian ? formData.denda_harian.toLocaleString('id-ID') : "-"}</div>
+                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Deskripsi Buku</div>
+                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.book_description || "-"}</div>
                             </div>
                         </div>
                         <Link to={`/data-master/buku-fisik/barcode/${id}`} className="border-[0.8px] border-primary text-secondary font-semibold w-full flex gap-2 items-center justify-center py-2 rounded-md" target="__blank">

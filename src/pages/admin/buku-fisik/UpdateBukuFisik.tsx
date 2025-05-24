@@ -1,7 +1,7 @@
 import { FaUserGraduate } from "react-icons/fa6";
 import BreadcrumbWithCustomSeparator from "@/components/Breadcrumb";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, Input, useDisclosure } from "@nextui-org/react";
+import { Button, Input, Select, SelectItem, Textarea, useDisclosure } from "@nextui-org/react";
 import React, { useEffect, useMemo, useState } from "react";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
 
@@ -11,6 +11,7 @@ import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
 import { BukuFisikInterfaceErrorReq, BukuFisikInterfaceReq } from "@/interface/request/BukuFisik.interface";
 import { useGetDetailBukuFisik, useUpdateBukuFisik } from "@/services/buku-fisik";
+import { useGetAllDepartment } from "@/services/option";
 
 export default function UpdateDataBukuFisik(){
 
@@ -31,6 +32,8 @@ export default function UpdateDataBukuFisik(){
         kode_rak: null,
         stok: null,
         denda_harian: null,
+        book_description: null,
+        studyProgramId: null,
     })
 
     const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -42,6 +45,17 @@ export default function UpdateDataBukuFisik(){
     const dataFetching = useMemo(() => {
         return data ? data.data : null;
     }, [data, id]);
+
+    const {
+        data: prodiData,
+        refetch: prodiRefetch,
+        isFetching: prodiIsFetching
+    } = useGetAllDepartment(null);
+
+    const PRODI_DATA = useMemo(() => {
+        if(!prodiData) return [];
+        else return prodiData.data;
+    }, [prodiData])
 
     useEffect(() => {
         if (dataFetching && Object.keys(dataFetching).length > 0) {
@@ -59,6 +73,8 @@ export default function UpdateDataBukuFisik(){
                 kode_rak: dataFetching.kode_rak,
                 stok: dataFetching.stok,
                 denda_harian: dataFetching.denda_harian,
+                book_description: dataFetching.book_description,
+                studyProgramId: dataFetching.prodi?.id || null,
             })
             setPreviewImage(dataFetching.cover)
         }
@@ -66,6 +82,7 @@ export default function UpdateDataBukuFisik(){
 
     useEffect(() => {
         refetch();
+        prodiRefetch();
         setFormDataError({})
     }, [])
 
@@ -103,6 +120,8 @@ export default function UpdateDataBukuFisik(){
         formData.kode_rak && formDataSend.append("kode_rak", formData.kode_rak)
         formData.stok && formDataSend.append("stok", String(formData.stok))
         formData.denda_harian && formDataSend.append("denda_harian", String(formData.denda_harian))
+        formData.book_description && formDataSend.append("book_description", formData.book_description)
+        formData.studyProgramId && formDataSend.append("studyProgramId", String(formData.studyProgramId))
 
         try {
             mutatePut(
@@ -136,6 +155,8 @@ export default function UpdateDataBukuFisik(){
                                     kode_rak: errors.kode_rak || "",
                                     stok: errors.stok || "",
                                     denda_harian: errors.denda_harian || "",
+                                    book_description: errors.book_description || "",
+                                    studyProgramId: errors.studyProgramId || "",
                                 })
                             }
                         } else {
@@ -201,26 +222,7 @@ export default function UpdateDataBukuFisik(){
                     </div>
                     <div className="lg:col-span-3 sm:col-span-2 col-span-1 flex flex-col gap-1 -mt-2">
                         <div className="grid sm:grid-cols-2 grid-cols-1 gap-2">
-                            <div>
-                                <label htmlFor="no_urut" className="text-primary font-semibold text-sm">No. Urut Buku</label>
-                                <Input
-                                    aria-label="Nomor Urut"
-                                    id="no_urut"
-                                    variant="bordered"
-                                    color="primary"
-                                    radius="sm"
-                                    placeholder="book serial number here"
-                                    value={formData.no_urut || ""}
-                                    onChange={(e) => setFormData({...formData, no_urut: e.target.value})}
-                                    classNames={{
-                                        inputWrapper: "border border-primary rounded",
-                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
-                                        label: "text-primary font-semibold text-sm"
-                                    }}
-                                />
-                                <div className="text-danger italic text-xs">{formDataError.no_urut}</div>
-                            </div>
-                            <div>
+                            <div className="sm:col-span-2 col-span-1">
                                 <label htmlFor="kode_klasifikasi" className="text-primary font-semibold text-sm">Kode Klasifikasi Koleksi Perpustakaan</label>
                                 <Input
                                     aria-label="Nomor Urut"
@@ -239,7 +241,7 @@ export default function UpdateDataBukuFisik(){
                                 />
                                 <div className="text-danger italic text-xs">{formDataError.kode_klasifikasi}</div>
                             </div>
-                            <div className="sm:col-span-2">
+                            <div>
                                 <label htmlFor="judul" className="text-primary font-semibold text-sm">Judul Buku</label>
                                 <Input
                                     aria-label="Nomor Urut"
@@ -317,6 +319,32 @@ export default function UpdateDataBukuFisik(){
                                     }}
                                 />
                                 <div className="text-danger italic text-xs">{formDataError.tahun_terbit}</div>
+                            </div>
+                            <div>
+                                <label htmlFor="prodi" className="text-primary font-semibold text-sm">Program Studi</label>
+                                <Select
+                                    aria-label="prodi"
+                                    id="prodi"
+                                    variant="bordered"
+                                    color="primary"
+                                    isLoading={prodiIsFetching}
+                                    radius="sm"
+                                    placeholder="--- Pilih program studi ---"
+                                    selectedKeys={[String(formData.studyProgramId || "")]}
+                                    onChange={(e) => setFormData({...formData, studyProgramId: Number(e.target.value)})}
+                                    classNames={{
+                                        trigger: "border border-primary rounded",
+                                        value: "text-primary text-xs font-medium italic placeholder:text-primary",
+                                        label: "text-primary font-semibold text-sm"
+                                    }}
+                                >
+                                    {prodiIsFetching ? (
+                                        <SelectItem value={""} key={""}>Loading ...</SelectItem>
+                                    ) : PRODI_DATA.map(item => (
+                                        <SelectItem value={item.id} key={item.id}>{item.name}</SelectItem>
+                                    ))}
+                                </Select>
+                                <div className="text-danger italic text-xs">{formDataError.studyProgramId}</div>
                             </div>
                             <div>
                                 <label htmlFor="isbn" className="text-primary font-semibold text-sm">ISBN</label>
@@ -416,6 +444,25 @@ export default function UpdateDataBukuFisik(){
                                     }}
                                 />
                                 <div className="text-danger italic text-xs">{formDataError.denda_harian}</div>
+                            </div>
+                            <div className="sm:col-span-2 col-span-1">
+                                <label htmlFor="book_description" className="text-primary font-semibold text-sm">Deskripsi Buku</label>
+                                <Textarea
+                                    aria-label="Nomor Urut"
+                                    id="book_description"
+                                    variant="bordered"
+                                    color="primary"
+                                    radius="sm"
+                                    placeholder="book description code here"
+                                    value={formData.book_description || ""}
+                                    onChange={(e) => setFormData({...formData, book_description: e.target.value})}
+                                    classNames={{
+                                        inputWrapper: "border border-primary rounded",
+                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
+                                        label: "text-primary font-semibold text-sm"
+                                    }}
+                                />
+                                <div className="text-danger italic text-xs">{formDataError.book_description}</div>
                             </div>
                         </div>
                         <div className="pt-2 pb-6">

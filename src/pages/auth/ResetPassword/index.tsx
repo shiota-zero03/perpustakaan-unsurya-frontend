@@ -51,7 +51,7 @@ export default function ResetPassword () {
                         navigate('/auth/sign-in')
                     },
                     onError: (error: AxiosError<BaseErrorRes>) => {
-                        console.log(error)
+                        console.error(error)
                         isFinished()
                         if (error.response && error.response.data) {
                             const { data, status } = error.response;

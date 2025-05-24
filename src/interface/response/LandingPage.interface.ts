@@ -41,5 +41,10 @@ export interface IBukuDetailRes extends BaseRes {
         kode_rak: string | null;
         stok: number | null;
         denda_harian: number | null;
+        book_description: string | null;
+        prodi: {
+            id: number;
+            name: string;
+        } | null;
     }
 }

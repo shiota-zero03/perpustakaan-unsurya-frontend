@@ -1,4 +1,4 @@
-import Background from "@/assets/images/bg-repository.jpg";
+import Background from "@/assets/images/profil-unsurya.jpg"
 import { useGetListKaryaTulis } from "@/services/landing-page";
 import { useEffect, useMemo, useState } from "react";
 import { Button, Card, Input, Pagination, Spinner } from "@nextui-org/react";
@@ -67,7 +67,7 @@ export default function Repository() {
 
     return (
         <div className="bg-[#e0e0e0]">
-            <div className="relative md:h-[32rem] h-60 bg-danger">
+            <div className="relative md:h-[36rem] h-60">
                 <img src={Background} alt="Background-landing-page" className="h-full w-full object-cover" />
                 <div className="bg-black/40 absolute inset-0"></div>
                 <div className="absolute bottom-0 bg-black/20 backdrop-blur-lg w-full px-4 sm:py-8 py-4 text-white sm:text-2xl font-medium">

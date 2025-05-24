@@ -31,6 +31,7 @@ export default function DataBukuFisik(){
     const [judulSearch, setJudulSearch] = useState<string | null>(null);
     const [penulisSearch, setPenulisSearch] = useState<string | null>(null);
     const [tahunSearch, setTahunSearch] = useState<string | null>(null);
+    const [prodiSearch, setProdiSearch] = useState<string | null>(null);
     
     const [totalPage, setTotalPage] = useState(1);
     const [totalData, setTotalData] = useState(1);
@@ -49,7 +50,8 @@ export default function DataBukuFisik(){
         currentPage,
         judulSearch,
         penulisSearch,
-        tahunSearch
+        tahunSearch,
+        prodiSearch
     );
     
     const MAHASISWA_DATA = useMemo(() => {
@@ -132,6 +134,11 @@ export default function DataBukuFisik(){
                 cell: (info) => info.getValue(),
                 header: () => <span>Tahun Terbit</span>,
             }),
+            columnHelper.accessor("prodi", {
+                id: "prodi",
+                cell: (info) => info.getValue() ?? "-",
+                header: () => <span>Program Studi</span>,
+            }),
             {
                 id: "action",
                 header: () => <span>Aksi</span>,
@@ -160,6 +167,7 @@ export default function DataBukuFisik(){
         setJudulSearch(null);
         setPenulisSearch(null);
         setTahunSearch(null);
+        setProdiSearch(null);
         setTimeout(() => {
             setCurrentPage(1);
             refetchBukuFisik();
@@ -398,6 +406,22 @@ export default function DataBukuFisik(){
                                 radius="sm"
                                 value={tahunSearch || ""}
                                 onChange={(e) => setTahunSearch(e.target.value)}
+                                classNames={{
+                                    inputWrapper: 'border border-primary',
+                                    input: 'text-primary'
+                                }}
+                            />
+                        </div>
+                        <div className="w-full">
+                            <label htmlFor="search-year" className="font-semibold text-sm text-primary">Program Studi</label>
+                            <Input
+                                id="search-year"
+                                aria-label="year"
+                                placeholder="Cari berdasarkan program studi"
+                                variant="bordered" 
+                                radius="sm"
+                                value={prodiSearch || ""}
+                                onChange={(e) => setProdiSearch(e.target.value)}
                                 classNames={{
                                     inputWrapper: 'border border-primary',
                                     input: 'text-primary'
