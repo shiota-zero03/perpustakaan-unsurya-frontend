@@ -36,5 +36,9 @@ export interface IBukuFisikDetailRes extends BaseRes {
             id: number;
             name: string;
         } | null;
+        locations: string | null;
+        language: string | null;
+        physical_description: string | null;
+        edition: string | null;
     }
 }

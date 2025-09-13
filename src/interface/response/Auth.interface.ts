@@ -11,6 +11,18 @@ export interface IRegisterRes extends BaseRes {
 export interface ITokenRes extends BaseRes {
     data: {
       token: string;
+      refresh: string;
+      user: {
+        user_id:string | null;
+        nama:string | null;
+        fakultas:string | null;
+        prodi:string | null;
+        jeniskelamin:string | null;
+        no_telpon:string | null;
+        email:string | null;
+        email_kampus:string | null;
+        status:string | null;
+      };
       role?: string;
     };
   }

@@ -1,14 +1,13 @@
 import { Outlet } from "react-router-dom";
 import { BiSolidChevronLeftCircle } from "react-icons/bi";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import Sidebar from "../Sidebar";
 import Header from "../Header";
-import { useGetProfile } from "@/services/profile";
 import store from "@/redux/store";
 
 const MainLayout = () => {
 
-    const { role } = store.getState().auth;
+    const { user } = store.getState().auth;
 
     const [ openSidebar, setOpenSidebar ] = useState<boolean>(true)
 
@@ -16,31 +15,12 @@ const MainLayout = () => {
         setOpenSidebar(!openSidebar)
     }
 
-    const [ dataLayoutProfile, setDataLayoutProfile ] = useState<{name: string, email: string, picture: string | null}>({
-        name: 'Anonymous',
-        email: 'anonymous@mail.com',
+    const dataLayoutProfile: {name: string, email: string, picture: string | null} = {
+        name: user?.nama ?? 'Anonymous',
+        email: user?.user_id ?? 'anonymous@mail.com',
         picture: null
-    })
+    }
 
-    const { data: dataProfile, isLoading: isLoadingProfile, refetch: refetchProfile } = useGetProfile();
-    useMemo(() => {
-        if(dataProfile && dataProfile.data) {
-            setDataLayoutProfile({
-                name: dataProfile.data.name,
-                email: dataProfile.data.email,
-                picture: role === "Admin" ? (dataProfile.data.admin?.profilePicture || null) : (
-                    role === "Teacher" ? (dataProfile.data.teacher?.profilePicture || null) : (
-                        dataProfile.data.student?.profilePicture || null
-                    )
-                )
-            })
-        }
-    }, [dataProfile, isLoadingProfile, refetchProfile])
-
-    useEffect(() => {
-        refetchProfile();
-    }, [dataProfile, refetchProfile])
-    
     return (
         <section className="bg-[#F5F5F5] w-full min-h-screen">
             <div className={`fixed ${!openSidebar ? 'left-[38px]' : 'left-[238px]'} top-8 bg-white rounded-full cursor-pointer duration-300 z-30`} onClick={toggleSidebar}>

@@ -1,6 +1,6 @@
 import { FaUserGraduate } from "react-icons/fa6";
 import BreadcrumbWithCustomSeparator from "@/components/Breadcrumb";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { Button, Input, useDisclosure } from "@nextui-org/react";
 import React, { useEffect, useMemo, useState } from "react";
 import ConfirmAlert from "@/components/Modals/ConfirmAlert";
@@ -29,6 +29,7 @@ export default function UpdateBukuDigital(){
     })
 
     const [previewImage, setPreviewImage] = useState<string | null>(null);
+    const [previewLink, setPreviewLink] = useState<string | null>(null);
 
     const [ formDataError, setFormDataError ] = useState<BukuDigitalInterfaceErrorReq>({})
 
@@ -47,10 +48,10 @@ export default function UpdateBukuDigital(){
                 penulis: dataFetching.penulis,
                 penerbit: dataFetching.penerbit,
                 tahun_terbit: dataFetching.tahun_terbit,
-                isbn: dataFetching.isbn,
-                link_book: dataFetching.link_book,
+                isbn: dataFetching.isbn
             })
             setPreviewImage(dataFetching.cover)
+            setPreviewLink(dataFetching.link_book)
         }
     }, [dataFetching])
 
@@ -67,6 +68,17 @@ export default function UpdateBukuDigital(){
         } else {
             setFormData({ ...formData, cover: null });
             setPreviewImage(dataFetching?.cover || "");
+        }
+    }
+
+    const handleChangeFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setFormData({ ...formData, link_book: file });
+            setPreviewLink(URL.createObjectURL(file));
+        } else {
+            setFormData({ ...formData, link_book: null });
+            setPreviewImage(dataFetching?.link_book || "");
         }
     }
 
@@ -279,22 +291,17 @@ export default function UpdateBukuDigital(){
                                 />
                                 <div className="text-danger italic text-xs">{formDataError.isbn}</div>
                             </div>
-                            <div className="sm:col-span-2">
-                                <label htmlFor="url" className="text-primary font-semibold text-sm">URL Buku</label>
-                                <Input
-                                    aria-label="URL Buku"
+                            <div className="sm:col-span-2 flex flex-col gap-1">
+                                <label htmlFor="url" className="text-primary font-semibold text-sm">File Buku</label>
+                                <div className="flex">
+                                    <Link target="__blank" to={previewLink || ""} className="text-white text-xs bg-primary flex items-center py-1 px-2 rounded-md">Lihat File</Link>
+                                </div>
+                                <input
+                                    className="border border-primary"
+                                    type="file"
                                     id="url"
-                                    variant="bordered"
-                                    color="primary"
-                                    radius="sm"
-                                    placeholder="book url here"
-                                    value={formData.link_book || ""}
-                                    onChange={(e) => setFormData({...formData, link_book: e.target.value})}
-                                    classNames={{
-                                        inputWrapper: "border border-primary rounded",
-                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
-                                        label: "text-primary font-semibold text-sm"
-                                    }}
+                                    onChange={handleChangeFile}
+                                    accept=".pdf,.jpg,.jpeg,.png"
                                 />
                                 <div className="text-danger italic text-xs">{formDataError.link_book}</div>
                             </div>

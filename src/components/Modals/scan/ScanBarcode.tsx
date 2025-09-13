@@ -29,7 +29,7 @@ const ScanAnggota = ({ isOpen, onClose, confirmAction }: Props) => {
       <ModalContent>
         <ModalBody className="flex flex-col gap-y-2 p-8">
           <p className="text-primary font-semibold">
-            ID Peminjam (NIM / NIDN)
+            ID Peminjam (Nomor Identitas)
           </p>
           <Input 
             ref={inputRef}

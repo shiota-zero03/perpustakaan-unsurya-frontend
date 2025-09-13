@@ -5,7 +5,7 @@ import { KaryaTulisInterfaceErrorReq } from "@/interface/request/KaryaTulis.inte
 import { BsFiletypePdf } from "react-icons/bs";
 import { errorToast } from "@/utils/toastMessage";
 import { useGetDetailRepository } from "@/services/landing-page";
-import { FaRegFrownOpen } from "react-icons/fa";
+import EmptyData from "@/assets/images/empty.svg"; 
 
 export default function RepositoryDetail(){
 
@@ -135,8 +135,10 @@ export default function RepositoryDetail(){
                                 </div>    
                             )) : (
                                 <div className="flex flex-col items-center text-primary lg:col-span-5 sm:col-span-3 col-span-2 py-8">
-                                    <FaRegFrownOpen size={72} />
-                                    <span className="italic mt-2 sm:text-lg">Tidak ada dokumen ditemukan</span>
+                                    <img src={EmptyData} alt="" />
+                                    <span className="italic mt-2 sm:text-lg">
+                                        <strong>Data kosong.</strong> Mohon dicoba kembali
+                                    </span>
                                 </div>
                             )}
                         </div>

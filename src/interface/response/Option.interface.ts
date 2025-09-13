@@ -13,7 +13,7 @@ export interface IOptionIDNameRes extends BaseRes {
 export interface OptionAnggotaRes {
     id: string;
     name: string | null;
-    identityNumber: string | null;
+    user_id: string | null;
 }
 
 export interface IOptionAnggotaRes extends BaseRes {

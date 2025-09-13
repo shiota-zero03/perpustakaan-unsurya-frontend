@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteMahasiswa, getDetailMahasiswa, getListMahasiswa, importMahasiswa, postSelectionMahasiswa, storeMahasiswa, updateMahasiswa } from "./http";
+import { cronMahasiswa, deleteMahasiswa, getDetailMahasiswa, getListMahasiswa, importMahasiswa, postSelectionMahasiswa, storeMahasiswa, updateMahasiswa } from "./http";
 import { TrueResponseInterface } from "@/interface/response/Utils.interface";
 import { SelectedDataReq } from "@/interface/request/Utils.interface";
 import { AxiosError } from "axios";
@@ -14,7 +14,7 @@ export const useGetListMahasiswa = (
     status: string | null
 ) => {
     return useQuery({
-        queryKey: ["getListMahasiswa"],
+        queryKey: ["getListMahasiswa", limit, page, name, nim, status],
         queryFn: () => getListMahasiswa(limit, page, name, nim, status),
         staleTime: 300000,
     });
@@ -48,6 +48,19 @@ export const useDeletedMahasiswa = () => {
     });
 };
 
+export const useCronMahasiswa = () => {
+    const queryClient = useQueryClient();
+  
+    return useMutation<IMahasiswaDetailRes, AxiosError<BaseErrorRes>, null>({
+        mutationFn: () => cronMahasiswa(),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["cronMahasiswa"] });
+        },
+        onError: (error) => {
+            throw error;
+        },
+    });
+};
 export const useStoreMahasiswa = () => {
     const queryClient = useQueryClient();
   
@@ -66,7 +79,7 @@ export const useGetDetailMahasiswa = (
     userId: string
 ) => {
     return useQuery({
-        queryKey: ["getDetailMahasiswa"],
+        queryKey: ["getDetailMahasiswa", userId],
         queryFn: () => getDetailMahasiswa(userId),
         staleTime: 300000,
     });

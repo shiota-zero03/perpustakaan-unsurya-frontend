@@ -17,6 +17,11 @@ export interface BukuListRes {
     penulis: string;
     tahun_terbit: string;
     link_book: string;
+    edition: string | null;
+    isbn: string;
+    type: string;
+    physical_description: string | null,
+    stok: number;
 }
 
 export interface IBukuListRes extends BaseRes {
@@ -42,6 +47,10 @@ export interface IBukuDetailRes extends BaseRes {
         stok: number | null;
         denda_harian: number | null;
         book_description: string | null;
+        locations: string | null;
+        language: string | null;
+        physical_description: string | null;
+        edition: string | null;
         prodi: {
             id: number;
             name: string;

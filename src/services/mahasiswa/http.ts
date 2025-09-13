@@ -33,6 +33,11 @@ export const deleteMahasiswa = async ( userId: string ): Promise<TrueResponseInt
   return response.data;
 };
 
+export const cronMahasiswa = async (): Promise<IMahasiswaDetailRes> => {
+  const response = await instance.post(`/cron/data-anggota`, {});
+  return response.data;
+};
+
 export const storeMahasiswa = async ( data: FormData ): Promise<IMahasiswaDetailRes> => {
   const response = await instance.post(`/mahasiswa/store`, data);
   return response.data;

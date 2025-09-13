@@ -7,7 +7,7 @@ export interface IRegisterReq {
 }
 
 export interface ILoginReq {
-    email?: string;
+    username?: string;
     password?: string;
 }
 

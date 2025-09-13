@@ -1,7 +1,7 @@
 import { FaUsers } from "react-icons/fa6";
 import { IoGridOutline } from "react-icons/io5";
 import { TbReport } from "react-icons/tb";
-import { BsDatabaseFillGear } from "react-icons/bs";
+import { BsDatabaseFillGear, BsGear } from "react-icons/bs";
 import { IconType } from "react-icons/lib";
 import { TbBinaryTree } from "react-icons/tb";
 
@@ -31,9 +31,9 @@ export const AdminSidebar: PropsMenu[] = [
         icon: FaUsers,
         subMenu: [
             {
-                text: 'Data Dosen',
-                name: 'dosen',
-                link: '/data-anggota/dosen'
+                text: 'Data Pegawai',
+                name: 'pegawai',
+                link: '/data-anggota/pegawai'
             },
             {
                 text: 'Data Mahasiswa',
@@ -48,10 +48,20 @@ export const AdminSidebar: PropsMenu[] = [
         link: '#',
         icon: BsDatabaseFillGear,
         subMenu: [
+            // {
+            //     text: 'Data Petugas',
+            //     name: 'petugas',
+            //     link: '/data-master/petugas'
+            // },
             {
-                text: 'Data Petugas',
-                name: 'petugas',
-                link: '/data-master/petugas'
+                text: 'Data Fakultas',
+                name: 'fakultas',
+                link: '/data-master/fakultas'
+            },
+            {
+                text: 'Data Prodi',
+                name: 'program-studi',
+                link: '/data-master/program-studi'
             },
             {
                 text: 'Data Buku Fisik',
@@ -87,6 +97,11 @@ export const AdminSidebar: PropsMenu[] = [
                 link: '/data-transaksi/peminjaman'
             },
             {
+                text: 'Data Pengembalian',
+                name: 'pengembalian',
+                link: '/data-transaksi/pengembalian'
+            },
+            {
                 text: 'Laporan Denda',
                 name: 'laporan-denda',
                 link: '/data-transaksi/laporan-denda'
@@ -99,16 +114,6 @@ export const AdminSidebar: PropsMenu[] = [
         link: '#',
         icon: TbBinaryTree,
         subMenu: [
-            {
-                text: 'Data Fakultas',
-                name: 'fakultas',
-                link: '/cms/fakultas'
-            },
-            {
-                text: 'Data Prodi',
-                name: 'program-studi',
-                link: '/cms/program-studi'
-            },
             {
                 text: 'Banner',
                 name: 'banner',
@@ -126,6 +131,12 @@ export const AdminSidebar: PropsMenu[] = [
             },
         ]
     },
+    {
+        text: 'Pengaturan',
+        name: 'pengaturan',
+        link: '/pengaturan',
+        icon: BsGear
+    },
 ];
 
 export const StudentSidebar: PropsMenu[] = [
@@ -136,7 +147,7 @@ export const StudentSidebar: PropsMenu[] = [
         icon: IoGridOutline
     },
     {
-        text: 'Data Master',
+        text: 'Data Koleksi',
         name: 'data-master',
         link: '#',
         icon: BsDatabaseFillGear,

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import UserImage from "@/assets/images/buku.png";
 import { errorToast } from "@/utils/toastMessage";
 import { useGetDetailBuku } from "@/services/landing-page";
+import { Divider } from "@nextui-org/react";
 
 export default function DetailBuku(){
 
@@ -26,6 +27,10 @@ export default function DetailBuku(){
         denda_harian: "",
         desctiption: "",
         prodi: "",
+        locations: "",
+        language: "",
+        physical_description: "",
+        edition: "",
     })
 
     const { data, isLoading, isFetching, refetch, error } = useGetDetailBuku(id || "")
@@ -52,6 +57,10 @@ export default function DetailBuku(){
                 denda_harian: dataFetching.denda_harian ? String(dataFetching.denda_harian) : "",
                 desctiption: dataFetching.book_description || "",
                 prodi: dataFetching.prodi?.name || "",
+                locations: dataFetching.locations || "",
+                language: dataFetching.language || "",
+                physical_description: dataFetching.physical_description || "",
+                edition: dataFetching.edition || "",
             })
         }
     }, [dataFetching])
@@ -82,47 +91,73 @@ export default function DetailBuku(){
                 <Link to={'#'}>{formData.judul}</Link>
             </div>
             <hr />
-            <div className="lg:px-8 px-4 flex flex-col gap-4 pb-4 min-h-[90vh]">
-                <h1 className="text-primary font-semibold md:text-lg">{formData.judul}</h1>
-                <div className="grid lg:grid-cols-4 grid-cols-1 gap-4">
-                    <div className="col-span-1 border border-primary rounded-md">
-                        <div className="flex items center justify-center md:p-4 p-2 mb-2">
-                            <img src={formData.cover || UserImage} alt="user-image" loading="lazy" className="w-full" />
+            <div className="lg:px-8 px-4 flex flex-col gap-4 pb-4 min-h-[90vh] w-full lg:max-w-7xl lg:mx-auto">
+                <div className="grid lg:grid-cols-4 sm:grid-cols-3 grid-cols-1 gap-8">
+                    <div className="col-span-1">
+                        <div className="flex items center justify-center md:p-4 p-2 mb-2 bg-[#dae1e7] rounded-lg">
+                            <img src={formData.cover || UserImage} alt="user-image" loading="lazy" className="w-full rounded-lg" />
                         </div>
                         {formData.link_book && (
                             <Link
                                 to={formData.link_book}
                                 target="__blakn"
-                                className="w-full rounded font-semibold flex items-center justify-center bg-primary text-white py-2 gap-4"
+                                className="w-full rounded font-semibold hidden items-center justify-center bg-primary text-white py-2 gap-4"
                             >
                                 <FaFilePdf /> Unduh File PDF
                             </Link>
                         )}
                     </div>
-                    <div className="lg:col-span-3 sm:col-span-2 col-span-1 flex flex-col gap-1 border border-primary rounded-md">
-                        <div className="md:px-6 md:py-4 px-2 py-2">
-                            <div className="grid grid-cols-3">
-                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Judul Buku</div>
-                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.judul || "-"}</div>
-                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Nama Pengarang</div>
-                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.penulis || "-"}</div>
-                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Penerbit</div>
-                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.penerbit || "-"}</div>
-                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Tahun Terbit</div>
-                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.tahun_terbit || "-"}</div>
-                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Program Studi</div>
-                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.prodi || "-"}</div>
-                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">ISBN</div>
-                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.isbn || "-"}</div>
-                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Nomor Urut Buku</div>
-                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.no_urut || "-"}</div>
-                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Kode Klasifikasi Koleksi Perpustakaan</div>
-                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.kode_klasifikasi || "-"}</div>
-                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Kode Rak Buku</div>
-                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.kode_rak || "-"}</div>
-                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Deskripsi Buku</div>
-                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.desctiption || "-"}</div>
+                    <div className="lg:col-span-3 sm:col-span-2 col-span-1 flex flex-col gap-2">
+                        <div className="font-bold text-primary lg:text-2xl md:text-xl text-base">{formData.judul || "-"}</div>
+                        <div className="font-semibold text-black lg:text-xl md:text-lg text-sm">- {formData.penulis || "-"}</div>
+                        <Divider />
+                        <div className={`text-gray-500 lg:text-lg md:text-base text-sm ${formData.desctiption ? "" : "italic"} sm:py-3 py-2`}>{formData.desctiption || "Tidak Tersedia Deskripsi"}</div>
+                        <Divider />
+
+
+                        <div className="font-bold text-primary lg:text-xl md:text-lg text-sm">Ketersediaan</div>
+                        <div className="border flex sm:flex-row flex-col items-center justify-between rounded-md">
+                            <div className={`font-medium lg:text-lg md:text-base text-sm ${formData.locations ? "" : "italic text-gray-500"} p-4`}>
+                                {formData.locations ? `Lokasi : ${formData.locations}` : "Belum memasukkan lokasi"}
                             </div>
+                            <div className="p-4 sm:border-s sm:border-t-0 border-t min-w-32">
+                                <span className={`${formData.stok && Number(formData.stok) > 0 ? "bg-primary" : "bg-danger"} p-2 text-white rounded-lg`}>{formData.stok && Number(formData.stok) > 0 ? `Tersedia (${formData.stok} Exemplar)` : "Tidak Tersedia"}</span>
+                            </div>
+                        </div>
+
+
+                        <div className="font-bold text-primary lg:text-xl md:text-lg text-sm">Informasi Detail</div>
+                        <div className="flex items-start gap-2">
+                            <h2 className="lg:text-lg md:text-base text-sm text-start font-bold sm:max-w-40 sm:min-w-40 max-w-32 min-w-32">Penerbit</h2>
+                            <h2 className="lg:text-lg md:text-base text-sm text-start">{formData.penerbit || "-"}</h2>
+                        </div>
+                        <div className="flex items-start gap-2">
+                            <h2 className="lg:text-lg md:text-base text-sm text-start font-bold sm:max-w-40 sm:min-w-40 max-w-32 min-w-32">Deksripsi Fisik</h2>
+                            <h2 className="lg:text-lg md:text-base text-sm text-start">{formData.physical_description || "-"}</h2>
+                        </div>
+                        <div className="flex items-start gap-2">
+                            <h2 className="lg:text-lg md:text-base text-sm text-start font-bold sm:max-w-40 sm:min-w-40 max-w-32 min-w-32">Bahasa</h2>
+                            <h2 className="lg:text-lg md:text-base text-sm text-start">{formData.language || "-"}</h2>
+                        </div>
+                        <div className="flex items-start gap-2">
+                            <h2 className="lg:text-lg md:text-base text-sm text-start font-bold sm:max-w-40 sm:min-w-40 max-w-32 min-w-32">ISBN/ISSN</h2>
+                            <h2 className="lg:text-lg md:text-base text-sm text-start">{formData.isbn || "-"}</h2>
+                        </div>
+                        <div className="flex items-start gap-2">
+                            <h2 className="lg:text-lg md:text-base text-sm text-start font-bold sm:max-w-40 sm:min-w-40 max-w-32 min-w-32">Klasifikasi</h2>
+                            <h2 className="lg:text-lg md:text-base text-sm text-start">{formData.kode_klasifikasi || "-"}</h2>
+                        </div>
+                        <div className="flex items-start gap-2">
+                            <h2 className="lg:text-lg md:text-base text-sm text-start font-bold sm:max-w-40 sm:min-w-40 max-w-32 min-w-32">Edisi</h2>
+                            <h2 className="lg:text-lg md:text-base text-sm text-start">{formData.edition || "-"}</h2>
+                        </div>
+                        <div className="flex items-start gap-2">
+                            <h2 className="lg:text-lg md:text-base text-sm text-start font-bold sm:max-w-40 sm:min-w-40 max-w-32 min-w-32">Tahun Terbit</h2>
+                            <h2 className="lg:text-lg md:text-base text-sm text-start">{formData.tahun_terbit || "-"}</h2>
+                        </div>
+                        <div className="flex items-start gap-2">
+                            <h2 className="lg:text-lg md:text-base text-sm text-start font-bold sm:max-w-40 sm:min-w-40 max-w-32 min-w-32">Kode Rak Buku</h2>
+                            <h2 className="lg:text-lg md:text-base text-sm text-start">{formData.kode_rak || "-"}</h2>
                         </div>
                     </div>
                 </div>

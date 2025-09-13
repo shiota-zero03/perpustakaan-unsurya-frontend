@@ -20,7 +20,6 @@ export default function TambahTransaksi(){
 
     const [ formData, setFormData ] = useState<TransaksiInterfaceReq>({
         userId: null,
-        userName: null,
         bukuId: null,
         tanggal_peminjaman: null,
         jatuh_tempo: null,
@@ -29,9 +28,10 @@ export default function TambahTransaksi(){
 
     const [ formDataError, setFormDataError ] = useState<TransaksiInterfaceErrorReq>({})
 
-    const { data: dataAnggota, isFetching: isFetchingAnggota } = useGetAllAnggota();
+    const { data: dataAnggota, isFetching: isFetchingAnggota, refetch: refetchAnggota } = useGetAllAnggota();
     const { data: dataBuku, isFetching: isFetchingBuku, refetch: refetchBuku } = useGetAllBuku();
 
+    const [ searchAnggota, setSearchAnggota ] = useState<string>("")
     const [ searchBuku, setSearchBuku ] = useState<string>("")
 
     const DATA_ANGGOTA = useMemo(() => {
@@ -46,13 +46,14 @@ export default function TambahTransaksi(){
     useEffect(() => {
         setFormData({
             userId: null,
-            userName: null,
             bukuId: null,
             tanggal_peminjaman: null,
             jatuh_tempo: null,
             keterangan_peminjaman: null,
         });
+        setSearchAnggota("")
         setSearchBuku("")
+        refetchAnggota();
         refetchBuku();
         setFormDataError({});
     }, [])
@@ -86,7 +87,6 @@ export default function TambahTransaksi(){
                                 setFormDataError({
                                     ...formDataError,
                                     userId: errors.userId || "",
-                                    userName: errors.userName || "",
                                     bukuId: errors.bukuId || "",
                                     tanggal_peminjaman: errors.tanggal_peminjaman || "",
                                     jatuh_tempo: errors.jatuh_tempo || "",
@@ -117,16 +117,12 @@ export default function TambahTransaksi(){
     const { isOpen: isOpenScanBuku, onOpen: onOpenScanBuku, onClose: onCloseScanBuku } = useDisclosure();
 
     const handleConfirmAnggota = (data: string) => {
-        let dataAnggota = DATA_ANGGOTA.find(item => item.user_id === data);
+        let dataAnggota = DATA_ANGGOTA.find(item => item.identityNumber === data);
         if(dataAnggota) {
-            setFormData({
-                ...formData, 
-                userId: String(dataAnggota.user_id),
-                userName: String(dataAnggota.name),
-            })
+            setFormData({...formData, userId: String(dataAnggota.id)})
             onCloseScanAnggota()
         } else {
-            setFormData({...formData, userId: "", userName: ""})
+            setFormData({...formData, userId: ""})
             errorToast({ text: "Nomor identitas tidak ditemukan" })
         }
     }
@@ -189,14 +185,14 @@ export default function TambahTransaksi(){
                             <div className="sm:col-span-2">
                                 <div className="w-full flex items-center justify-between mb-2">
                                     <label htmlFor="author" className="text-primary font-semibold text-sm">Pilih Peminjam (Anggota)</label><br />
-                                    <Button isLoading={isFetchingAnggota} onPress={onOpenScanAnggota} variant="bordered" color="primary" size="sm" className="flex items-center justify-center"><FaQrcode /> Scan/Cari</Button>
+                                    <Button onPress={onOpenScanAnggota} variant="bordered" color="primary" size="sm" className="flex items-center justify-center"><FaQrcode /> Scan</Button>
                                 </div>
-                                {/* <Autocomplete
+                                <Autocomplete
                                     id="provinceId"
                                     onSelectionChange={(value) => setFormData({...formData, userId: String(value)})}
                                     defaultItems={DATA_ANGGOTA.filter((dt) =>
                                         dt.name?.toLowerCase().includes(searchAnggota.toLowerCase()) ||
-                                        dt.user_id?.toLowerCase().includes(searchAnggota.toLowerCase())
+                                        dt.identityNumber?.toLowerCase().includes(searchAnggota.toLowerCase())
                                     )}
                                     selectedKey={formData.userId}
                                     aria-label="Data pengguna"
@@ -211,23 +207,8 @@ export default function TambahTransaksi(){
                                         },
                                     }}
                                 >
-                                    {(dt) => <AutocompleteItem key={dt.id} textValue={`${dt.name} - ${dt.user_id}`}>{dt.name} - {dt.user_id}</AutocompleteItem>}
-                                </Autocomplete> */}
-                                <Input
-                                    aria-label="Peminjam"
-                                    id="code"
-                                    variant="bordered"
-                                    color="primary"
-                                    radius="sm"
-                                    placeholder="AUTO_FILLED"
-                                    value={formData.userId && formData.userName ? `${formData.userId} - ${formData.userName}` : ""}
-                                    readOnly
-                                    classNames={{
-                                        inputWrapper: "border border-primary rounded bg-slate-50 cursor-not-allowed",
-                                        input: "text-primary text-xs font-medium italic placeholder:text-primary cursor-not-allowed",
-                                        label: "text-primary font-semibold text-sm"
-                                    }}
-                                />
+                                    {(dt) => <AutocompleteItem key={dt.id} textValue={`${dt.name} - ${dt.identityNumber}`}>{dt.name} - {dt.identityNumber}</AutocompleteItem>}
+                                </Autocomplete>
                                 <div className="text-danger italic text-xs">{formDataError.userId}</div>
                             </div>
                             <div className="sm:col-span-2">

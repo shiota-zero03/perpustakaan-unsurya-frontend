@@ -1,5 +1,6 @@
 export interface TransaksiInterfaceErrorReq {
     userId?: string | null;
+    userName?: string | null;
     bukuId?: string | null;
     tanggal_peminjaman?: string | null;
     jatuh_tempo?: string | null;
@@ -12,6 +13,7 @@ export interface TransaksiInterfaceErrorReq {
 }
 export interface TransaksiInterfaceReq {
     userId?: string | null;
+    userName?: string | null;
     bukuId?: string | null;
     tanggal_peminjaman?: string | null;
     jatuh_tempo?: string | null;

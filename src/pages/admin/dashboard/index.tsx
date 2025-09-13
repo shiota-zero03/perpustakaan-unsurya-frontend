@@ -1,4 +1,3 @@
-import { useGetProfile } from "@/services/profile";
 import { useEffect, useMemo, useState } from "react";
 import Profile from "@/assets/images/profile.png";
 import { CardDashboard, CardDashboardChart, CardDashboardHarian } from "@/components/Card";
@@ -12,30 +11,12 @@ import { Card, CardBody } from "@nextui-org/react";
 
 export default function Dashboard(){
 
-    const { role } = store.getState().auth;
+    const { user } = store.getState().auth;
 
-    const [ dataLayoutProfile, setDataLayoutProfile ] = useState<{name: string, picture: string | null}>({
-        name: 'Anonymous',
+    const dataLayoutProfile: {name: string, picture: string | null} = {
+        name: user?.nama ?? "Anonimous",
         picture: null
-    })
-
-    const { data: dataProfile, isLoading: isLoadingProfile, refetch: refetchProfile } = useGetProfile();
-    useMemo(() => {
-        if(dataProfile && dataProfile.data) {
-            setDataLayoutProfile({
-                name: dataProfile.data.name,
-                picture: role === "Admin" ? (dataProfile.data.admin?.profilePicture || null) : (
-                    role === "Teacher" ? (dataProfile.data.teacher?.profilePicture || null) : (
-                        dataProfile.data.student?.profilePicture || null
-                    )
-                )
-            })
-        }
-    }, [dataProfile, isLoadingProfile, refetchProfile])
-
-    useEffect(() => {
-        refetchProfile();
-    }, [dataProfile, refetchProfile])
+    }
 
     const { data: dataDashboard, isLoading: isFetchingDashboard, refetch: refetchDashboard } = useGetDashgetDashboard();
     const DASHBOARD_FETCHING = useMemo(() => {
@@ -116,7 +97,7 @@ export default function Dashboard(){
                 </main>
             ) : (
                 <main className="flex flex-col gap-8">
-                    {isLoadingProfile || isFetchingDashboard ? (
+                    {isFetchingDashboard ? (
                         <div className="inset-0 fixed bg-black/10 z-10 flex items-center justify-center">
                             <div className="loader ease-linear rounded-full border-[6px] border-t-4 h-20 w-20 mb-4" />
                         </div>

@@ -12,7 +12,7 @@ import { AxiosError } from "axios";
 import { useState } from "react";
 import { FaEye, FaEyeSlash, FaRegAddressCard } from "react-icons/fa6";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function SignIn () {
     const [ checkCondition, setCheckCondition ] = useState<boolean>(false)
@@ -21,7 +21,7 @@ export default function SignIn () {
     const [ sLoading, SetSLoading ] = useState<boolean>(false)
 
     const [ formData, setFormData ] = useState<ILoginReq>({
-        email: '',
+        username: '',
         password: ''
     });
 
@@ -48,6 +48,8 @@ export default function SignIn () {
                         dispatch(
                             setAuthTokens({
                                 token: res.data.token,
+                                refresh: res.data.refresh,
+                                user: res.data.user,
                                 role: res.data.role || ""
                             }),
                         );
@@ -63,7 +65,7 @@ export default function SignIn () {
                             if(status === 422) {
                                 setFormDataError({
                                     ...formDataError,
-                                    email: errors.email,
+                                    username: errors.username,
                                     password: errors.password
                                 })
                             }
@@ -102,15 +104,14 @@ export default function SignIn () {
                     >
                         <div className="w-full">
                             <Input
-                                type="email"
-                                value={formData.email || ""}
-                                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                value={formData.username || ""}
+                                onChange={(e) => setFormData({...formData, username: e.target.value})}
                                 variant="bordered"
-                                aria-label="Email"
+                                aria-label="username"
                                 labelPlacement="inside"
                                 radius="sm"
                                 className="w-full"
-                                placeholder="your email here"
+                                placeholder="your username here"
                                 color="primary"
                                 classNames={{
                                     inputWrapper: 'border-primary text-primary',
@@ -119,7 +120,7 @@ export default function SignIn () {
                                 }}
                                 endContent={<FaRegAddressCard className="text-secondary" size={24} />}
                             />
-                            <div className="-mt-1"><small className="text-danger"><em>{formDataError?.email}</em></small></div>
+                            <div className="-mt-1"><small className="text-danger"><em>{formDataError?.username}</em></small></div>
                         </div>
                         <div className="w-full">
                             <Input
@@ -146,7 +147,7 @@ export default function SignIn () {
                         </div>
                         <div className="flex items-center justify-between my-2">
                             <Checkbox isSelected={checkCondition} onChange={() => setCheckCondition(!checkCondition)} size="sm" color="primary" radius="none"><span className="font-medium text-primary">Ingat saya</span></Checkbox>
-                            <Link to={"/auth/forgot-password"} className="sm:text-sm text-xs font-medium text-primary underline">Lupa password ?</Link>
+                            {/* <Link to={"/auth/forgot-password"} className="sm:text-sm text-xs font-medium text-primary underline">Lupa password ?</Link> */}
                         </div>
                         <div>
                             <ButtonSolid type="submit" isLoading={sLoading} className="bg-primary text-sm text-white font-bold h-10 w-full" content="Sign In" />

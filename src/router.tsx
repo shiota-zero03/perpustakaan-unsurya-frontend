@@ -69,6 +69,11 @@ const TambahDataTransaksi = lazy(() => import("@/pages/admin/transaksi/TambahTra
 const UpdateDataTransaksi = lazy(() => import("@/pages/admin/transaksi/UpdateTransaksi"));
 const DetailTransaksi = lazy(() => import("@/pages/admin/transaksi/DetailTransaksi"));
 
+const DataPengembalian = lazy(() => import("@/pages/admin/pengembalian"));
+const TambahDataPengembalian = lazy(() => import("@/pages/admin/pengembalian/TambahTransaksi"));
+const UpdateDataPengembalian = lazy(() => import("@/pages/admin/pengembalian/UpdateTransaksi"));
+const DetailPengembalian = lazy(() => import("@/pages/admin/pengembalian/DetailTransaksi"));
+
 const DataDenda = lazy(() => import("@/pages/admin/denda"));
 const UpdateDataDenda = lazy(() => import("@/pages/admin/denda/UpdateDenda"));
 const DetailDenda = lazy(() => import("@/pages/admin/denda/DetailDenda"));
@@ -86,6 +91,7 @@ const UpdateProfil =  lazy(() => import("@/pages/admin/profil"));
 
 const ProfileKartuAnggota = lazy(() => import("@/pages/admin/profil/kartu-anggota"));
 const CetakProfileKartuAnggota = lazy(() => import("@/pages/admin/profil/cetak-kartu"));
+const Setting = lazy(() => import("@/pages/admin/setting"));
 
 export default function Router() {
     return (
@@ -114,7 +120,7 @@ export default function Router() {
             <Route path="/visitor" element={<Visitor />} />
           </Route>
 
-          <Route path="/data-anggota/dosen/cetak-kartu/:id" element={<CetakKartuAnggotaDosen />} />
+          <Route path="/data-anggota/pegawai/cetak-kartu/:id" element={<CetakKartuAnggotaDosen />} />
           <Route path="/data-anggota/mahasiswa/cetak-kartu/:id" element={<CetakKartuAnggotaMahasiswa />} />
           <Route path="/data-master/buku-fisik/barcode/:id" element={<CetakBarcodeBukuFisik />} />
           <Route path="/edit-profil/cetak-kartu/:id" element={<CetakProfileKartuAnggota />} />
@@ -124,11 +130,11 @@ export default function Router() {
             <Route path="/edit-profil" element={<UpdateProfil />} />
             <Route path="/edit-profil/lihat-kartu-anggota" element={<ProfileKartuAnggota />} />
 
-            <Route path="/data-anggota/dosen" element={<DataDosen />} />
-            <Route path="/data-anggota/dosen/tambah-data" element={<TambahDataDosen />} />
-            <Route path="/data-anggota/dosen/edit-data/:id" element={<UpdateDataDosen />} />
-            <Route path="/data-anggota/dosen/detail/:id" element={<DetailDosen />} />
-            <Route path="/data-anggota/dosen/kartu-anggota/:id" element={<KartuAnggotaDosen />} />
+            <Route path="/data-anggota/pegawai" element={<DataDosen />} />
+            <Route path="/data-anggota/pegawai/tambah-data" element={<TambahDataDosen />} />
+            <Route path="/data-anggota/pegawai/edit-data/:id" element={<UpdateDataDosen />} />
+            <Route path="/data-anggota/pegawai/detail/:id" element={<DetailDosen />} />
+            <Route path="/data-anggota/pegawai/kartu-anggota/:id" element={<KartuAnggotaDosen />} />
 
             <Route path="/data-anggota/mahasiswa" element={<DataMahasiswa />} />
             <Route path="/data-anggota/mahasiswa/tambah-data" element={<TambahDataMahasiswa />} />
@@ -163,18 +169,25 @@ export default function Router() {
             <Route path="/data-transaksi/peminjaman/edit-data/:slug" element={<UpdateDataTransaksi />} />
             <Route path="/data-transaksi/peminjaman/detail/:slug" element={<DetailTransaksi />} />
 
+            <Route path="/data-transaksi/pengembalian" element={<DataPengembalian />} />
+            <Route path="/data-transaksi/pengembalian/tambah-data" element={<TambahDataPengembalian />} />
+            <Route path="/data-transaksi/pengembalian/edit-data/:slug" element={<UpdateDataPengembalian />} />
+            <Route path="/data-transaksi/pengembalian/detail/:slug" element={<DetailPengembalian />} />
+
             <Route path="/data-transaksi/laporan-denda" element={<DataDenda />} />
             <Route path="/data-transaksi/laporan-denda/edit-data/:slug" element={<UpdateDataDenda />} />
             <Route path="/data-transaksi/laporan-denda/detail/:slug" element={<DetailDenda />} />
 
-            <Route path="/cms/fakultas" element={<DataFakultas />} />
-            <Route path="/cms/program-studi" element={<DataProdi />} />
+            <Route path="/data-master/fakultas" element={<DataFakultas />} />
+            <Route path="/data-master/program-studi" element={<DataProdi />} />
             <Route path="/cms/banner" element={<DataBanner />} />
             <Route path="/cms/profil-perpustakaan" element={<DataProfilPerpustakaan />} />
             <Route path="/cms/berita-informasi" element={<DataBerita />} />
             <Route path="/cms/berita-informasi/tambah-data" element={<TambahDataBerita />} />
             <Route path="/cms/berita-informasi/edit-data/:slug" element={<UpdateDataBerita />} />
             <Route path="/cms/berita-informasi/detail/:slug" element={<DetailBerita />} />
+
+            <Route path="/pengaturan" element={<Setting />} />
 
           </Route>
         </Routes>

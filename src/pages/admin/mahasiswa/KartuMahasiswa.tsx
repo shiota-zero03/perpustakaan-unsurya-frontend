@@ -56,12 +56,12 @@ export const KartuMahasiswa = ({dataFetching}: {dataFetching: props | null}) => 
               <div className="flex items-center text-primary text-[6.5pt]">
                 <h1 className="font-semibold w-20">Jenis Kelamin</h1>
                 <span className="font-semibold">:</span>
-                <h1 className="font-semibold">&nbsp;{dataFetching?.gender === "L" ? "Laki - Laki" : (dataFetching?.gender === "P" ? "Perempuan" : "-")}</h1>
+                <h1 className="font-semibold">&nbsp;{dataFetching?.gender}</h1>
               </div>
             </CardBody>
             <CardFooter>
-              <div className="relative z-10 flex items-end justify-between w-full">
-                <p className="text-[5pt] italic text-primary font-normal">Berlaku hingga <span className="font-semibold">{dataFetching?.valid_until ? formatDateDMYIn(dataFetching?.valid_until) : "-"}</span></p>
+               <div className="relative z-10 flex items-end justify-end w-full">
+                 
                 <div>
                   <p className="text-[5pt] text-primary font-normal">Jakarta, {formatDateDMYIn(new Date().toDateString())}</p>
                   <br />

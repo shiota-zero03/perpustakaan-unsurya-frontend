@@ -8,8 +8,9 @@ export interface MahasiswaInterfaceErrorReq {
     password?: string | null;
     status?: string | null;
     faculty?: string | null;
-    department?: string | null;
     validUntil?: string | null;
+    department?: string | null;
+    waktu_terdaftar?: string | null;
 }
 export interface MahasiswaInterfaceReq {
     profilePicture?: File | null;
@@ -33,6 +34,9 @@ export interface ProfilInterfaceReq {
     profilePicture?: File | null;
     gender?: string | null;
     phoneNumber?: string | null;
+    faculty?: string | null;
+    department?: string | null;
+    waktu_terdaftar?: string | null;
 }
 
 export interface ProfilInterfaceErrorReq {

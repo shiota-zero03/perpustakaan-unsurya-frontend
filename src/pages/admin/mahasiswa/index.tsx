@@ -3,7 +3,7 @@ import BreadcrumbWithCustomSeparator from "@/components/Breadcrumb";
 import { useEffect, useMemo, useState } from "react";
 import { MahasiswaListRes } from "@/interface/response/Mahasiswa.interface";
 import { createColumnHelper, Row } from "@tanstack/react-table";
-import { Button, Checkbox, Input, Select, SelectItem, useDisclosure } from "@nextui-org/react";
+import { Button, Input, Select, SelectItem, useDisclosure } from "@nextui-org/react";
 import MyReactTable from "@/components/DataTable";
 import { BiDownload, BiEdit, BiSearch, BiTrash, BiUpload } from "react-icons/bi";
 import { BsEye, BsPlusSquareFill } from "react-icons/bs";
@@ -14,7 +14,6 @@ import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
 import { SelectedDataReq } from "@/interface/request/Utils.interface";
-import { formatedTimestampWitoutWeekday } from "@/utils/dateFormat";
 import ImportMahasiswa from "@/components/Modals/import/ImportMahasiswa";
 import { DataMahasiswaExport } from "@/services/mahasiswa/http";
 import { useDeletedMahasiswa, useGetListMahasiswa, usePostSelectedMahasiswa } from "@/services/mahasiswa";
@@ -63,34 +62,14 @@ export default function DataMahasiswa(){
     const [ checkBoxData, setCheckBoxData ] = useState<string[]>([]);
 
     useEffect(() => {
-        refetchMahasiswa();
         setCheckBoxData([])
     }, [currentPage]);
 
-
-    const handleCheckBox = (value: any) => {
-        setCheckBoxData(prevData => {
-            if (prevData.includes(value)) {
-                return prevData.filter(item => item !== value);
-            } else {
-                return [...prevData, value];
-            }
-        });
-    }
 
     const columnHelper = createColumnHelper<MahasiswaListRes>();
 
     const columns = useMemo(
         () => [
-            {
-                id: "select",
-                header: () => <span></span>,
-                cell: ({ row }: { row: Row<MahasiswaListRes> }) => {
-                    const { id } = row.original;
-                    const isChecked = checkBoxData.includes(id);
-                    return <Checkbox value={id} key={id} isSelected={isChecked} onChange={() => handleCheckBox(id)} />
-                },
-            },
             columnHelper.accessor("nim", {
                 id: "nim",
                 cell: (info) => info.getValue(),
@@ -113,7 +92,15 @@ export default function DataMahasiswa(){
                 const status = info.getValue();
         
                 return (
-                    <div className={`${status === 'Aktif' ? 'text-accent-green' : (status === 'Tidak Aktif' ? 'text-accent-gray' : 'text-danger')} flex items-center`}>
+                    <div 
+                        className={`
+                            ${status === 'AKTIF' ? 
+                                'text-accent-green' : 
+                                    (status === 'NON-AKTIF' ? 'text-accent-gray' : 
+                                        (status === 'LULUS' ? 'text-blue-500' : 'text-danger'))} 
+                            flex items-center
+                        `}
+                    >
                         <div className="italic flex items-center w-full"><FaCircle size={4} className="me-1" />{status}</div>
                     </div>
                 );
@@ -127,7 +114,7 @@ export default function DataMahasiswa(){
         
                 return (
                     <div>
-                        {formatedTimestampWitoutWeekday(waktu_terdaftar || "", "|")}
+                        {waktu_terdaftar}
                     </div>
                 );
                 },
@@ -142,8 +129,8 @@ export default function DataMahasiswa(){
                     return (
                         <div className="flex items-center gap-2">
                             <Button onPress={() => navigate(`/data-anggota/mahasiswa/detail/${id}`)} isIconOnly size="sm" variant="bordered" color="primary"><BsEye /></Button>
-                            <Button onPress={() => navigate(`/data-anggota/mahasiswa/edit-data/${id}`)} isIconOnly size="sm" variant="bordered" color="warning"><BiEdit /></Button>
-                            <Button onPress={() => deletedAction(id)} isIconOnly size="sm" variant="bordered" color="danger"><BiTrash /></Button>
+                            <Button className="hidden" onPress={() => navigate(`/data-anggota/mahasiswa/edit-data/${id}`)} isIconOnly size="sm" variant="bordered" color="warning"><BiEdit /></Button>
+                            <Button className="hidden" onPress={() => deletedAction(id)} isIconOnly size="sm" variant="bordered" color="danger"><BiTrash /></Button>
                         </div>
                     );
                 },
@@ -163,7 +150,6 @@ export default function DataMahasiswa(){
         setStatusSearch(null);
         setTimeout(() => {
             setCurrentPage(1);
-            refetchMahasiswa();
         }, 500);
     }
 
@@ -323,7 +309,7 @@ export default function DataMahasiswa(){
                 }}
             />
             <BreadcrumbWithCustomSeparator icon={FaUserGraduate} />
-            <div className="bg-white p-4 border shadow rounded-md flex flex-col gap-4">
+            <div className="bg-white p-4 border shadow rounded-md hidden flex-col gap-4">
                 <div className="flex items-center justify-between sm:flex-row flex-col gap-2">
                     <Button
                         size="sm"
@@ -405,11 +391,20 @@ export default function DataMahasiswa(){
                                     value: 'text-primary'
                                 }}
                             >
-                                <SelectItem key={'Active'} value={'Active'}>
+                                <SelectItem key={'AKTIF'} value={'AKTIF'}>
                                     Aktif
                                 </SelectItem>
-                                <SelectItem key={'InActive'} value={'InActive'}>
+                                <SelectItem key={'NON-AKTIF'} value={'NON-AKTIF'}>
                                     Tidak Aktif
+                                </SelectItem>
+                                <SelectItem key={'LULUS'} value={'LULUS'}>
+                                    Lulus
+                                </SelectItem>
+                                <SelectItem key={'KELUAR'} value={'KELUAR'}>
+                                    Keluar
+                                </SelectItem>
+                                <SelectItem key={'DROP-OUT/PUTUS STUDI'} value={'DROP-OUT/PUTUS STUDI'}>
+                                    Drop-Out/Putus Studi
                                 </SelectItem>
                             </Select>
                         </div>
@@ -419,7 +414,7 @@ export default function DataMahasiswa(){
                             radius="sm"
                             variant="bordered"
                             onPress={handleSearch}
-                            className="border border-primary text-primary font-semibold flex items-center sm:w-auto w-full"
+                            className="border border-primary text-primary font-semibold hidden items-center sm:w-auto w-full"
                         >
                             <BiSearch size={16} /> Cari
                         </Button>

@@ -11,7 +11,6 @@ import { useGetDetailDosen, usePostSelectedDosen } from "@/services/dosen";
 import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
-import { formatDateDMYIn } from "@/utils/dateFormat";
 import { SelectedDataReq } from "@/interface/request/Utils.interface";
 
 export default function DetailDosen(){
@@ -49,7 +48,7 @@ export default function DetailDosen(){
                 phoneNumber: dataFetching.phone_number,
                 email: dataFetching.email,
                 password: null,
-                status: dataFetching.status === "Aktif" ? "Active" : "InActive",
+                status: dataFetching.status,
                 validUntil: dataFetching.valid_until,
             })
         }
@@ -109,7 +108,7 @@ export default function DetailDosen(){
 
     useEffect(() => {
         if(!isFetching && error) {
-            navigate('/data-anggota/dosen');
+            navigate('/data-anggota/pegawai');
             errorToast({ text: "Data tidak ditemukan" })
         }
     }, [isFetching])
@@ -133,8 +132,8 @@ export default function DetailDosen(){
                 <div className="border border-primary py-2 sm:px-4 px-2 sm:text-left text-center rounded-md">
                     <h1 className="text-primary font-semibold">{formData.name}</h1>
                 </div>
-                <div className="grid lg:grid-cols-4 grid-cols-1 gap-4">
-                    <div className="col-span-1">
+                <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
+                    <div className="col-span-1 hidden">
                         <div className="border border-primary rounded-md flex items center justify-center md:p-4 p-2 mb-2">
                             <img src={formData.profilePicture || UserImage} alt="user-image" loading="lazy" className="w-full" />
                         </div>
@@ -142,28 +141,26 @@ export default function DetailDosen(){
                     <div className="lg:col-span-3 sm:col-span-2 col-span-1 flex flex-col gap-1">
                         <div className="border border-primary rounded-md md:px-6 md:py-4 px-2 py-2 mb-2">
                             <div className="grid grid-cols-3">
-                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">NIDN</div>
+                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Nomor Identitas</div>
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.nidn}</div>
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Nama</div>
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.name}</div>
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Jenis Kelamin</div>
-                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.gender === 'L' ? 'Laki - Laki' : ( formData.gender === 'P' ? 'Perempuan' : '-' )}</div>
+                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.gender}</div>
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">No. Hp</div>
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.phoneNumber}</div>
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Email</div>
                                 <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formData.email}</div>
                                 <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Status Keanggotaan</div>
-                                <div className={`text-left  ${formData.status === 'Active' ? 'text-primary' : 'text-danger'} font-bold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4`}>
-                                    <span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span><span className="italic">{formData.status === 'Active' ? 'Aktif' : 'Tidak Aktif'}</span>
-                                    <button onClick={onOpen} className={`${formData.status === 'Active' ? 'bg-danger' : 'bg-primary'} text-white font-semibold py-1 px-3 text-xs rounded-md sm:ms-12 sm:w-auto w-full`}>
+                                <div className={`text-left font-bold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4`}>
+                                    <span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span><span className="italic">{formData.status}</span>
+                                    <button onClick={onOpen} className={`${formData.status === 'Active' ? 'bg-danger' : 'bg-primary'} text-white font-semibold py-1 px-3 text-xs rounded-md sm:ms-12 sm:w-auto w-full hidden`}>
                                         {formData.status === 'Active' ? 'Nonaktifkan Akun' : 'Aktifkan Akun'}
                                     </button>
                                 </div>
-                                <div className="text-primary lg:text-base text-sm lg:col-span-1 col-span-3">Masa Berlaku Keanggotaan</div>
-                                <div className="text-left text-primary font-semibold lg:text-base text-sm lg:col-span-2 col-span-3 mb-4"><span className="lg:inline hidden">&nbsp;: &nbsp; </span><span className="lg:hidden">&nbsp;- </span>{formatDateDMYIn(formData.validUntil || "")}</div>
                             </div>
                         </div>
-                        <Button onPress={() => navigate(`/data-anggota/dosen/kartu-anggota/${id}`)} variant="bordered" radius="sm" className="border-[0.8px] border-primary text-secondary font-semibold">
+                        <Button onPress={() => navigate(`/data-anggota/pegawai/kartu-anggota/${id}`)} variant="bordered" radius="sm" className="border-[0.8px] border-primary text-secondary font-semibold">
                             Lihat Kartu Anggota
                         </Button>
                     </div>

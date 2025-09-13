@@ -101,7 +101,7 @@ export default function UpdateDosenDosen(){
                     onSuccess: (res) => {
                         successToast({text: res.message})
                         isFinished()
-                        navigate('/data-anggota/dosen')
+                        navigate('/data-anggota/pegawai')
                         
                     },
                     onError: (error: AxiosError<BaseErrorRes>) => {
@@ -147,7 +147,7 @@ export default function UpdateDosenDosen(){
 
     useEffect(() => {
         if(!isFetching && error) {
-            navigate('/data-anggota/dosen');
+            navigate('/data-anggota/pegawai');
             errorToast({ text: "Data tidak ditemukan" })
         }
     }, [isFetching])

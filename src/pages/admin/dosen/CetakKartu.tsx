@@ -17,7 +17,7 @@ const LibraryCard: React.FC = () => {
 
   useEffect(() => {
     if(!isFetching && error) {
-      navigate('/data-anggota/dosen');
+      navigate('/data-anggota/pegawai');
       errorToast({ text: "Data tidak ditemukan" })
     }
   }, [isFetching])

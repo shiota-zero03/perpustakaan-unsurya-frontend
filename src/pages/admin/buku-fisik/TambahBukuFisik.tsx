@@ -32,6 +32,10 @@ export default function TambahDataBukuFisik(){
         denda_harian: null,
         studyProgramId: null,
         book_description: null,
+        locations: null,
+        language: null,
+        physical_description: null,
+        edition: null,
     })
 
     const [ formDataError, setFormDataError ] = useState<BukuFisikInterfaceErrorReq>({})
@@ -64,6 +68,10 @@ export default function TambahDataBukuFisik(){
             denda_harian: null,
             studyProgramId: null,
             book_description: null,
+            locations: null,
+            language: null,
+            physical_description: null,
+            edition: null,
         });
         setPreviewImage(null);
         setFormDataError({})
@@ -105,6 +113,10 @@ export default function TambahDataBukuFisik(){
         formData.denda_harian && formDataSend.append("denda_harian", String(formData.denda_harian))
         formData.kode_rak && formDataSend.append("kode_rak", formData.kode_rak)
         formData.book_description && formDataSend.append("book_description", formData.book_description)
+        formData.locations && formDataSend.append("locations", formData.locations)
+        formData.language && formDataSend.append("language", formData.language)
+        formData.physical_description && formDataSend.append("physical_description", formData.physical_description)
+        formData.edition && formDataSend.append("edition", formData.edition)
         formData.studyProgramId && formDataSend.append("studyProgramId", String(formData.studyProgramId))
 
         try {
@@ -141,6 +153,10 @@ export default function TambahDataBukuFisik(){
                                     denda_harian: errors.denda_harian || "",
                                     book_description: errors.book_description || "",
                                     studyProgramId: errors.studyProgramId || "",
+                                    locations: errors.locations || "",
+                                    language: errors.language || "",
+                                    physical_description: errors.physical_description || "",
+                                    edition: errors.edition || "",
                                 })
                             }
                         } else {
@@ -319,7 +335,7 @@ export default function TambahDataBukuFisik(){
                                 <div className="text-danger italic text-xs">{formDataError.studyProgramId}</div>
                             </div>
                             <div>
-                                <label htmlFor="isbn" className="text-primary font-semibold text-sm">ISBN</label>
+                                <label htmlFor="isbn" className="text-primary font-semibold text-sm">ISBN/ISSN</label>
                                 <Input
                                     aria-label="Nomor Urut"
                                     id="isbn"
@@ -336,6 +352,82 @@ export default function TambahDataBukuFisik(){
                                     }}
                                 />
                                 <div className="text-danger italic text-xs">{formDataError.isbn}</div>
+                            </div>
+                            <div>
+                                <label htmlFor="locations" className="text-primary font-semibold text-sm">Lokasi Buku</label>
+                                <Input
+                                    aria-label="Nomor Urut"
+                                    id="locations"
+                                    variant="bordered"
+                                    color="primary"
+                                    radius="sm"
+                                    placeholder="book location here"
+                                    value={formData.locations || ""}
+                                    onChange={(e) => setFormData({...formData, locations: e.target.value})}
+                                    classNames={{
+                                        inputWrapper: "border border-primary rounded",
+                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
+                                        label: "text-primary font-semibold text-sm"
+                                    }}
+                                />
+                                <div className="text-danger italic text-xs">{formDataError.locations}</div>
+                            </div>
+                            <div>
+                                <label htmlFor="bahasa" className="text-primary font-semibold text-sm">Bahasa</label>
+                                <Input
+                                    aria-label="Nomor Urut"
+                                    id="bahasa"
+                                    variant="bordered"
+                                    color="primary"
+                                    radius="sm"
+                                    placeholder="book language here"
+                                    value={formData.language || ""}
+                                    onChange={(e) => setFormData({...formData, language: e.target.value})}
+                                    classNames={{
+                                        inputWrapper: "border border-primary rounded",
+                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
+                                        label: "text-primary font-semibold text-sm"
+                                    }}
+                                />
+                                <div className="text-danger italic text-xs">{formDataError.language}</div>
+                            </div>
+                            <div>
+                                <label htmlFor="physical_description" className="text-primary font-semibold text-sm">Deskripsi Fisik</label>
+                                <Input
+                                    aria-label="Nomor Urut"
+                                    id="physical_description"
+                                    variant="bordered"
+                                    color="primary"
+                                    radius="sm"
+                                    placeholder="book physical description here (ex: vi+266 hlm; 16x23 cm)"
+                                    value={formData.physical_description || ""}
+                                    onChange={(e) => setFormData({...formData, physical_description: e.target.value})}
+                                    classNames={{
+                                        inputWrapper: "border border-primary rounded",
+                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
+                                        label: "text-primary font-semibold text-sm"
+                                    }}
+                                />
+                                <div className="text-danger italic text-xs">{formDataError.physical_description}</div>
+                            </div>
+                            <div>
+                                <label htmlFor="edition" className="text-primary font-semibold text-sm">Edisi</label>
+                                <Input
+                                    aria-label="Nomor Urut"
+                                    id="edition"
+                                    variant="bordered"
+                                    color="primary"
+                                    radius="sm"
+                                    placeholder="book edition here"
+                                    value={formData.edition || ""}
+                                    onChange={(e) => setFormData({...formData, edition: e.target.value})}
+                                    classNames={{
+                                        inputWrapper: "border border-primary rounded",
+                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
+                                        label: "text-primary font-semibold text-sm"
+                                    }}
+                                />
+                                <div className="text-danger italic text-xs">{formDataError.edition}</div>
                             </div>
                             <div>
                                 <label htmlFor="tanggal_masuk" className="text-primary font-semibold text-sm">Tanggal Masuk Perpustakaan</label>
@@ -425,7 +517,7 @@ export default function TambahDataBukuFisik(){
                                     variant="bordered"
                                     color="primary"
                                     radius="sm"
-                                    placeholder="book description code here"
+                                    placeholder="book description here"
                                     value={formData.book_description || ""}
                                     onChange={(e) => setFormData({...formData, book_description: e.target.value})}
                                     classNames={{

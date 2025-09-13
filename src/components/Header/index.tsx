@@ -3,16 +3,19 @@ import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, useDiscl
 import { BiChevronDown, BiPowerOff } from "react-icons/bi";
 import { useLocation, useNavigate } from "react-router-dom";
 import Profile from "@/assets/images/profile.png";
-import { useAuthLogout } from "@/services/auth";
+// import { useAuthLogout } from "@/services/auth";
 import { useState } from "react";
-import { errorToast, successToast } from "@/utils/toastMessage";
-import { BaseErrorRes } from "@/interface/response/base.interface";
-import { AxiosError } from "axios";
+import { successToast } from "@/utils/toastMessage";
+// import { BaseErrorRes } from "@/interface/response/base.interface";
+// import { AxiosError } from "axios";
 import LogoutAlert from "../Modals/LogoutAlert";
 import useTitle from "@/utils/hooks/useTitle";
+import { useDispatch } from "react-redux";
+import { clearAuthTokens } from "@/redux/slices/auth.slice";
 import { FaUserCog } from "react-icons/fa";
 
 const Header = ({ profile, openSidebar }: { profile: { name: string, email: string, picture: string | null}, openSidebar: boolean }) => {
+    const dispatch = useDispatch();
     const { pathname } = useLocation();
     const nameOfPage = formatTitle(pathname)
 
@@ -23,45 +26,15 @@ const Header = ({ profile, openSidebar }: { profile: { name: string, email: stri
     const [ sLoading, SetSLoading ] = useState<boolean>(false)
 
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { mutate: mutateLogout } = useAuthLogout();
     const navigate = useNavigate();
 
     const handleSubmit = () => {
         SetSLoading(true);
-
-        try {
-            mutateLogout
-            (
-                {},
-                {
-                    onSuccess: (res) => {
-                        successToast({ text: res.message })
-                        navigate('/auth')
-                    },
-                    onError: (error: AxiosError<BaseErrorRes>) => {
-                        isFinished()
-                        if (error.response && error.response.data) {
-                            const { data } = error.response;
-                            const { message } = data;
-                            errorToast({ text: message || "" });
-                        } else {
-                            errorToast({ text: error.message || "Terjadi kesalahan yang tidak terduga" });
-                        }
-                        
-                        throw error;
-                    },
-                }
-            )
-        } catch (error) {
-            console.error("Error during form submission:", error);
-            isFinished()
-            throw error;
-        }
-    }
-
-    const isFinished = () => {
+        dispatch(clearAuthTokens())
+        successToast({ text: "Berhasil keluar dari sistem" })
+        navigate('/auth')
         SetSLoading(false);
-        onClose();
+        onClose()
     }
 
     return (

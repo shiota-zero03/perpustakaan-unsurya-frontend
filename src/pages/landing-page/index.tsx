@@ -1,5 +1,5 @@
 import HomeBanner from "@/components/Banner/HomeBanner";
-import { FaBook, FaGavel, FaUniversity } from "react-icons/fa";
+import { FaBook, FaUniversity } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import Repository from "@/assets/images/repository.jpg";
 import Catalog from "@/assets/images/catalog.jpg";
@@ -18,12 +18,12 @@ export default function Home(){
             subtitle: 'Panduan lengkap untuk meminjam buku dengan mudah.',
             link: "/prosedur"
         },
-        { 
-            title: 'Aturan Perpustakaan', 
-            icon: <FaGavel />, 
-            subtitle: 'Ketahui peraturan dan kebijakan perpustakaan.',
-            link: "/petunjuk"
-        },
+        // { 
+        //     title: 'Aturan Perpustakaan', 
+        //     icon: <FaGavel />, 
+        //     subtitle: 'Ketahui peraturan dan kebijakan perpustakaan.',
+        //     link: "/petunjuk"
+        // },
         { 
             title: 'Profil Perpustakaan', 
             icon: <FaUniversity />, 
@@ -62,7 +62,7 @@ export default function Home(){
                     &nbsp;Perpustakaan adalah tempat di mana masa lalu, masa kini, dan masa depan bertemu dalam satu ruang. Di sinilah kisah-kisah terdahulu mengajarkan kita kebijaksanaan, penelitian masa kini membuka wawasan, dan impian masa depan mulai dirangkai&nbsp;
                 </q>
             </div>
-            <div className="grid sm:grid-cols-3 grid-cols-1 xl:px-52 lg:px-36 md:px-28 sm:px-16 px-8 lg:py-20 py-10 bg-white gap-4">
+            <div className="grid sm:grid-cols-2 grid-cols-1 xl:px-52 lg:px-36 md:px-28 sm:px-16 px-8 lg:py-20 py-10 bg-white gap-4">
                 {threePointFirst.map((item, index) => (
                     <div key={index} className="text-center border shadow-sm rounded-lg p-4 relative flex flex-col">
                         <div className="absolute -top-4 bg-primary/20 p-2 rounded-full shadow-md left-[50%] -translate-x-[50%]">

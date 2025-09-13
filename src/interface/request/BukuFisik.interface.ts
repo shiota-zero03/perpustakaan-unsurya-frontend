@@ -13,6 +13,10 @@ export interface BukuFisikInterfaceErrorReq {
     kode_rak?: string;
     stok?: string;
     denda_harian?: string;
+    locations?: string;
+    language?: string;
+    physical_description?: string;
+    edition?: string;
 }
 export interface BukuFisikInterfaceReq {
     no_urut?: string | null;
@@ -30,4 +34,8 @@ export interface BukuFisikInterfaceReq {
     book_description?: string | null;
     prodi?: string | null;
     studyProgramId?: number | null;
+    locations?: string | null;
+    language?: string | null;
+    physical_description?: string | null;
+    edition?: string | null;
 }

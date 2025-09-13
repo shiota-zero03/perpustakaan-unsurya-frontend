@@ -54,6 +54,15 @@ export default function TambahBukuDigital(){
         }
     }
 
+    const handleChangeFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setFormData({ ...formData, link_book: file });
+        } else {
+            setFormData({ ...formData, link_book: null });
+        }
+    }
+
     const [ loadingSend, setLoadingSend ] = useState<boolean>(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -249,22 +258,14 @@ export default function TambahBukuDigital(){
                                 />
                                 <div className="text-danger italic text-xs">{formDataError.isbn}</div>
                             </div>
-                            <div className="sm:col-span-2">
-                                <label htmlFor="url" className="text-primary font-semibold text-sm">URL Buku</label>
-                                <Input
-                                    aria-label="URL Buku"
+                            <div className="sm:col-span-2 flex flex-col">
+                                <label htmlFor="url" className="text-primary font-semibold text-sm">File Buku</label>
+                                <input
+                                    className="border border-primary"
+                                    type="file"
                                     id="url"
-                                    variant="bordered"
-                                    color="primary"
-                                    radius="sm"
-                                    placeholder="book url here"
-                                    value={formData.link_book || ""}
-                                    onChange={(e) => setFormData({...formData, link_book: e.target.value})}
-                                    classNames={{
-                                        inputWrapper: "border border-primary rounded",
-                                        input: "text-primary text-xs font-medium italic placeholder:text-primary",
-                                        label: "text-primary font-semibold text-sm"
-                                    }}
+                                    onChange={handleChangeFile}
+                                    accept=".pdf,.jpg,.jpeg,.png"
                                 />
                                 <div className="text-danger italic text-xs">{formDataError.link_book}</div>
                             </div>

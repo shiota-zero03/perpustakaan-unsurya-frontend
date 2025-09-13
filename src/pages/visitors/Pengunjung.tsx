@@ -119,7 +119,7 @@ const Pengunjung = () => {
                     {formData.type === "Akademisi" && (
                         <div className="w-full">
                             <div>
-                                <label htmlFor="member" className="font-bold text-primary text-sm">NIM / NIDN</label>
+                                <label htmlFor="member" className="font-bold text-primary text-sm">Nomor Identitas</label>
                             </div>
                             <Input
                                 id="member"
@@ -131,7 +131,7 @@ const Pengunjung = () => {
                                 labelPlacement="outside"
                                 radius="sm"
                                 className="w-full"
-                                placeholder="NIM / NIDN anda disini"
+                                placeholder="Nomor Identitas anda disini"
                                 color="primary"
                                 classNames={{
                                     base: 'flex justify-center',

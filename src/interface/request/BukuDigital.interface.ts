@@ -14,5 +14,5 @@ export interface BukuDigitalInterfaceReq {
     penerbit?: string | null;
     tahun_terbit?: number | null;
     isbn?: string | null;
-    link_book?: string | null;
+    link_book?: File | string | null;
 }

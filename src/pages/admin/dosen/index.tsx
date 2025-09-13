@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useDeletedDosen, useGetListDosen, usePostSelectedDosen } from "@/services/dosen";
 import { DosenListRes } from "@/interface/response/Dosen.interface";
 import { createColumnHelper, Row } from "@tanstack/react-table";
-import { Button, Checkbox, Input, Select, SelectItem, useDisclosure } from "@nextui-org/react";
+import { Button, Input, Select, SelectItem, useDisclosure } from "@nextui-org/react";
 import MyReactTable from "@/components/DataTable";
 import { BiDownload, BiEdit, BiSearch, BiTrash, BiUpload } from "react-icons/bi";
 import { BsEye, BsPlusSquareFill } from "react-icons/bs";
@@ -15,7 +15,6 @@ import { errorToast, successToast } from "@/utils/toastMessage";
 import { AxiosError } from "axios";
 import { BaseErrorRes } from "@/interface/response/base.interface";
 import { SelectedDataReq } from "@/interface/request/Utils.interface";
-import { formatedTimestampWitoutWeekday } from "@/utils/dateFormat";
 import ImportDosen from "@/components/Modals/import/ImportDosen";
 import { DataDosenExport } from "@/services/dosen/http";
 
@@ -68,34 +67,15 @@ export default function DataDosen(){
     }, [currentPage]);
 
 
-    const handleCheckBox = (value: any) => {
-        setCheckBoxData(prevData => {
-            if (prevData.includes(value)) {
-                return prevData.filter(item => item !== value);
-            } else {
-                return [...prevData, value];
-            }
-        });
-    }
-
     const columnHelper = createColumnHelper<DosenListRes>();
 
     const columns = useMemo(
         () => [
-            {
-                id: "select",
-                header: () => <span></span>,
-                cell: ({ row }: { row: Row<DosenListRes> }) => {
-                    const { id } = row.original;
-                    const isChecked = checkBoxData.includes(id);
-                    return <Checkbox value={id} key={id} isSelected={isChecked} onChange={() => handleCheckBox(id)} />
-                },
-            },
             columnHelper.accessor("nidn", {
                 id: "nidn",
                 cell: (info) => info.getValue(),
                 filterFn: "includesString",
-                header: () => <span>NIDN</span>,
+                header: () => <span>Nomor Identitas</span>,
             }),
             columnHelper.accessor("name", {
                 id: "name",
@@ -113,25 +93,20 @@ export default function DataDosen(){
                 const status = info.getValue();
         
                 return (
-                    <div className={`${status === 'Aktif' ? 'text-accent-green' : (status === 'Tidak Aktif' ? 'text-accent-gray' : 'text-danger')} flex items-center`}>
+                    <div 
+                        className={`
+                            ${status === 'AKTIF' ? 
+                                'text-accent-green' : 
+                                    (status === 'NON-AKTIF' ? 'text-accent-gray' : 
+                                        (status === 'LULUS' ? 'text-blue-500' : 'text-danger'))} 
+                            flex items-center
+                        `}
+                    >
                         <div className="italic flex items-center w-full"><FaCircle size={4} className="me-1" />{status}</div>
                     </div>
                 );
                 },
                 header: () => <span>Status</span>,
-            }),
-            columnHelper.accessor("waktu_terdaftar", {
-                id: "waktu_terdaftar",
-                cell: (info) => {
-                const waktu_terdaftar = info.getValue();
-        
-                return (
-                    <div>
-                        {formatedTimestampWitoutWeekday(waktu_terdaftar || "", "|")}
-                    </div>
-                );
-                },
-                header: () => <span>Waktu Terdaftar</span>,
             }),
             {
                 id: "action",
@@ -141,9 +116,9 @@ export default function DataDosen(){
 
                     return (
                         <div className="flex items-center gap-2">
-                            <Button onPress={() => navigate(`/data-anggota/dosen/detail/${id}`)} isIconOnly size="sm" variant="bordered" color="primary"><BsEye /></Button>
-                            <Button onPress={() => navigate(`/data-anggota/dosen/edit-data/${id}`)} isIconOnly size="sm" variant="bordered" color="warning"><BiEdit /></Button>
-                            <Button onPress={() => deletedAction(id)} isIconOnly size="sm" variant="bordered" color="danger"><BiTrash /></Button>
+                            <Button onPress={() => navigate(`/data-anggota/pegawai/detail/${id}`)} isIconOnly size="sm" variant="bordered" color="primary"><BsEye /></Button>
+                            <Button className="hidden" onPress={() => navigate(`/data-anggota/pegawai/edit-data/${id}`)} isIconOnly size="sm" variant="bordered" color="warning"><BiEdit /></Button>
+                            <Button className="hidden" onPress={() => deletedAction(id)} isIconOnly size="sm" variant="bordered" color="danger"><BiTrash /></Button>
                         </div>
                     );
                 },
@@ -323,14 +298,14 @@ export default function DataDosen(){
                 }}
             />
             <BreadcrumbWithCustomSeparator icon={FaUserGraduate} />
-            <div className="bg-white p-4 border shadow rounded-md flex flex-col gap-4">
+            <div className="bg-white p-4 border shadow rounded-md hidden flex-col gap-4">
                 <div className="flex items-center justify-between sm:flex-row flex-col gap-2">
                     <Button
                         size="sm"
                         radius="sm"
                         color="primary"
                         className="font-semibold flex items-center"
-                        onPress={() => navigate('/data-anggota/dosen/tambah-data')}
+                        onPress={() => navigate('/data-anggota/pegawai/tambah-data')}
                     >
                         <BsPlusSquareFill /> Tambah Data Dosen
                     </Button>
@@ -375,11 +350,11 @@ export default function DataDosen(){
                             />
                         </div>
                         <div className="w-full">
-                            <label htmlFor="search-nidn" className="font-semibold text-sm text-primary">NIDN</label>
+                            <label htmlFor="search-nidn" className="font-semibold text-sm text-primary">Nomor Identitas</label>
                             <Input
                                 id="search-nidn"
                                 aria-label="NIDN"
-                                placeholder="Cari berdasarkan nidn"
+                                placeholder="Cari berdasarkan nomor identitas"
                                 variant="bordered" 
                                 radius="sm"
                                 value={nidnSearch || ""}
@@ -405,11 +380,20 @@ export default function DataDosen(){
                                     value: 'text-primary'
                                 }}
                             >
-                                <SelectItem key={'Active'} value={'Active'}>
+                                <SelectItem key={'AKTIF'} value={'AKTIF'}>
                                     Aktif
                                 </SelectItem>
-                                <SelectItem key={'InActive'} value={'InActive'}>
+                                <SelectItem key={'NON-AKTIF'} value={'NON-AKTIF'}>
                                     Tidak Aktif
+                                </SelectItem>
+                                <SelectItem key={'LULUS'} value={'LULUS'}>
+                                    Lulus
+                                </SelectItem>
+                                <SelectItem key={'KELUAR'} value={'KELUAR'}>
+                                    Keluar
+                                </SelectItem>
+                                <SelectItem key={'DROP-OUT/PUTUS STUDI'} value={'DROP-OUT/PUTUS STUDI'}>
+                                    Drop-Out/Putus Studi
                                 </SelectItem>
                             </Select>
                         </div>

@@ -86,7 +86,7 @@ export default function TambahDataDosen(){
                     onSuccess: (res) => {
                         successToast({text: res.message})
                         isFinished()
-                        navigate('/data-anggota/dosen')
+                        navigate('/data-anggota/pegawai')
                         
                     },
                     onError: (error: AxiosError<BaseErrorRes>) => {

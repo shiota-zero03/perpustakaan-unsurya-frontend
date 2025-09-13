@@ -54,7 +54,7 @@ export default function KartuAnggotaDosen(){
 
     useEffect(() => {
         if(!isFetching && error) {
-            navigate('/data-anggota/dosen');
+            navigate('/data-anggota/pegawai');
             errorToast({ text: "Data tidak ditemukan" })
         }
     }, [isFetching])
@@ -74,7 +74,7 @@ export default function KartuAnggotaDosen(){
                 <div className="flex items-center md:flex-row flex-col justify-center xl:scale-150 xl:my-20">
                     <KartuDosen dataFetching={dataFetching} />
                 </div>
-                <Link to={`/data-anggota/dosen/cetak-kartu/${id}`} className="mx-auto flex items-center justify-center gap-2 border border-primary p-2 text-white bg-primary px-4 rounded-lg" target="__blank">
+                <Link to={`/data-anggota/pegawai/cetak-kartu/${id}`} className="mx-auto flex items-center justify-center gap-2 border border-primary p-2 text-white bg-primary px-4 rounded-lg" target="__blank">
                     <FaPrint /> Cetak Kartu
                 </Link>
             </div>
