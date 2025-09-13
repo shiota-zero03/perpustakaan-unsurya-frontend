@@ -31,6 +31,7 @@ export default function DetailBuku(){
         language: "",
         physical_description: "",
         edition: "",
+        type: "",
     })
 
     const { data, isLoading, isFetching, refetch, error } = useGetDetailBuku(id || "")
@@ -61,6 +62,7 @@ export default function DetailBuku(){
                 language: dataFetching.language || "",
                 physical_description: dataFetching.physical_description || "",
                 edition: dataFetching.edition || "",
+                type: dataFetching.type || "",
             })
         }
     }, [dataFetching])
@@ -121,7 +123,11 @@ export default function DetailBuku(){
                                 {formData.locations ? `Lokasi : ${formData.locations}` : "Belum memasukkan lokasi"}
                             </div>
                             <div className="p-4 sm:border-s sm:border-t-0 border-t min-w-32">
-                                <span className={`${formData.stok && Number(formData.stok) > 0 ? "bg-primary" : "bg-danger"} p-2 text-white rounded-lg`}>{formData.stok && Number(formData.stok) > 0 ? `Tersedia (${formData.stok} Exemplar)` : "Tidak Tersedia"}</span>
+                                {formData.type !== 'Buku Digital' ? (
+                                    <span className={`${formData.stok && Number(formData.stok) > 0 ? "bg-primary" : "bg-danger"} p-2 text-white rounded-lg`}>{formData.stok && Number(formData.stok) > 0 ? `Tersedia (${formData.stok} Exemplar)` : "Tidak Tersedia"}</span>
+                                ) : (
+                                    <span className={`bg-primary p-2 text-white rounded-lg`}>Tersedia</span>
+                                )}
                             </div>
                         </div>
 

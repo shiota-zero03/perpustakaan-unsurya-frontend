@@ -25,5 +25,9 @@ export interface IBukuDigitalDetailRes extends BaseRes {
         tahun_terbit: number | null;
         isbn: string | null;
         link_book: string | null;
+        locations: string | null;
+        language: string | null;
+        physical_description: string | null;
+        edition: string | null;
     }
 }

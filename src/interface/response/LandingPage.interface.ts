@@ -33,6 +33,7 @@ export interface IBukuListRes extends BaseRes {
 
 export interface IBukuDetailRes extends BaseRes {
     data: {
+        type: string | null;
         cover: string | null;
         judul: string | null;
         penulis: string | null;

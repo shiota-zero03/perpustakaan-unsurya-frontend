@@ -228,10 +228,12 @@ export default function Katalog() {
                                                     <h2 className="md:text-sm text-xs">Deskripsi Fisik</h2>
                                                     <h2 className="md:text-sm text-xs font-semibold">{item.physical_description ?? "-"}</h2>
                                                 </div>
-                                                <div className="flex items-start justify-between gap-2 p-2">
-                                                    <h2 className="md:text-sm text-xs">Eksemplar Tersedia</h2>
-                                                    <h2 className="md:text-sm text-xs font-semibold">{item.stok ?? 0}</h2>
-                                                </div>
+                                                {item.type !== 'Buku Digital' ? (
+                                                    <div className="flex items-start justify-between gap-2 p-2">
+                                                        <h2 className="md:text-sm text-xs">Eksemplar Tersedia</h2>
+                                                        <h2 className="md:text-sm text-xs font-semibold">{item.stok ?? 0}</h2>
+                                                    </div>
+                                                ) : null}
                                             </div>
                                         </>
                                     ) : (
@@ -275,10 +277,12 @@ export default function Katalog() {
                                                     <h2 className="md:text-sm text-xs">Deskripsi Fisik</h2>
                                                     <h2 className="md:text-sm text-xs font-semibold">{item.physical_description ?? "-"}</h2>
                                                 </div>
-                                                <div className="flex items-start justify-between gap-2 p-2">
-                                                    <h2 className="md:text-sm text-xs">Eksemplar Tersedia</h2>
-                                                    <h2 className="md:text-sm text-xs font-semibold">{item.stok ?? 0}</h2>
-                                                </div>
+                                                {item.type !== 'Buku Digital' ? (
+                                                    <div className="flex items-start justify-between gap-2 p-2">
+                                                        <h2 className="md:text-sm text-xs">Eksemplar Tersedia</h2>
+                                                        <h2 className="md:text-sm text-xs font-semibold">{item.stok ?? 0}</h2>
+                                                    </div>
+                                                ) : null}
                                             </div>
                                             <div className="sm:flex hidden flex-col w-full p-4 gap-2">
                                                 <div className="text-justify flex">
@@ -305,7 +309,7 @@ export default function Katalog() {
                                             <div className="sm:block hidden border border-slate-300 rounded-lg p-4 m-4">
                                                 <div className="flex items-start justify-center flex-col gap-2">
                                                     <h2 className="md:text-sm text-xs">Ketersediaan</h2>
-                                                    <h2 className="text-3xl flex items-center justify-center w-full text-center font-semibold">{item.stok ?? 0}</h2>
+                                                    <h2 className="text-3xl flex items-center justify-center w-full text-center font-semibold">{item.type !== 'Buku Digital' ? (item.stok || 0) : 1}</h2>
                                                 </div>
                                             </div>
                                         </div>

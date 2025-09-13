@@ -6,6 +6,10 @@ export interface BukuDigitalInterfaceErrorReq {
     tahun_terbit?: string | null;
     isbn?: string | null;
     link_book?: string | null;
+    locations?: string | null;
+    language?: string | null;
+    physical_description?: string | null;
+    edition?: string | null;
 }
 export interface BukuDigitalInterfaceReq {
     cover?: File | null;
@@ -15,4 +19,8 @@ export interface BukuDigitalInterfaceReq {
     tahun_terbit?: number | null;
     isbn?: string | null;
     link_book?: File | string | null;
+    locations?: string | null;
+    language?: string | null;
+    physical_description?: string | null;
+    edition?: string | null;
 }
