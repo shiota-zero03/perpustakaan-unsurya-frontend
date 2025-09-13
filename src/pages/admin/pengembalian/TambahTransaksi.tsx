@@ -117,7 +117,7 @@ export default function TambahTransaksi(){
     const { isOpen: isOpenScanBuku, onOpen: onOpenScanBuku, onClose: onCloseScanBuku } = useDisclosure();
 
     const handleConfirmAnggota = (data: string) => {
-        let dataAnggota = DATA_ANGGOTA.find(item => item.identityNumber === data);
+        let dataAnggota = DATA_ANGGOTA.find(item => item.user_id === data);
         if(dataAnggota) {
             setFormData({...formData, userId: String(dataAnggota.id)})
             onCloseScanAnggota()
@@ -192,7 +192,7 @@ export default function TambahTransaksi(){
                                     onSelectionChange={(value) => setFormData({...formData, userId: String(value)})}
                                     defaultItems={DATA_ANGGOTA.filter((dt) =>
                                         dt.name?.toLowerCase().includes(searchAnggota.toLowerCase()) ||
-                                        dt.identityNumber?.toLowerCase().includes(searchAnggota.toLowerCase())
+                                        dt.user_id?.toLowerCase().includes(searchAnggota.toLowerCase())
                                     )}
                                     selectedKey={formData.userId}
                                     aria-label="Data pengguna"
@@ -207,7 +207,7 @@ export default function TambahTransaksi(){
                                         },
                                     }}
                                 >
-                                    {(dt) => <AutocompleteItem key={dt.id} textValue={`${dt.name} - ${dt.identityNumber}`}>{dt.name} - {dt.identityNumber}</AutocompleteItem>}
+                                    {(dt) => <AutocompleteItem key={dt.id} textValue={`${dt.name} - ${dt.user_id}`}>{dt.name} - {dt.user_id}</AutocompleteItem>}
                                 </Autocomplete>
                                 <div className="text-danger italic text-xs">{formDataError.userId}</div>
                             </div>
