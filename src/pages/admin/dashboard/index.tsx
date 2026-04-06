@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Profile from "@/assets/images/profile.png";
+import Profile2 from "@/assets/images/profile-2.jpg";
 import { CardDashboard, CardDashboardChart, CardDashboardHarian } from "@/components/Card";
 import { FaUsers } from "react-icons/fa6";
 import { BiBookOpen } from "react-icons/bi";
@@ -74,7 +75,7 @@ export default function Dashboard(){
             {auth.role === "Student" || auth.role === "Teacher" ? (
                 <main className="flex flex-col gap-8">
                     <div className="flex sm:flex-row flex-col items-center gap-4">
-                        <img src={dataLayoutProfile.picture || Profile} alt="profile-user" className="w-20 h-20 object-cover object-center border border-primary rounded-full " />
+                        <img src={dataLayoutProfile.picture || (user?.jeniskelamin?.toLowerCase() === 'perempuan' ? Profile2 : Profile)} alt="profile-user" className="w-20 h-20 object-cover object-center border border-primary rounded-full " />
                         <div className="flex flex-col text-primary sm:items-start items-center">
                             <div className="lg:text-2xl text-xl font-bold mb-1">Hi, {dataLayoutProfile.name}</div>
                             <div className="lg:text-base sm:text-sm text-xs italic sm:text-start text-center">Hari yang cerah dan selamat beraktivitas - {
@@ -103,7 +104,7 @@ export default function Dashboard(){
                         </div>
                     ) : null}
                     <div className="flex sm:flex-row flex-col items-center gap-4">
-                        <img src={dataLayoutProfile.picture || Profile} alt="profile-user" className="w-20 h-20 object-cover object-center border border-primary rounded-full " />
+                        <img src={dataLayoutProfile.picture || (user?.jeniskelamin?.toLowerCase() === 'perempuan' ? Profile2 : Profile)} alt="profile-user" className="w-20 h-20 object-cover object-center border border-primary rounded-full " />
                         <div className="flex flex-col text-primary sm:items-start items-center">
                             <div className="lg:text-2xl text-xl font-bold mb-1">Hi, {dataLayoutProfile.name}</div>
                             <div className="lg:text-base sm:text-sm text-xs italic sm:text-start text-center">Hari yang cerah dan selamat beraktivitas - {

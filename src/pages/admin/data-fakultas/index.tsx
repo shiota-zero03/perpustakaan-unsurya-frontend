@@ -175,12 +175,12 @@ export default function DataFakultas() {
                 onClose={onCloseCreated}
                 afterClose={refetchData}
             />
-            <UpdateModal
+            {selectedId ? <UpdateModal
                 id={selectedId}
                 isOpen={isOpenUpdated}
                 onClose={onCloseUpdated}
                 afterClose={() => {refetchData(); setSelectedId('');}}
-            />
+            /> : null}
             <BreadcrumbWithCustomSeparator icon={FaList} />
             <div className="bg-white p-4 border shadow rounded-md flex flex-col gap-4">
                 <div className="flex items-center justify-end sm:flex-row flex-col gap-2">

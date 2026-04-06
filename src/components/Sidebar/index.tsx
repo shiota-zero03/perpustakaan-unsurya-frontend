@@ -1,12 +1,13 @@
 import Logo from "@/assets/images/logo.png";
 import Profile from "@/assets/images/profile.png";
+import Profile2 from "@/assets/images/profile-2.jpg";
 import { AdminSidebar, StudentSidebar } from "@/constants/SidebarMenu";
 import store from "@/redux/store";
 import { useRef } from "react";
 import { FaChevronDown } from "react-icons/fa6";
 import { Link, useLocation } from "react-router-dom";
 
-const Sidebar = ({ profile, openSidebar }: {profile: { name: string, email: string, picture: string | null}, openSidebar: boolean}) => {
+const Sidebar = ({ profile, openSidebar }: {profile: { name: string, email: string, picture: string | null, jeniskelamin: string | null}, openSidebar: boolean}) => {
 
     const { pathname } = useLocation();
 
@@ -37,7 +38,7 @@ const Sidebar = ({ profile, openSidebar }: {profile: { name: string, email: stri
             </div>
             <div className="overflow-smooth-white overflow-y-auto h-[calc(100vh-60px)] mt-[12px] text-white">
                 <div className={`w-full flex items-center justify-center flex-col gap-2 ${openSidebar ? 'block animate-appearance-in' : 'hidden animate-appearance-out'} duration-300`}>
-                    <img src={profile.picture || Profile} alt="profile-user" className="w-16 h-auto object-cover object-center rounded-md" />
+                    <img src={profile.picture || (profile.jeniskelamin?.toLowerCase() === 'perempuan' ? Profile2 : Profile)} alt="profile-user" className="w-16 h-auto object-cover object-center rounded-full" />
                     <div className="text-center px-4">
                         <div className="text-lg font-bold leading-6">{name}</div>
                         <div className="text-sm mt-1 hidden"><em>{email}</em></div>

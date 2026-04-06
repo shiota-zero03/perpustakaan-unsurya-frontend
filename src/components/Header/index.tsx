@@ -3,6 +3,7 @@ import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, useDiscl
 import { BiChevronDown, BiPowerOff } from "react-icons/bi";
 import { useLocation, useNavigate } from "react-router-dom";
 import Profile from "@/assets/images/profile.png";
+import Profile2 from "@/assets/images/profile-2.jpg";
 // import { useAuthLogout } from "@/services/auth";
 import { useState } from "react";
 import { successToast } from "@/utils/toastMessage";
@@ -13,11 +14,14 @@ import useTitle from "@/utils/hooks/useTitle";
 import { useDispatch } from "react-redux";
 import { clearAuthTokens } from "@/redux/slices/auth.slice";
 import { FaUserCog } from "react-icons/fa";
+import store from "@/redux/store";
 
-const Header = ({ profile, openSidebar }: { profile: { name: string, email: string, picture: string | null}, openSidebar: boolean }) => {
+const Header = ({ profile, openSidebar }: { profile: { name: string, email: string, picture: string | null, jeniskelamin: string | null}, openSidebar: boolean }) => {
     const dispatch = useDispatch();
     const { pathname } = useLocation();
     const nameOfPage = formatTitle(pathname)
+
+    const { auth } = store.getState();
 
     useTitle(
         nameOfPage !== "/" ? `Perpustakan Unsurya - ${nameOfPage}` : "Perpustakan Unsurya",
@@ -55,7 +59,7 @@ const Header = ({ profile, openSidebar }: { profile: { name: string, email: stri
                     <Dropdown radius="sm" shadow="sm" className="border border-primary">
                         <DropdownTrigger>
                             <div className="flex items-center gap-2 cursor-pointer">
-                                <Avatar src={profile.picture || Profile} className="h-6 w-6" isBordered color="primary" alt="profile-picture" />
+                                <Avatar src={profile.picture || (profile.jeniskelamin?.toLowerCase() === 'perempuan' ? Profile2 : Profile)} className="h-6 w-6" isBordered color="primary" alt="profile-picture" />
                                 <span className="text-sm font-semibold text-primary sm:block hidden">{profile.name}</span>
                                 <BiChevronDown />
                             </div>
@@ -63,17 +67,19 @@ const Header = ({ profile, openSidebar }: { profile: { name: string, email: stri
                         <DropdownMenu 
                             aria-label="Menu Dropdown" 
                         >
-                            <DropdownItem
-                                aria-label="profil"
-                                onPress={() => navigate('/edit-profil')}
-                                key={'profil'}
-                                className={`text-primary`}
-                                startContent={
-                                    <FaUserCog className="text-primary" size={20} />
-                                }
-                            >
-                                <span className="font-semibold">Edit Profil</span>
-                            </DropdownItem>
+                            {auth.role !== "Teacher" && auth.role !== "Student" ? (
+                                <DropdownItem
+                                    aria-label="profil"
+                                    onPress={() => navigate('/edit-profil')}
+                                    key={'profil'}
+                                    className={`text-primary`}
+                                    startContent={
+                                        <FaUserCog className="text-primary" size={20} />
+                                    }
+                                >
+                                    <span className="font-semibold">Edit Profil</span>
+                                </DropdownItem>
+                            ) : null}
                             <DropdownItem
                                 aria-label="logout"
                                 onPress={onOpen}

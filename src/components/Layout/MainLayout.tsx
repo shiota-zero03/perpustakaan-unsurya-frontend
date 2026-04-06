@@ -15,9 +15,10 @@ const MainLayout = () => {
         setOpenSidebar(!openSidebar)
     }
 
-    const dataLayoutProfile: {name: string, email: string, picture: string | null} = {
+    const dataLayoutProfile: {name: string, email: string, picture: string | null, jeniskelamin: string | null} = {
         name: user?.nama ?? 'Anonymous',
         email: user?.user_id ?? 'anonymous@mail.com',
+        jeniskelamin: user?.jeniskelamin ?? null,
         picture: null
     }
 

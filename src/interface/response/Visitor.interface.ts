@@ -13,6 +13,7 @@ export interface ListVisitorRes {
     name: string | null;
     activity: string | null;
     time: string | null;
+    prodi: string | null;
 }
 
 export interface IListVisitorRes extends BaseRes {
