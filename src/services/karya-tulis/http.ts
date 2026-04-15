@@ -50,8 +50,31 @@ export const updateKaryaTulis = async ( data: FormData, userId: string ): Promis
   return response.data;
 };
 
-export const DataKaryaTulisExport = async () => {
-  const link = `/karya-tulis/data/export`;
+export const sampleTASkripsiExport = async () => {
+  const link = `/karya-tulis/sample/export`;
+  const response = await instance.get(link, {
+    responseType: "blob", // Mengatur respons menjadi tipe blob untuk file
+  });
+
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const linkElement = document.createElement("a");
+  linkElement.href = url;
+  linkElement.setAttribute("download", "Karya Tulis Sample Import.xlsx");
+  document.body.appendChild(linkElement);
+  linkElement.click();
+  document.body.removeChild(linkElement);
+}
+
+export const importTASkripsi = async ( data: {dataImport: string} ): Promise<IKaryaTulisDetailRes> => {
+  const response = await instance.post(`/karya-tulis/data/import`, data);
+  return response.data;
+};
+
+export const DataKaryaTulisExport = async (prodi?: string | null) => {
+  let link = `/karya-tulis/data/export`;
+  if(prodi) {
+    link = `${link}?prodi=${prodi}`
+  }
   const response = await instance.get(link, {
     responseType: "blob", // Mengatur respons menjadi tipe blob untuk file
   });

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteKaryaTulis, getDetailKaryaTulis, getListKaryaTulis, postSelectionKaryaTulis, storeKaryaTulis, updateKaryaTulis } from "./http";
+import { deleteKaryaTulis, getDetailKaryaTulis, getListKaryaTulis, importTASkripsi, postSelectionKaryaTulis, storeKaryaTulis, updateKaryaTulis } from "./http";
 import { TrueResponseInterface } from "@/interface/response/Utils.interface";
 import { SelectedDataReq } from "@/interface/request/Utils.interface";
 import { AxiosError } from "axios";
@@ -80,6 +80,20 @@ export const useUpdateKaryaTulis = () => {
         mutationFn: ( { data, userId } ) => updateKaryaTulis(data, userId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["updateKaryaTulis"] });
+        },
+        onError: (error) => {
+            throw error;
+        },
+    });
+};
+
+export const useImportTASkripsi = () => {
+    const queryClient = useQueryClient();
+  
+    return useMutation<IKaryaTulisDetailRes, AxiosError<BaseErrorRes>, { dataImport: string }>({
+        mutationFn: ( data ) => importTASkripsi(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["importTASkripsi"] });
         },
         onError: (error) => {
             throw error;

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createColumnHelper, Row } from "@tanstack/react-table";
 import { Button, Checkbox, Input, Select, SelectItem, useDisclosure } from "@nextui-org/react";
 import MyReactTable from "@/components/DataTable";
-import { BiDownload, BiEdit, BiSearch, BiTrash } from "react-icons/bi";
+import { BiDownload, BiEdit, BiSearch, BiTrash, BiUpload } from "react-icons/bi";
 import { BsEye, BsPlusSquareFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { TbRestore } from "react-icons/tb";
@@ -17,6 +17,7 @@ import { useDeletedKaryaTulis, useGetListKaryaTulis, usePostSelectedKaryaTulis }
 import { KaryaTulisListRes } from "@/interface/response/KaryaTulis.interface";
 import { DataKaryaTulisExport } from "@/services/karya-tulis/http";
 import store from "@/redux/store";
+import ImportBukuSkripsi from "@/components/Modals/import/ImportBuukuSkripsi";
 
 export default function DataTASkripsi(){
 
@@ -276,12 +277,14 @@ export default function DataTASkripsi(){
         setLoadingAction(false);
     }
 
+    const { isOpen: isOpenImport, onOpen: onOpenImport, onClose: onCloseImport } = useDisclosure();
+    
     const [ isLoadingExport, setIsLoadingExport ] = useState<boolean>(false)
     
     const handleDownloadExport = async () => {
         try {
             setIsLoadingExport(true);
-            await DataKaryaTulisExport();
+            await DataKaryaTulisExport(nimSearch ? nimSearch : undefined);
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: { status: number } | any) {
             if (error?.status === 404) {
@@ -313,6 +316,15 @@ export default function DataTASkripsi(){
                 confirmAction={() => handleDelete(selectedId)}
             />
 
+            <ImportBukuSkripsi 
+                isOpen={isOpenImport} 
+                onClose={onCloseImport}
+                confirmAction={() => {
+                    refetchBukuFisik();
+                    onCloseImport();
+                }}
+            />
+
             <BreadcrumbWithCustomSeparator icon={FaBook} />
             {auth.role !== "Student" && auth.role !== "Teacher" && 
                 <div className="bg-white p-4 border shadow rounded-md flex flex-col gap-4">
@@ -327,6 +339,14 @@ export default function DataTASkripsi(){
                             <BsPlusSquareFill /> Tambah Data TA/Skripsi
                         </Button>
                         <div className="flex items-center gap-2 sm:flex-row flex-col">
+                            <Button
+                                size="sm"
+                                radius="sm"
+                                className="border border-primary text-primary font-semibold flex items-center sm:w-auto w-full bg-transparent"
+                                onPress={onOpenImport}
+                            >
+                                <BiUpload size={16} /> Import Data
+                            </Button>
                             <Button
                                 onPress={handleDownloadExport}
                                 isLoading={isLoadingExport}
